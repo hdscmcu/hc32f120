@@ -1,0 +1,4 @@
+version     date            comment
+ 1.0.0      June 7, 2019    1. the first release for hc32f120 series DDL(Device Driver Library)
+
+EOF
