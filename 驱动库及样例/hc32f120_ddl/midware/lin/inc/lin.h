@@ -135,7 +135,7 @@ typedef enum
  */
 typedef enum
 {
-    LinOk          = 0,                 /*!< No error */
+    LinOk          = 0u,                /*!< No error */
     LinErrBreak    = 1u,                /*!< Error break */
     LinErrPID      = 2u,                /*!< Error PID */
     LinErrChecksum = 3u,                /*!< Error checksum */
@@ -269,7 +269,7 @@ en_result_t LIN_SLAVE_Init(stc_lin_hanlde_t *pstcLinHandle);
 en_result_t LIN_SLAVE_RecFrameHeader(stc_lin_hanlde_t *pstcLinHandle,
                                         stc_lin_frame_t *pstcFrame,
                                         int32_t i32Timeout);
-en_result_t LIN_SLAVE_RecFrameResponse(stc_lin_hanlde_t *pstcLinHandle,
+en_result_t LIN_SLAVE_RecFrameResponse(const stc_lin_hanlde_t *pstcLinHandle,
                                         stc_lin_frame_t *pstcFrame,
                                         int32_t i32Timeout);
 en_result_t LIN_SLAVE_SendFrameResponse(stc_lin_hanlde_t *pstcLinHandle,
@@ -277,11 +277,11 @@ en_result_t LIN_SLAVE_SendFrameResponse(stc_lin_hanlde_t *pstcLinHandle,
 
 en_result_t LIN_SetState(stc_lin_hanlde_t *pstcLinHandle,
                             en_lin_state_t enState);
-en_lin_state_t LIN_GetState(stc_lin_hanlde_t *pstcLinHandle);
+en_lin_state_t LIN_GetState(const stc_lin_hanlde_t *pstcLinHandle);
 en_result_t LIN_Sleep(stc_lin_hanlde_t *pstcLinHandle);
 en_result_t LIN_SendWakeupSignal(stc_lin_hanlde_t *pstcLinHandle);
 
-uint8_t LIN_CalcChecksum(uint8_t u8PID, uint8_t *pu8Data, uint8_t u8Len);
+uint8_t LIN_CalcChecksum(uint8_t u8PID, const uint8_t au8Data[], uint8_t u8Len);
 
 /**
  * @}

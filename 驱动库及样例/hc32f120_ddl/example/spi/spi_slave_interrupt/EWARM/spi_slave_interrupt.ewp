@@ -3,7 +3,7 @@
 <project>
   <fileVersion>2</fileVersion>
   <configuration>
-    <name>Release</name>
+    <name>Debug</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -25,15 +25,15 @@
         </option>
         <option>
           <name>ExePath</name>
-          <state>output\release\Exe</state>
+          <state>output\debug\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>output\release\Obj</state>
+          <state>output\debug\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>output\release\List</state>
+          <state>output\debug\List</state>
         </option>
         <option>
           <name>GEndianMode</name>
@@ -181,6 +181,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
+          <state>__DEBUG</state>
           <state>HC32F120</state>
           <state>USE_DDL_DRIVER</state>
         </option>
@@ -966,7 +967,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>debug</name>
+    <name>Release</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -980,15 +981,15 @@
         <debug>0</debug>
         <option>
           <name>ExePath</name>
-          <state>output\debug\Exe</state>
+          <state>output\release\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>output\debug\Obj</state>
+          <state>output\release\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>output\debug\List</state>
+          <state>output\release\List</state>
         </option>
         <option>
           <name>GEndianMode</name>
@@ -1144,7 +1145,6 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>__DEBUG</state>
           <state>HC32F120</state>
           <state>USE_DDL_DRIVER</state>
         </option>
@@ -1211,7 +1211,7 @@
         </option>
         <option>
           <name>CCDebugInfo</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IEndianMode</name>
@@ -1947,10 +1947,7 @@
     </file>
     -->
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_interrupts.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_utility.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_efm.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_spi.c</name>
@@ -1959,10 +1956,16 @@
       <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_gpio.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_clk.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_interrupts.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_icg.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_clk.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_utility.c</name>
     </file>
 
   </group>

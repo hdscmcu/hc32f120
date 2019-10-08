@@ -74,26 +74,26 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* Red LED Port/Pin definition */
-#define LED_R_PORT                      GPIO_PORT_2
-#define LED_R_PIN                       GPIO_PIN_5
-#define LED_R_ON()                      GPIO_ResetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_OFF()                     GPIO_SetPins(LED_R_PORT, LED_R_PIN)
+#define LED_R_PORT                      (GPIO_PORT_2)
+#define LED_R_PIN                       (GPIO_PIN_5)
+#define LED_R_ON()                      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_OFF()                     (GPIO_SetPins(LED_R_PORT, LED_R_PIN))
 
 /* USART RX/TX Port/Pin definition */
-#define LIN_RX_PORT                     GPIO_PORT_1
-#define LIN_RX_PIN                      GPIO_PIN_6      /* P16: USART1_RX_B */
+#define LIN_RX_PORT                     (GPIO_PORT_1)
+#define LIN_RX_PIN                      (GPIO_PIN_6)      /* P16: USART1_RX_B */
 
-#define LIN_TX_PORT                     GPIO_PORT_1
-#define LIN_TX_PIN                      GPIO_PIN_7      /* P17: USART1_TX_B */
+#define LIN_TX_PORT                     (GPIO_PORT_1)
+#define LIN_TX_PIN                      (GPIO_PIN_7)      /* P17: USART1_TX_B */
 
 /* LIN transceiver chip sleep Port/Pin definition */
-#define LIN_SLEEP_PORT                  GPIO_PORT_1
-#define LIN_SLEEP_PIN                   GPIO_PIN_4      /* P14: LINSLP_N */
+#define LIN_SLEEP_PORT                  (GPIO_PORT_1)
+#define LIN_SLEEP_PIN                   (GPIO_PIN_4)      /* P14: LINSLP_N */
 
 /* Interrupt number definition */
-#define LIN_UNIT_RX_IRQn                Int010_IRQn
-#define LIN_UNIT_ERR_IRQn               Int008_IRQn
-#define LIN_TIMERB_UNIT_CMP_IRQn        Int016_IRQn
+#define LIN_UNIT_RX_IRQn                (Int010_IRQn)
+#define LIN_UNIT_ERR_IRQn               (Int008_IRQn)
+#define LIN_TIMERB_UNIT_CMP_IRQn        (Int016_IRQn)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -108,29 +108,6 @@ static void LedConfig(void);
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-static stc_lin_frame_t m_stcFrame;
-
-static stc_lin_hanlde_t m_stcLinHandle = {
-    .stcLinInit = {
-        .u32Baudrate = 9600ul,
-        .u32ClkMode = USART_INTCLK_NONE_OUTPUT,
-        .u32ClkPrescaler = USART_CLK_PRESCALER_DIV4,
-        .u32OversamplingBits = USART_OVERSAMPLING_BITS_8,
-        .u32SbDetectPolarity = USART_SB_DETECT_FALLING,
-    },
-    .stcPinCfg = {
-        .u8RxPort = LIN_RX_PORT,
-        .u8RxPin = LIN_RX_PIN,
-        .u8TxPort = LIN_TX_PORT,
-        .u8TxPin = LIN_TX_PIN,
-    },
-    .stcIrqnCfg = {
-        .UsartRxIRQn = LIN_UNIT_RX_IRQn,
-        .UsartErrIRQn = LIN_UNIT_ERR_IRQn,
-        .TimerbCmpIRQn = LIN_TIMERB_UNIT_CMP_IRQn,
-    },
-    .enLinState = LinStateSleep,
-};
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -181,6 +158,28 @@ int32_t main(void)
 {
     en_result_t enRet;
     stc_gpio_init_t stcGpioInit = {0};
+    static stc_lin_frame_t stcFrame;
+    static stc_lin_hanlde_t stcLinHandle = {
+        .stcLinInit = {
+            .u32Baudrate = 9600ul,
+            .u32ClkMode = USART_INTCLK_NONE_OUTPUT,
+            .u32ClkPrescaler = USART_CLK_PRESCALER_DIV4,
+            .u32OversamplingBits = USART_OVERSAMPLING_BITS_8,
+            .u32SbDetectPolarity = USART_SB_DETECT_FALLING,
+        },
+        .stcPinCfg = {
+            .u8RxPort = LIN_RX_PORT,
+            .u8RxPin = LIN_RX_PIN,
+            .u8TxPort = LIN_TX_PORT,
+            .u8TxPin = LIN_TX_PIN,
+        },
+        .stcIrqnCfg = {
+            .UsartRxIRQn = LIN_UNIT_RX_IRQn,
+            .UsartErrIRQn = LIN_UNIT_ERR_IRQn,
+            .TimerbCmpIRQn = LIN_TIMERB_UNIT_CMP_IRQn,
+        },
+        .enLinState = LinStateSleep,
+    };
 
     /* Configure system clock. */
     SystemClockConfig();
@@ -194,15 +193,18 @@ int32_t main(void)
     GPIO_Init(LIN_SLEEP_PORT, LIN_SLEEP_PIN, &stcGpioInit);
 
     /* Initialize LIN slave function. */
-    LIN_SLAVE_Init(&m_stcLinHandle);
+    LIN_SLAVE_Init(&stcLinHandle);
 
     while (1)
     {
         /* Wait wakeup. */
-        while (LinStateSleep == LIN_GetState(&m_stcLinHandle));
+        while (LinStateSleep == LIN_GetState(&stcLinHandle))
+        {
+            ;
+        }
 
         /* Start LIN slave receive frame header function(blocking mode). */
-        enRet = LIN_SLAVE_RecFrameHeader(&m_stcLinHandle, &m_stcFrame , LIN_REC_WAITING_FOREVER);
+        enRet = LIN_SLAVE_RecFrameHeader(&stcLinHandle, &stcFrame , LIN_REC_WAITING_FOREVER);
         if (Ok != enRet)
         {
             LED_R_ON();
@@ -213,7 +215,7 @@ int32_t main(void)
         }
 
         /* Start LIN slave receive frame data function. */
-        enRet = LIN_SLAVE_RecFrameResponse(&m_stcLinHandle, &m_stcFrame, 200);
+        enRet = LIN_SLAVE_RecFrameResponse(&stcLinHandle, &stcFrame, 200);
         if (Ok != enRet)
         {
             LED_R_ON();
@@ -224,7 +226,7 @@ int32_t main(void)
         }
 
         /* Start LIN slave receive frame header function(blocking mode). */
-        enRet = LIN_SLAVE_RecFrameHeader(&m_stcLinHandle, &m_stcFrame , LIN_REC_WAITING_FOREVER);
+        enRet = LIN_SLAVE_RecFrameHeader(&stcLinHandle, &stcFrame , LIN_REC_WAITING_FOREVER);
         if (Ok != enRet)
         {
             LED_R_ON();
@@ -235,7 +237,7 @@ int32_t main(void)
         }
 
         /* LIN slave send frame response. */
-        enRet = LIN_SLAVE_SendFrameResponse(&m_stcLinHandle, &m_stcFrame);
+        enRet = LIN_SLAVE_SendFrameResponse(&stcLinHandle, &stcFrame);
         if (Ok != enRet)
         {
             LED_R_ON();
@@ -246,7 +248,7 @@ int32_t main(void)
         }
 
         /* Enter sleep. */
-        LIN_Sleep(&m_stcLinHandle);
+        LIN_Sleep(&stcLinHandle);
     }
 }
 

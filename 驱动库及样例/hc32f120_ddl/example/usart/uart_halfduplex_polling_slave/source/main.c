@@ -76,14 +76,14 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* UART TX Port/Pin definition */
-#define UART_SLAVE_TX_PORT              GPIO_PORT_0
-#define UART_SLAVE_TX_PIN               GPIO_PIN_0      /* P00: USART2_TX_B */
+#define UART_SLAVE_TX_PORT              (GPIO_PORT_0)
+#define UART_SLAVE_TX_PIN               (GPIO_PIN_0)      /* P00: USART2_TX_B */
 
 /* UART unit definition */
-#define UART_SLAVE_UNIT                 M0P_USART2
+#define UART_SLAVE_UNIT                 (M0P_USART2)
 
 /* Function clock gate definition  */
-#define FUNCTION_CLK_GATE               CLK_FCG_UART2
+#define FUNCTION_CLK_GATE               (CLK_FCG_UART2)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -98,17 +98,6 @@ static void UartRxErrProcess(void);
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-static const stc_uart_init_t m_stcUartInit = {
-    .u32Baudrate = 19200,
-    .u32BitDirection = USART_LSB,
-    .u32StopBit = USART_STOP_BITS_1,
-    .u32Parity = USART_PARITY_NONE,
-    .u32DataWidth = USART_DATA_WIDTH_BITS_8,
-    .u32ClkMode = USART_INTCLK_NONE_OUTPUT,
-    .u32OversamplingBits = USART_OVERSAMPLING_BITS_8,
-    .u32NoiseFilterState = USART_NOISE_FILTER_DISABLE,
-    .u32SbDetectPolarity = USART_SB_DETECT_FALLING,
-};
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -148,9 +137,6 @@ static void UartRxErrProcess(void)
     {
         USART_ClearFlag(UART_SLAVE_UNIT, (USART_CLEAR_FLAG_PE | USART_CLEAR_FLAG_FE | USART_CLEAR_FLAG_ORE));
     }
-    else
-    {
-    }
 }
 
 /**
@@ -160,19 +146,30 @@ static void UartRxErrProcess(void)
  */
 int32_t main(void)
 {
-    uint8_t u8SlaveRxData = 0;
+    uint8_t u8SlaveRxData = 0u;
+    const stc_uart_init_t stcUartInit = {
+        .u32Baudrate = 19200ul,
+        .u32BitDirection = USART_LSB,
+        .u32StopBit = USART_STOP_BITS_1,
+        .u32Parity = USART_PARITY_NONE,
+        .u32DataWidth = USART_DATA_WIDTH_BITS_8,
+        .u32ClkMode = USART_INTCLK_NONE_OUTPUT,
+        .u32OversamplingBits = USART_OVERSAMPLING_BITS_8,
+        .u32NoiseFilterState = USART_NOISE_FILTER_DISABLE,
+        .u32SbDetectPolarity = USART_SB_DETECT_FALLING,
+    };
 
     /* Configure system clock. */
     SystemClockConfig();
 
     /* Configure USART TX pin. */
-    GPIO_SetFunc(UART_SLAVE_TX_PORT, UART_SLAVE_TX_PIN, GPIO_FUNC_USART);
+    GPIO_SetFunc(UART_SLAVE_TX_PORT, UART_SLAVE_TX_PIN, GPIO_FUNC_3_USART);
 
     /* Enable peripheral clock */
     CLK_FcgPeriphClockCmd(FUNCTION_CLK_GATE, Enable);
 
     /* Initialize UART function. */
-    USART_HalfDuplexInit(UART_SLAVE_UNIT, &m_stcUartInit);
+    USART_HalfDuplexInit(UART_SLAVE_UNIT, &stcUartInit);
 
     /* Enable RX function */
     USART_FuncCmd(UART_SLAVE_UNIT, USART_RX, Enable);
@@ -182,21 +179,23 @@ int32_t main(void)
         /* Wait slave unit Rx data register no empty */
         while (Reset == USART_GetFlag(UART_SLAVE_UNIT, USART_FLAG_RXNE))
         {
+            ;
         }
 
         /* Slave unit receive data */
-        u8SlaveRxData = USART_RecData(UART_SLAVE_UNIT);
+        u8SlaveRxData = (uint8_t)USART_RecData(UART_SLAVE_UNIT);
 
         /* Enable slave RX function && Disable slave TX function*/
         USART_FuncCmd(UART_SLAVE_UNIT, USART_RX, Disable);
         USART_FuncCmd(UART_SLAVE_UNIT, USART_TX, Enable);
 
         /* Slave unit send data */
-        USART_SendData(UART_SLAVE_UNIT, u8SlaveRxData);
+        USART_SendData(UART_SLAVE_UNIT, (uint16_t)u8SlaveRxData);
 
         /* Wait slave unit Tx complete */
         while (Reset == USART_GetFlag(UART_SLAVE_UNIT, USART_FLAG_TC))
         {
+            ;
         }
 
         /* Enable slave RX function && Disable slave TX function*/

@@ -114,30 +114,30 @@ void SystemInit(void)
  */
 uint32_t HrcUpdate(void)
 {
-    uint32_t Hrc_value = 0;
-    uint8_t tmp = M0P_EFM->HRCCFGR & 0x07;
+    uint32_t Hrc_value = 0ul;
+    uint8_t tmp = M0P_EFM->HRCCFGR & 0x07u;
 
     if(EFM_HRCCFGR_HRCFREQS_3 == (M0P_EFM->HRCCFGR & EFM_HRCCFGR_HRCFREQS_3))
     {
         switch(tmp)
         {
             case 0x00:
-                Hrc_value = (uint32_t)32000000 * 3 / 2;
+                Hrc_value = (uint32_t)32000000ul * 3ul / 2ul;
                 break;
             case 0x01:
-                Hrc_value = (uint32_t)16000000 * 3 / 2;
+                Hrc_value = (uint32_t)16000000ul * 3ul / 2ul;
                 break;
             case 0x02:
-                Hrc_value = (uint32_t)8000000 * 3 / 2;
+                Hrc_value = (uint32_t)8000000ul * 3ul / 2ul;
                 break;
             case 0x03:
-                Hrc_value = (uint32_t)4000000 * 3 / 2;
+                Hrc_value = (uint32_t)4000000ul * 3ul / 2ul;
                 break;
             case 0x04:
-                Hrc_value = (uint32_t)2000000 * 3 / 2;
+                Hrc_value = (uint32_t)2000000ul * 3ul / 2ul;
                 break;
             default:
-                Hrc_value = (uint32_t)1000000 * 3 / 2;
+                Hrc_value = (uint32_t)1000000ul * 3ul / 2ul;
                 break;
         }
     }
@@ -146,22 +146,22 @@ uint32_t HrcUpdate(void)
         switch(tmp)
         {
             case 0x00:
-                Hrc_value = (uint32_t)32000000;
+                Hrc_value = (uint32_t)32000000ul;
                 break;
             case 0x01:
-                Hrc_value = (uint32_t)16000000;
+                Hrc_value = (uint32_t)16000000ul;
                 break;
             case 0x02:
-                Hrc_value = (uint32_t)8000000;
+                Hrc_value = (uint32_t)8000000ul;
                 break;
             case 0x03:
-                Hrc_value = (uint32_t)4000000;
+                Hrc_value = (uint32_t)4000000ul;
                 break;
             case 0x04:
-                Hrc_value = (uint32_t)2000000;
+                Hrc_value = (uint32_t)2000000ul;
                 break;
             default:
-                Hrc_value = (uint32_t)1000000;
+                Hrc_value = (uint32_t)1000000ul;
                 break;
         }
     }
@@ -201,22 +201,22 @@ void SystemCoreClockUpdate(void)
             SystemCoreClock = SystemCoreClock;
             break;
         case 0x01:
-            SystemCoreClock = SystemCoreClock / 2;
+            SystemCoreClock = SystemCoreClock / 2ul;
             break;
         case 0x02:
-            SystemCoreClock = SystemCoreClock / 4;
+            SystemCoreClock = SystemCoreClock / 4ul;
             break;
         case 0x03:
-            SystemCoreClock = SystemCoreClock / 8;
+            SystemCoreClock = SystemCoreClock / 8ul;
             break;
         case 0x04:
-            SystemCoreClock = SystemCoreClock / 16;
+            SystemCoreClock = SystemCoreClock / 16ul;
             break;
         case 0x05:
-            SystemCoreClock = SystemCoreClock / 32;
+            SystemCoreClock = SystemCoreClock / 32ul;
             break;
         case 0x06:
-            SystemCoreClock = SystemCoreClock / 64;
+            SystemCoreClock = SystemCoreClock / 64ul;
             break;
     }
 }

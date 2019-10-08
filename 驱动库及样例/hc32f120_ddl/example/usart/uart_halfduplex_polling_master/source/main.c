@@ -94,43 +94,43 @@ typedef struct
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* Key Port/Pin definition */
-#define KEY_PORT                        GPIO_PORT_7
-#define KEY_PIN                         GPIO_PIN_0
+#define KEY_PORT                        (GPIO_PORT_7)
+#define KEY_PIN                         (GPIO_PIN_0)
 
 /* Red LED Port/Pin definition */
-#define LED_R_PORT                      GPIO_PORT_2
-#define LED_R_PIN                       GPIO_PIN_5
-#define LED_R_ON()                      GPIO_ResetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_OFF()                     GPIO_SetPins(LED_R_PORT, LED_R_PIN)
+#define LED_R_PORT                      (GPIO_PORT_2)
+#define LED_R_PIN                       (GPIO_PIN_5)
+#define LED_R_ON()                      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_OFF()                     (GPIO_SetPins(LED_R_PORT, LED_R_PIN))
 
 /* Green LED Port/Pin definition */
-#define LED_G_PORT                      GPIO_PORT_2
-#define LED_G_PIN                       GPIO_PIN_6
-#define LED_G_TOGGLE()                  GPIO_TogglePins(LED_G_PORT, LED_G_PIN)
-#define LED_G_OFF()                     GPIO_SetPins(LED_G_PORT, LED_G_PIN)
+#define LED_G_PORT                      (GPIO_PORT_2)
+#define LED_G_PIN                       (GPIO_PIN_6)
+#define LED_G_TOGGLE()                  (GPIO_TogglePins(LED_G_PORT, LED_G_PIN))
+#define LED_G_OFF()                     (GPIO_SetPins(LED_G_PORT, LED_G_PIN))
 
 /* UART TX Port/Pin definition */
-#define UART_MASTER_TX_PORT             GPIO_PORT_0
-#define UART_MASTER_TX_PIN              GPIO_PIN_0      /* P00: USART2_TX_B */
+#define UART_MASTER_TX_PORT             (GPIO_PORT_0)
+#define UART_MASTER_TX_PIN              (GPIO_PIN_0)      /* P00: USART2_TX_B */
 
 /* UART unit definition */
-#define UART_MASTER_UNIT                M0P_USART2
+#define UART_MASTER_UNIT                (M0P_USART2)
 
 /* UART unit interrupt definition */
-#define UART_MASTER_UNIT_ERR_INT        INT_USART_2_EI
-#define UART_MASTER_UNIT_ERR_IRQn       Int016_IRQn
+#define UART_MASTER_UNIT_ERR_INT        (INT_USART_2_EI)
+#define UART_MASTER_UNIT_ERR_IRQn       (Int016_IRQn)
 
-#define UART_MASTER_UNIT_RX_INT         INT_USART_2_RI
-#define UART_MASTER_UNIT_RX_IRQn        Int018_IRQn
+#define UART_MASTER_UNIT_RX_INT         (INT_USART_2_RI)
+#define UART_MASTER_UNIT_RX_IRQn        (Int018_IRQn)
 
-#define UART_MASTER_UNIT_TX_INT         INT_USART_2_TI
-#define UART_MASTER_UNIT_TX_IRQn        Int020_IRQn
+#define UART_MASTER_UNIT_TX_INT         (INT_USART_2_TI)
+#define UART_MASTER_UNIT_TX_IRQn        (Int020_IRQn)
 
-#define UART_MASTER_UNIT_TCI_INT        INT_USART_2_TCI
-#define UART_MASTER_UNIT_TCI_IRQn       Int022_IRQn
+#define UART_MASTER_UNIT_TCI_INT        (INT_USART_2_TCI)
+#define UART_MASTER_UNIT_TCI_IRQn       (Int022_IRQn)
 
 /* Function clock gate definition  */
-#define FUNCTION_CLK_GATE               CLK_FCG_UART2
+#define FUNCTION_CLK_GATE               (CLK_FCG_UART2)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -141,29 +141,12 @@ typedef struct
  ******************************************************************************/
 static void SystemClockConfig(void);
 static void LedConfig(void);
-static en_key_state_t KeyGetState(stc_key_t *pstcKey);
+static en_key_state_t KeyGetState(const stc_key_t *pstcKey);
 static void UartRxErrProcess(void);
 
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-static stc_key_t m_stcKeySw2 = {
-    .u8Port = KEY_PORT,
-    .u8Pin = KEY_PIN,
-    .enPressPinState = Pin_Reset,
-};
-
-static const stc_uart_init_t m_stcUartInit = {
-    .u32Baudrate = 19200,
-    .u32BitDirection = USART_LSB,
-    .u32StopBit = USART_STOP_BITS_1,
-    .u32Parity = USART_PARITY_NONE,
-    .u32DataWidth = USART_DATA_WIDTH_BITS_8,
-    .u32ClkMode = USART_INTCLK_NONE_OUTPUT,
-    .u32OversamplingBits = USART_OVERSAMPLING_BITS_8,
-    .u32NoiseFilterState = USART_NOISE_FILTER_DISABLE,
-    .u32SbDetectPolarity = USART_SB_DETECT_FALLING,
-};
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -213,25 +196,28 @@ static void LedConfig(void)
  *           - KeyIdle: Key isn't pressed.
  *           - KeyRelease: Released after key is pressed.
  */
-static en_key_state_t KeyGetState(stc_key_t *pstcKey)
+static en_key_state_t KeyGetState(const stc_key_t *pstcKey)
 {
-    DDL_ASSERT(NULL != pstcKey);
+    en_key_state_t enKeyState = KeyIdle;
 
-    if (pstcKey->enPressPinState != GPIO_ReadInputPortPin(pstcKey->u8Port, pstcKey->u8Pin))
+    if (NULL != pstcKey)
     {
-        return KeyIdle;
+       if (pstcKey->enPressPinState == GPIO_ReadInputPortPin(pstcKey->u8Port, pstcKey->u8Pin))
+        {
+            DDL_Delay1ms(20ul);
+
+            if (pstcKey->enPressPinState == GPIO_ReadInputPortPin(pstcKey->u8Port, pstcKey->u8Pin))
+            {
+                while (pstcKey->enPressPinState == GPIO_ReadInputPortPin(pstcKey->u8Port, pstcKey->u8Pin))
+                {
+                    ;
+                }
+                enKeyState = KeyRelease;
+            }
+        }
     }
 
-    DDL_Delay1ms(20);
-
-    if (pstcKey->enPressPinState != GPIO_ReadInputPortPin(pstcKey->u8Port, pstcKey->u8Pin))
-    {
-        return KeyIdle;
-    }
-
-    while (pstcKey->enPressPinState == GPIO_ReadInputPortPin(pstcKey->u8Port, pstcKey->u8Pin));
-
-    return KeyRelease;
+    return enKeyState;
 }
 
 /**
@@ -245,9 +231,6 @@ static void UartRxErrProcess(void)
     {
         USART_ClearFlag(UART_MASTER_UNIT, (USART_CLEAR_FLAG_PE | USART_CLEAR_FLAG_FE | USART_CLEAR_FLAG_ORE));
     }
-    else
-    {
-    }
 }
 
 /**
@@ -257,8 +240,24 @@ static void UartRxErrProcess(void)
  */
 int32_t main(void)
 {
-    uint8_t u8MasterTxData = 0;
-    uint8_t u8MasterRxData = 0;
+    uint8_t u8MasterTxData = 0u;
+    uint8_t u8MasterRxData = 0u;
+    stc_key_t stcKeySw2 = {
+        .u8Port = KEY_PORT,
+        .u8Pin = KEY_PIN,
+        .enPressPinState = Pin_Reset,
+    };
+    const stc_uart_init_t stcUartInit = {
+        .u32Baudrate = 19200ul,
+        .u32BitDirection = USART_LSB,
+        .u32StopBit = USART_STOP_BITS_1,
+        .u32Parity = USART_PARITY_NONE,
+        .u32DataWidth = USART_DATA_WIDTH_BITS_8,
+        .u32ClkMode = USART_INTCLK_NONE_OUTPUT,
+        .u32OversamplingBits = USART_OVERSAMPLING_BITS_8,
+        .u32NoiseFilterState = USART_NOISE_FILTER_DISABLE,
+        .u32SbDetectPolarity = USART_SB_DETECT_FALLING,
+    };
 
     /* Configure system clock. */
     SystemClockConfig();
@@ -270,29 +269,33 @@ int32_t main(void)
     LedConfig();
 
     /* Configure USART TX pin. */
-    GPIO_SetFunc(UART_MASTER_TX_PORT, UART_MASTER_TX_PIN, GPIO_FUNC_USART);
+    GPIO_SetFunc(UART_MASTER_TX_PORT, UART_MASTER_TX_PIN, GPIO_FUNC_3_USART);
 
     /* Enable peripheral clock */
     CLK_FcgPeriphClockCmd(FUNCTION_CLK_GATE, Enable);
 
     /* Initialize UART function. */
-    USART_HalfDuplexInit(UART_MASTER_UNIT, &m_stcUartInit);
+    USART_HalfDuplexInit(UART_MASTER_UNIT, &stcUartInit);
 
     while (1)
     {
         /* Wait key release */
-        while (KeyRelease !=  KeyGetState(&m_stcKeySw2));
+        while (KeyRelease !=  KeyGetState(&stcKeySw2))
+        {
+            ;
+        }
 
         /* Enable TX function && Disable RX function */
         USART_FuncCmd(UART_MASTER_UNIT, USART_RX, Disable);
         USART_FuncCmd(UART_MASTER_UNIT, USART_TX, Enable);
 
         /* Master unit send data */
-        USART_SendData(UART_MASTER_UNIT, u8MasterTxData);
+        USART_SendData(UART_MASTER_UNIT, (uint16_t)u8MasterTxData);
 
         /* Wait Tx complete */
         while (Reset == USART_GetFlag(UART_MASTER_UNIT, USART_FLAG_TC))
         {
+            ;
         }
 
         /* Enable RX function && Disable TX function*/
@@ -302,9 +305,10 @@ int32_t main(void)
         /* Wait Rx data register no empty */
         while (Reset == USART_GetFlag(UART_MASTER_UNIT, USART_FLAG_RXNE))
         {
+            ;
         }
 
-        u8MasterRxData = USART_RecData(UART_MASTER_UNIT);
+        u8MasterRxData = (uint8_t)USART_RecData(UART_MASTER_UNIT);
 
         if (u8MasterRxData == u8MasterTxData)
         {

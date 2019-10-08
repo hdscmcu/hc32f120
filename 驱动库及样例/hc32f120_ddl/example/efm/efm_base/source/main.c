@@ -75,23 +75,23 @@
  ******************************************************************************/
 
 /* LED0 Port/Pin definition */
-#define LED_PORT        GPIO_PORT_2
-#define LED0_PORT       GPIO_PORT_2
-#define LED0_PIN        GPIO_PIN_5
+#define LED_PORT        (GPIO_PORT_2)
+#define LED0_PORT       (GPIO_PORT_2)
+#define LED0_PIN        (GPIO_PIN_5)
 
 /* LED1 Port/Pin definition */
-#define LED1_PORT       GPIO_PORT_2
-#define LED1_PIN        GPIO_PIN_6
+#define LED1_PORT       (GPIO_PORT_2)
+#define LED1_PIN        (GPIO_PIN_6)
 
 /* LED0~1 definition */
-#define LED0_ON()       GPIO_ResetPins(LED0_PORT, LED0_PIN)
-#define LED0_OFF()      GPIO_SetPins(LED0_PORT, LED0_PIN)
+#define LED0_ON()       (GPIO_ResetPins(LED0_PORT, LED0_PIN))
+#define LED0_OFF()      (GPIO_SetPins(LED0_PORT, LED0_PIN))
 
-#define LED1_ON()       GPIO_ResetPins(LED1_PORT, LED1_PIN)
-#define LED1_OFF()      GPIO_SetPins(LED1_PORT, LED1_PIN)
+#define LED1_ON()       (GPIO_ResetPins(LED1_PORT, LED1_PIN))
+#define LED1_OFF()      (GPIO_SetPins(LED1_PORT, LED1_PIN))
 
-#define LED_ON()        GPIO_ResetPins(LED_PORT, LED0_PIN | LED1_PIN)
-#define LED_OFF()       GPIO_SetPins(LED_PORT, LED0_PIN | LED1_PIN)
+#define LED_ON()        (GPIO_ResetPins(LED_PORT, LED0_PIN | LED1_PIN))
+#define LED_OFF()       (GPIO_SetPins(LED_PORT, LED0_PIN | LED1_PIN))
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -135,9 +135,9 @@ int32_t main(void)
 {
     stc_efm_cfg_t stcEfmCfg;
 
-    uint8_t u8Data = 0x5A;
-    uint16_t u16Data = 0xA5A5;
-    uint32_t u32Data = 0xAA5555AA;
+    uint8_t u8Data = 0x5Au;
+    uint16_t u16Data = 0xA5A5u;
+    uint32_t u32Data = 0xAA5555AAu;
     uint32_t u32Addr;
 
     /* Led Init */
@@ -154,7 +154,10 @@ int32_t main(void)
     EFM_Cmd(Enable);
 
     /* Wait flash ready. */
-    while(Set != EFM_GetFlagStatus(EFM_FLAG_RDY));
+    while(Set != EFM_GetFlagStatus(EFM_FLAG_RDY))
+    {
+        ;
+    }
     /* Erase sector 10. */
     EFM_SectorErase(EFM_SECTOR10_ADRR);
 
@@ -167,7 +170,7 @@ int32_t main(void)
         LED1_OFF();
     }
 
-    u32Addr += 2;
+    u32Addr += 2ul;
 
     /* program half word */
     if(Ok != EFM_ProgramHalfWord(u32Addr, u16Data))
@@ -176,7 +179,7 @@ int32_t main(void)
         LED1_OFF();
     }
 
-    u32Addr += 2;
+    u32Addr += 2ul;
 
     /* program word */
     if(Ok != EFM_ProgramWord(u32Addr, u32Data))
@@ -188,7 +191,10 @@ int32_t main(void)
     /* Lock EFM. */
     EFM_Lock();
 
-    while(1);
+    while(1)
+    {
+        ;
+    }
 }
 
 /**

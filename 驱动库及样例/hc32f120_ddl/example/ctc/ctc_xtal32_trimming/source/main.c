@@ -75,25 +75,25 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* Key Port/Pin definition */
-#define KEY_PORT                        GPIO_PORT_7
-#define KEY_PIN                         GPIO_PIN_0
+#define KEY_PORT                        (GPIO_PORT_7)
+#define KEY_PIN                         (GPIO_PIN_0)
 
 /* Red LED Port/Pin definition */
-#define LED_R_PORT                      GPIO_PORT_2
-#define LED_R_PIN                       GPIO_PIN_5
-#define LED_R_ON()                      GPIO_ResetPins(LED_R_PORT, LED_R_PIN)
+#define LED_R_PORT                      (GPIO_PORT_2)
+#define LED_R_PIN                       (GPIO_PIN_5)
+#define LED_R_ON()                      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
 
 /* Green LED Port/Pin definition */
-#define LED_G_PORT                      GPIO_PORT_2
-#define LED_G_PIN                       GPIO_PIN_6
-#define LED_G_ON()                      GPIO_ResetPins(LED_G_PORT, LED_G_PIN)
-#define LED_G_OFF()                     GPIO_SetPins(LED_G_PORT, LED_G_PIN)
+#define LED_G_PORT                      (GPIO_PORT_2)
+#define LED_G_PIN                       (GPIO_PIN_6)
+#define LED_G_ON()                      (GPIO_ResetPins(LED_G_PORT, LED_G_PIN))
+#define LED_G_OFF()                     (GPIO_SetPins(LED_G_PORT, LED_G_PIN))
 
 /* CTC interrupt number */
-#define CTC_ERR_IRQn                    Int010_IRQn
+#define CTC_ERR_IRQn                    (Int010_IRQn)
 
 /* CTC reference clock selection */
-#define CTC_REFCLK_SOURCE               CTC_REFCLK_XTAL32
+#define CTC_REFCLK_SOURCE               (CTC_REFCLK_XTAL32)
 
 /* CTC TRMVAL value */
 #define CTC_TRMVAL_VALUE                (0x21ul)       /* -31 */
@@ -102,10 +102,10 @@
 #define CTC_TRIMMING_REFCLK_FREQ        (32768ul)      /* 32768Hz */
 
 /* Internal high speed RC freqency */
-#define CTC_TRIMMING_HRC_FREQ           CTC_TRIMMING_HRC_48MHZ
+#define CTC_TRIMMING_HRC_FREQ           (CTC_TRIMMING_HRC_48MHZ)
 
 /* Function clock gate definition  */
-#define FUNCTION_CLK_GATE               CLK_FCG_CTC
+#define FUNCTION_CLK_GATE               (CLK_FCG_CTC)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -121,14 +121,6 @@ static void CtcErrIrqCallback(void);
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-static stc_ctc_init_t m_stcCtcInit = {
-    .u32Fhrc = CTC_TRIMMING_HRC_FREQ,
-    .u32Fref = CTC_TRIMMING_REFCLK_FREQ,
-    .u32RefClkSel = CTC_REFCLK_SOURCE,
-    .u32RefclkPrescaler = CTC_REFCLK_PRESCALER_DIV32,
-    .f32ToleranceBias = 0.005,
-    .u32TrmVal = CTC_TRMVAL_VALUE,
-};
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -213,11 +205,19 @@ int32_t main(void)
     uint8_t InitTrmVal;
     uint8_t TrimmingTrmVal;
     stc_irq_regi_config_t stcIrqRegiConf;
+    stc_ctc_init_t stcCtcInit = {
+        .u32Fhrc = CTC_TRIMMING_HRC_FREQ,
+        .u32Fref = CTC_TRIMMING_REFCLK_FREQ,
+        .u32RefClkSel = CTC_REFCLK_SOURCE,
+        .u32RefclkPrescaler = CTC_REFCLK_PRESCALER_DIV32,
+        .f32ToleranceBias = 0.005f,
+        .u32TrmVal = CTC_TRMVAL_VALUE,
+    };
 
     /* Confiure clock output system clock */
     CLK_MCOConfig(CLK_MCOSOURCCE_HRC, CLK_MCODIV_1);
     /* Confiure clock output pin */
-    GPIO_SetFunc(GPIO_PORT_1, GPIO_PIN_5, GPIO_FUNC_PULBUZ);
+    GPIO_SetFunc(GPIO_PORT_1, GPIO_PIN_5, GPIO_FUNC_1_PULBUZ);
 
     /* Configure system clock. */
     SystemClockConfig();
@@ -232,15 +232,18 @@ int32_t main(void)
     CLK_FcgPeriphClockCmd(FUNCTION_CLK_GATE, Enable);
 
     /* Wait CTC stop. */
-    while (CTC_GetFlag(CTC_FLAG_BUSY));
+    while (CTC_GetFlag(CTC_FLAG_BUSY))
+    {
+        ;
+    }
 
     /* Initialize CTC function. */
-    CTC_Init(&m_stcCtcInit);
+    CTC_Init(&stcCtcInit);
 
     /* Register CTC error IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = CTC_ERR_IRQn;
     stcIrqRegiConf.enIntSrc = INT_CTC_ERR;
-    stcIrqRegiConf.pfnCallback = CtcErrIrqCallback;
+    stcIrqRegiConf.pfnCallback = &CtcErrIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -257,14 +260,20 @@ int32_t main(void)
 
     CTC_Cmd(Enable);
 
-    while (!CTC_GetFlag(CTC_FLAG_TRMOK | CTC_FLAG_BUSY));
+    while (!CTC_GetFlag(CTC_FLAG_TRMOK | CTC_FLAG_BUSY))
+    {
+        ;
+    }
 
     TrimmingTrmVal = CTC_GetTrmVal();
 
     CTC_Cmd(Disable);
 
     /* Wait CTC stop. */
-    while (CTC_GetFlag(CTC_FLAG_BUSY));
+    while (CTC_GetFlag(CTC_FLAG_BUSY))
+    {
+        ;
+    }
 
     printf("Triming value is 0x%02X; Triming result is 0x%02X. \r\n", InitTrmVal, TrimmingTrmVal);
 

@@ -111,14 +111,14 @@ typedef struct
 /** @defgroup I2C_Clock_division I2C clock division
   * @{
   */
-#define I2C_CLK_DIV1            0u
-#define I2C_CLK_DIV2            1u
-#define I2C_CLK_DIV4            2u
-#define I2C_CLK_DIV8            3u
-#define I2C_CLK_DIV16           4u
-#define I2C_CLK_DIV32           5u
-#define I2C_CLK_DIV64           6u
-#define I2C_CLK_DIV128          7u
+#define I2C_CLK_DIV1            (0u)
+#define I2C_CLK_DIV2            (1u)
+#define I2C_CLK_DIV4            (2u)
+#define I2C_CLK_DIV8            (3u)
+#define I2C_CLK_DIV16           (4u)
+#define I2C_CLK_DIV32           (5u)
+#define I2C_CLK_DIV64           (6u)
+#define I2C_CLK_DIV128          (7u)
 /**
  * @}
  */
@@ -127,10 +127,10 @@ typedef struct
 /** @defgroup I2C_Smbus_config I2C Smbus configuration
   * @{
   */
-#define I2C_SMBUS_ALRTEN        I2C_CR1_SMBALRTEN
-#define I2C_SMBUS_DEFAULTEN     I2C_CR1_SMBDEFAULTEN
-#define I2C_SMBUS_HOSTEN        I2C_CR1_SMBHOSTEN
-#define I2C_SMBUS_DISEN         0u
+#define I2C_SMBUS_ALRTEN        (I2C_CR1_SMBALRTEN)
+#define I2C_SMBUS_DEFAULTEN     (I2C_CR1_SMBDEFAULTEN)
+#define I2C_SMBUS_HOSTEN        (I2C_CR1_SMBHOSTEN)
+#define I2C_SMBUS_DISEN         (0u)
 /**
  * @}
  */
@@ -147,8 +147,8 @@ typedef struct
 /** @defgroup I2C_peripheral_Enable I2C peripheral configuration
   * @{
   */
-#define I2C_PE_EN               I2C_CR1_PE
-#define I2C_PE_DISEN            0u
+#define I2C_PE_EN               (I2C_CR1_PE)
+#define I2C_PE_DISEN            (0u)
 
 /**
  * @}
@@ -158,10 +158,10 @@ typedef struct
 /** @defgroup I2C_Digital_Filter_mode I2C digital filter mode
   * @{
   */
-#define I2C_DIG_FILTMODE_1CYCLE     (0u << I2C_FLTR_DNF_POS)
-#define I2C_DIG_FILTMODE_2CYCLE     (1u << I2C_FLTR_DNF_POS)
-#define I2C_DIG_FILTMODE_3CYCLE     (2u << I2C_FLTR_DNF_POS)
-#define I2C_DIG_FILTMODE_4CYCLE     (3u << I2C_FLTR_DNF_POS)
+#define I2C_DIG_FILTMODE_1CYCLE     (0ul << I2C_FLTR_DNF_POS)
+#define I2C_DIG_FILTMODE_2CYCLE     (1ul << I2C_FLTR_DNF_POS)
+#define I2C_DIG_FILTMODE_3CYCLE     (2ul << I2C_FLTR_DNF_POS)
+#define I2C_DIG_FILTMODE_4CYCLE     (3ul << I2C_FLTR_DNF_POS)
 /**
  * @}
  */
@@ -169,8 +169,8 @@ typedef struct
 /** @defgroup I2C_Adr_Config I2C Address configuration
   * @{
   */
-#define     I2C_ADR_CONFIG_DISEN    0u
-#define     I2C_ADR_CONFIG_7BIT     I2C_SLR0_SLADDR0EN
+#define     I2C_ADR_CONFIG_DISEN    (0u)
+#define     I2C_ADR_CONFIG_7BIT     (I2C_SLR0_SLADDR0EN)
 #define     I2C_ADR_CONFIG_10BIT    (I2C_SLR0_ADDRMOD0 | I2C_SLR0_SLADDR0EN)
 /**
  * @}
@@ -179,8 +179,8 @@ typedef struct
 /** @defgroup I2C_Adr_Num I2C address index number
   * @{
   */
-#define     I2C_ADR_0               0u
-#define     I2C_ADR_1               1u
+#define     I2C_ADR_0               (0u)
+#define     I2C_ADR_1               (1u)
 /**
  * @}
  */

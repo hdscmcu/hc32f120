@@ -176,8 +176,8 @@ typedef struct
  * @defgroup TIMERB_Count_Direction TimerB Count Direction
  * @{
  */
-#define TIMERB_CNT_UP                           TMRB_BCSTR_DIR
-#define TIMERB_CNT_DOWN                         ((uint16_t)0x0000)
+#define TIMERB_CNT_UP                           (TMRB_BCSTR_DIR)
+#define TIMERB_CNT_DOWN                         ((uint16_t)0x0000u)
 /**
  * @}
  */
@@ -186,8 +186,8 @@ typedef struct
  * @defgroup TIMERB_Count_Mode TimerB Count Mode
  * @{
  */
-#define TIMERB_TRIANGLE_WAVE                    TMRB_BCSTR_MODE
-#define TIMERB_SAWTOOTH_WAVE                    ((uint16_t)0x0000)
+#define TIMERB_TRIANGLE_WAVE                    (TMRB_BCSTR_MODE)
+#define TIMERB_SAWTOOTH_WAVE                    ((uint16_t)0x0000u)
 /**
  * @}
  */
@@ -196,8 +196,8 @@ typedef struct
  * @defgroup TIMERB_Synchronization_Start_State TimerB Synchronization Start State
  * @{
  */
-#define TIMERB_SYNC_START_ENABLE                TMRB_BCSTR_SYNST
-#define TIMERB_SYNC_START_DISABLE               ((uint16_t)0x0000)
+#define TIMERB_SYNC_START_ENABLE                (TMRB_BCSTR_SYNST)
+#define TIMERB_SYNC_START_DISABLE               ((uint16_t)0x0000u)
 /**
  * @}
  */
@@ -206,15 +206,15 @@ typedef struct
  * @defgroup TIMERB_ClockDivision TimerB Clock Division
  * @{
  */
-#define TIMERB_CLKDIV_DIV1                      ((uint16_t)0x0000)                                              /*!< HCLK      */
-#define TIMERB_CLKDIV_DIV2                      TMRB_BCSTR_CKDIV_0                                              /*!< HCLK/2    */
-#define TIMERB_CLKDIV_DIV4                      TMRB_BCSTR_CKDIV_1                                              /*!< HCLK/4    */
+#define TIMERB_CLKDIV_DIV1                      ((uint16_t)0x0000u)                                             /*!< HCLK      */
+#define TIMERB_CLKDIV_DIV2                      (TMRB_BCSTR_CKDIV_0)                                            /*!< HCLK/2    */
+#define TIMERB_CLKDIV_DIV4                      (TMRB_BCSTR_CKDIV_1)                                            /*!< HCLK/4    */
 #define TIMERB_CLKDIV_DIV8                      (TMRB_BCSTR_CKDIV_1 | TMRB_BCSTR_CKDIV_0)                       /*!< HCLK/8    */
-#define TIMERB_CLKDIV_DIV16                     TMRB_BCSTR_CKDIV_2                                              /*!< HCLK/16   */
+#define TIMERB_CLKDIV_DIV16                     (TMRB_BCSTR_CKDIV_2)                                            /*!< HCLK/16   */
 #define TIMERB_CLKDIV_DIV32                     (TMRB_BCSTR_CKDIV_2 | TMRB_BCSTR_CKDIV_0)                       /*!< HCLK/32   */
 #define TIMERB_CLKDIV_DIV64                     (TMRB_BCSTR_CKDIV_2 | TMRB_BCSTR_CKDIV_1)                       /*!< HCLK/64   */
 #define TIMERB_CLKDIV_DIV128                    (TMRB_BCSTR_CKDIV_2 | TMRB_BCSTR_CKDIV_1 | TMRB_BCSTR_CKDIV_0)  /*!< HCLK/128  */
-#define TIMERB_CLKDIV_DIV256                    TMRB_BCSTR_CKDIV_3                                              /*!< HCLK/256  */
+#define TIMERB_CLKDIV_DIV256                    (TMRB_BCSTR_CKDIV_3)                                            /*!< HCLK/256  */
 #define TIMERB_CLKDIV_DIV512                    (TMRB_BCSTR_CKDIV_3 | TMRB_BCSTR_CKDIV_0)                       /*!< HCLK/512  */
 #define TIMERB_CLKDIV_DIV1024                   (TMRB_BCSTR_CKDIV_3 | TMRB_BCSTR_CKDIV_1)                       /*!< HCLK/1024 */
 /**
@@ -225,8 +225,8 @@ typedef struct
  * @defgroup TIMERB_Overflow_Control TimerB Overflow Control
  * @{
  */
-#define TIMERB_OVERFLOW_STOP                    TMRB_BCSTR_OVSTP
-#define TIMERB_OVERFLOW_COUNT                   ((uint16_t)0x0000)
+#define TIMERB_OVERFLOW_STOP                    (TMRB_BCSTR_OVSTP)
+#define TIMERB_OVERFLOW_COUNT                   ((uint16_t)0x0000u)
 /**
  * @}
  */
@@ -235,9 +235,9 @@ typedef struct
  * @defgroup TIMERB_Flag TIMERB Flag
  * @{
  */
-#define TIMERB_FLAG_OVF                         TMRB_BCSTR_OVFF
-#define TIMERB_FLAG_UDF                         TMRB_BCSTR_UDFF
-#define TIMERB_FLAG_CMP                         TMRB_STFLR_CMPF1
+#define TIMERB_FLAG_OVF                         (TMRB_BCSTR_OVFF)
+#define TIMERB_FLAG_UDF                         (TMRB_BCSTR_UDFF)
+#define TIMERB_FLAG_CMP                         (TMRB_STFLR_CMPF1)
 /**
  * @}
  */
@@ -246,9 +246,9 @@ typedef struct
  * @defgroup TIMERB_Interrupt_definition TIMERB Interrupts Definition
  * @{
  */
-#define TIMERB_IT_OVF                           TMRB_BCSTR_INENOVF
-#define TIMERB_IT_UDF                           TMRB_BCSTR_INENUDF
-#define TIMERB_IT_CMP                           TMRB_ICONR_ITEN1
+#define TIMERB_IT_OVF                           (TMRB_BCSTR_INENOVF)
+#define TIMERB_IT_UDF                           (TMRB_BCSTR_INENUDF)
+#define TIMERB_IT_CMP                           (TMRB_ICONR_ITEN1)
 /**
  * @}
  */
@@ -257,8 +257,8 @@ typedef struct
  * @defgroup TIMERB_Compare_Match_Event TimerB Compare Match Event
  * @{
  */
-#define TIMERB_CMP_EVT_ENABLE                   TMRB_ECONR_ETEN1
-#define TIMERB_CMP_EVT_DISABLE                  ((uint16_t)0x0000)
+#define TIMERB_CMP_EVT_ENABLE                   (TMRB_ECONR_ETEN1)
+#define TIMERB_CMP_EVT_DISABLE                  ((uint16_t)0x0000u)
 /**
  * @}
  */
@@ -267,8 +267,8 @@ typedef struct
  * @defgroup TIMERB_Function_Mode TimerB Function Mode
  * @{
  */
-#define TIMERB_INPUT_CAPTURE                    TMRB_CCONR_CAPMDA       /*!< Capture input function */
-#define TIMERB_OUTPUT_COMPARE                   ((uint16_t)0x0000)      /*!< Comare output function */
+#define TIMERB_INPUT_CAPTURE                    (TMRB_CCONR_CAPMDA)     /*!< Capture input function */
+#define TIMERB_OUTPUT_COMPARE                   ((uint16_t)0x0000u)     /*!< Comare output function */
 /**
  * @}
  */
@@ -278,10 +278,10 @@ typedef struct
  * @note TIMB_<t>_PWM1 _<t>_ is unit number,range 1~8
  * @{
  */
-#define TIMERB_IC_RISING                        TMRB_CCONR_HICP0        /*!< Capture triggered by rising edge on timer input TIMB_<t>_PWM1 */
-#define TIMERB_IC_FALLING                       TMRB_CCONR_HICP1        /*!< Capture triggered by falling edge on timer input TIMB_<t>_PWM1 */
-#define TIMERB_IC_EVT                           TMRB_CCONR_HICP2        /*!< Capture triggered by the timer TMRB_HTSSR specified event */
-#define TIMERB_IC_INVALID                       ((uint16_t)0x0000)      /*!< Don't occur capture action */
+#define TIMERB_IC_RISING                        (TMRB_CCONR_HICP0)      /*!< Capture triggered by rising edge on timer input TIMB_<t>_PWM1 */
+#define TIMERB_IC_FALLING                       (TMRB_CCONR_HICP1)      /*!< Capture triggered by falling edge on timer input TIMB_<t>_PWM1 */
+#define TIMERB_IC_EVT                           (TMRB_CCONR_HICP2)      /*!< Capture triggered by the timer TMRB_HTSSR specified event */
+#define TIMERB_IC_INVALID                       ((uint16_t)0x0000u)     /*!< Don't occur capture action */
 /**
  * @}
  */
@@ -290,8 +290,8 @@ typedef struct
  * @defgroup TIMERB_Input_Capture_Noise_Filter_Clock_Division TimerB Input Capture Noise Filter Clock Division
  * @{
  */
-#define TIMERB_IC_NOFICLKDIV_NONE               ((uint16_t)0x0000)                              /*!< Disable filter */
-#define TIMERB_IC_NOFICLKDIV_DIV1               TMRB_CCONR_NOFIENCP                             /*!< HCLK          */
+#define TIMERB_IC_NOFICLKDIV_NONE               ((uint16_t)0x0000u)                             /*!< Disable filter */
+#define TIMERB_IC_NOFICLKDIV_DIV1               (TMRB_CCONR_NOFIENCP)                           /*!< HCLK          */
 #define TIMERB_IC_NOFICLKDIV_DIV4               (TMRB_CCONR_NOFIENCP | TMRB_CCONR_NOFICKCP_0)   /*!< HCLK/4        */
 #define TIMERB_IC_NOFICLKDIV_DIV16              (TMRB_CCONR_NOFIENCP | TMRB_CCONR_NOFICKCP_1)   /*!< HCLK/16       */
 #define TIMERB_IC_NOFICLKDIV_DIV64              (TMRB_CCONR_NOFIENCP | TMRB_CCONR_NOFICKCP)     /*!< HCLK/64       */
@@ -304,9 +304,9 @@ typedef struct
  * @note TIMB_<t>_PWM1 _<t>_ is unit number,range 1~8
  * @{
  */
-#define TIMERB_OC_STARTCNT_OUTPUT_LOW           ((uint16_t)0x0000)  /*!< TIM_<t>_PWM1 output low level when TimerB start count */
-#define TIMERB_OC_STARTCNT_OUTPUT_HIGH          TMRB_PCONR_STAC_0   /*!< TIM_<t>_PWM1 output high level when TimerB start count */
-#define TIMERB_OC_STARTCNT_OUTPUT_HOLD          TMRB_PCONR_STAC_1   /*!< TIM_<t>_PWM1 output hold level when TimerB start count */
+#define TIMERB_OC_STARTCNT_OUTPUT_LOW           ((uint16_t)0x0000u) /*!< TIM_<t>_PWM1 output low level when TimerB start count */
+#define TIMERB_OC_STARTCNT_OUTPUT_HIGH          (TMRB_PCONR_STAC_0) /*!< TIM_<t>_PWM1 output high level when TimerB start count */
+#define TIMERB_OC_STARTCNT_OUTPUT_HOLD          (TMRB_PCONR_STAC_1) /*!< TIM_<t>_PWM1 output hold level when TimerB start count */
 /**
  * @}
  */
@@ -316,9 +316,9 @@ typedef struct
  * @note TIMB_<t>_PWM1 _<t>_ is unit number,range 1~8
  * @{
  */
-#define TIMERB_OC_STOPCNT_OUTPUT_LOW            ((uint16_t)0x0000)  /*!< TIM_<t>_PWM1 output low level when TimerB stop count */
-#define TIMERB_OC_STOPCNT_OUTPUT_HIGH           TMRB_PCONR_STPC_0   /*!< TIM_<t>_PWM1 output high level when TimerB stop count */
-#define TIMERB_OC_STOPCNT_OUTPUT_HOLD           TMRB_PCONR_STPC_1   /*!< TIM_<t>_PWM1 output hold level when TimerB stop count */
+#define TIMERB_OC_STOPCNT_OUTPUT_LOW            ((uint16_t)0x0000u) /*!< TIM_<t>_PWM1 output low level when TimerB stop count */
+#define TIMERB_OC_STOPCNT_OUTPUT_HIGH           (TMRB_PCONR_STPC_0) /*!< TIM_<t>_PWM1 output high level when TimerB stop count */
+#define TIMERB_OC_STOPCNT_OUTPUT_HOLD           (TMRB_PCONR_STPC_1) /*!< TIM_<t>_PWM1 output hold level when TimerB stop count */
 /**
  * @}
  */
@@ -328,10 +328,10 @@ typedef struct
  * @note TIMB_<t>_PWM1 _<t>_ is unit number,range 1~8
  * @{
  */
-#define TIMERB_OC_CMPMATCH_OUTPUT_LOW           ((uint16_t)0x0000)  /*!< TIM_<t>_PWM1 output low level when TimerB comapre match */
-#define TIMERB_OC_CMPMATCH_OUTPUT_HIGH          TMRB_PCONR_CMPC_0   /*!< TIM_<t>_PWM1 output high level when TimerB comapre match */
-#define TIMERB_OC_CMPMATCH_OUTPUT_HOLD          TMRB_PCONR_CMPC_1   /*!< TIM_<t>_PWM1 output hold level when TimerB comapre match */
-#define TIMERB_OC_CMPMATCH_OUTPUT_INVERTED      TMRB_PCONR_CMPC     /*!< TIM_<t>_PWM1 output inverted level when TimerB comapre match */
+#define TIMERB_OC_CMPMATCH_OUTPUT_LOW           ((uint16_t)0x0000u) /*!< TIM_<t>_PWM1 output low level when TimerB comapre match */
+#define TIMERB_OC_CMPMATCH_OUTPUT_HIGH          (TMRB_PCONR_CMPC_0) /*!< TIM_<t>_PWM1 output high level when TimerB comapre match */
+#define TIMERB_OC_CMPMATCH_OUTPUT_HOLD          (TMRB_PCONR_CMPC_1) /*!< TIM_<t>_PWM1 output hold level when TimerB comapre match */
+#define TIMERB_OC_CMPMATCH_OUTPUT_INVERTED      (TMRB_PCONR_CMPC)   /*!< TIM_<t>_PWM1 output inverted level when TimerB comapre match */
 /**
  * @}
  */
@@ -341,10 +341,10 @@ typedef struct
  * @note TIMB_<t>_PWM1 _<t>_ is unit number,range 1~8
  * @{
  */
-#define TIMERB_OC_PERIODMATCH_OUTPUT_LOW        ((uint16_t)0x0000)  /*!< TIM_<t>_PWM1 output low level when TimerB period match */
-#define TIMERB_OC_PERIODMATCH_OUTPUT_HIGH       TMRB_PCONR_PERC_0   /*!< TIM_<t>_PWM1 output high level when TimerB period match */
-#define TIMERB_OC_PERIODMATCH_OUTPUT_HOLD       TMRB_PCONR_PERC_1   /*!< TIM_<t>_PWM1 output hold level when TimerB period match */
-#define TIMERB_OC_PERIODMATCH_OUTPUT_INVERTED   TMRB_PCONR_PERC     /*!< TIM_<t>_PWM1 output inverted level when TimerB period match */
+#define TIMERB_OC_PERIODMATCH_OUTPUT_LOW        ((uint16_t)0x0000u) /*!< TIM_<t>_PWM1 output low level when TimerB period match */
+#define TIMERB_OC_PERIODMATCH_OUTPUT_HIGH       (TMRB_PCONR_PERC_0) /*!< TIM_<t>_PWM1 output high level when TimerB period match */
+#define TIMERB_OC_PERIODMATCH_OUTPUT_HOLD       (TMRB_PCONR_PERC_1) /*!< TIM_<t>_PWM1 output hold level when TimerB period match */
+#define TIMERB_OC_PERIODMATCH_OUTPUT_INVERTED   (TMRB_PCONR_PERC)   /*!< TIM_<t>_PWM1 output inverted level when TimerB period match */
 /**
  * @}
  */
@@ -354,9 +354,9 @@ typedef struct
  * @note TIMB_<t>_PWM1 _<t>_ is unit number,range 1~8
  * @{
  */
-#define TIMERB_OC_FORCE_OUTPUT_INVALID          ((uint16_t)0x0000)  /*!< Invalid */
-#define TIMERB_OC_FORCE_OUTPUT_LOW              TMRB_PCONR_FORC_1   /*!< Force TIM_<t>_PWM1  output low level */
-#define TIMERB_OC_FORCE_OUTPUT_HIGH             TMRB_PCONR_FORC     /*!< Force TIM_<t>_PWM1 force output high level */
+#define TIMERB_OC_FORCE_OUTPUT_INVALID          ((uint16_t)0x0000u) /*!< Invalid */
+#define TIMERB_OC_FORCE_OUTPUT_LOW              (TMRB_PCONR_FORC_1) /*!< Force TIM_<t>_PWM1  output low level */
+#define TIMERB_OC_FORCE_OUTPUT_HIGH             (TMRB_PCONR_FORC)   /*!< Force TIM_<t>_PWM1 force output high level */
 /**
  * @}
  */
@@ -366,8 +366,8 @@ typedef struct
  * @note TIMB_<t>_PWM1 _<t>_ is unit number,range 1~8
  * @{
  */
-#define TIMERB_OC_PORT_OUTPUT_ENABLE            TMRB_PCONR_OUTEN    /*!< Enable Output Compare TIMB_<t>_PWM1 output function */
-#define TIMERB_OC_PORT_OUTPUT_DISABLE           ((uint16_t)0x0000)  /*!< Disable Output Compare TIMB_<t>_PWM1 output function */
+#define TIMERB_OC_PORT_OUTPUT_ENABLE            (TMRB_PCONR_OUTEN)  /*!< Enable Output Compare TIMB_<t>_PWM1 output function */
+#define TIMERB_OC_PORT_OUTPUT_DISABLE           ((uint16_t)0x0000u) /*!< Disable Output Compare TIMB_<t>_PWM1 output function */
 /**
  * @}
  */
@@ -378,12 +378,12 @@ typedef struct
  * @note TIMB_<T>_PWM1 _<T>_ is 2,4,6, or 8 when sync start function is valid
  * @{
  */
-#define TIMERB_HWSTART_INVALID                  ((uint16_t)0x0000)  /*!< Hardware start is invalid */
-#define TIMERB_HWSTART_TIMB_T_PWM1_RISING       TMRB_HCONR_HSTA0    /*!< Hardware start by rising edge on timer input TIMB_<t>_PWM1 (t = 1~8) when sysnc start function is invalid or
+#define TIMERB_HWSTART_INVALID                  ((uint16_t)0x0000u) /*!< Hardware start is invalid */
+#define TIMERB_HWSTART_TIMB_T_PWM1_RISING       (TMRB_HCONR_HSTA0)  /*!< Hardware start by rising edge on timer input TIMB_<t>_PWM1 (t = 1~8) when sysnc start function is invalid or
                                                                          hardware start by rising edge on timer input TIMB_n_PWM1 (n = 1,3,5,7) when sysnc start function is invalid */
-#define TIMERB_HWSTART_TIMB_T_PWM1_FALLING      TMRB_HCONR_HSTA1    /*!< Hardware start by falling edge on timer input TIMB_<t>_PWM1 (t = 1~8) when sysnc start function is invalid or
+#define TIMERB_HWSTART_TIMB_T_PWM1_FALLING      (TMRB_HCONR_HSTA1)  /*!< Hardware start by falling edge on timer input TIMB_<t>_PWM1 (t = 1~8) when sysnc start function is invalid or
                                                                          hardware start by falling edge on timer input TIMB_n_PWM1 (n = 1,3,5,7) when sysnc start function is invalid */
-#define TIMERB_HWSTART_TIMB_EVT                 TMRB_HCONR_HSTA2    /*!< Hardware start by the timer TMRB_HTSSR specified event */
+#define TIMERB_HWSTART_TIMB_EVT                 (TMRB_HCONR_HSTA2)  /*!< Hardware start by the timer TMRB_HTSSR specified event */
 /**
  * @}
  */
@@ -393,10 +393,10 @@ typedef struct
  * @note TIMB_<T>_PWM1 _<T>_ is range 1~8
  * @{
  */
-#define TIMERB_HWSTOP_INVALID                   ((uint16_t)0x0000)  /*!< Hardware stop is invalid */
-#define TIMERB_HWSTOP_TIMB_T_PWM1_RISING        TMRB_HCONR_HSTP0    /*!< Hardware stop by rising edge on timer input TIMB_<t>_PWM1 (t = 1~8) */
-#define TIMERB_HWSTOP_TIMB_T_PWM1_FALLING       TMRB_HCONR_HSTP1    /*!< Hardware stop by falling edge on timer input TIMB_<t>_PWM1 (t = 1~8) */
-#define TIMERB_HWSTOP_TIMB_EVT                  TMRB_HCONR_HSTP2    /*!< Hardware stop by the timer TMRB_HTSSR specified event */
+#define TIMERB_HWSTOP_INVALID                   ((uint16_t)0x0000u) /*!< Hardware stop is invalid */
+#define TIMERB_HWSTOP_TIMB_T_PWM1_RISING        (TMRB_HCONR_HSTP0)  /*!< Hardware stop by rising edge on timer input TIMB_<t>_PWM1 (t = 1~8) */
+#define TIMERB_HWSTOP_TIMB_T_PWM1_FALLING       (TMRB_HCONR_HSTP1)  /*!< Hardware stop by falling edge on timer input TIMB_<t>_PWM1 (t = 1~8) */
+#define TIMERB_HWSTOP_TIMB_EVT                  (TMRB_HCONR_HSTP2)  /*!< Hardware stop by the timer TMRB_HTSSR specified event */
 /**
  * @}
  */
@@ -407,12 +407,12 @@ typedef struct
  * @note TIMB_<N>_PWM1 _<N>_ is 2/4/6/8 when m=1/3/5/7 OR TIMB_N_PWM1 _<N>_ is 1/3/5/7 when 2/4/6/8
  * @{
  */
-#define TIMERB_HWCLEAR_INVALID                  ((uint16_t)0x0000)  /*!< Hardware clear is invalid */
-#define TIMERB_HWCLEAR_TIMB_T_PWM1_RISING       TMRB_HCONR_HCLE0    /*!< Hardware clear count by rising edge on timer input TIMB_<t>_PWM1, t = 1~8 */
-#define TIMERB_HWCLEAR_TIMB_T_PWM1_FALLING      TMRB_HCONR_HCLE1    /*!< Hardware clear count by falling edge on timer input TIMB_<t>_PWM1, t = 1~8 */
-#define TIMERB_HWCLEAR_EVT                      TMRB_HCONR_HCLE2    /*!< Hardware clear count by the timer TMRB_HTSSR specified event */
-#define TIMERB_HWCLEAR_TIMB_N_PWM1_RISING       TMRB_HCONR_HCLE3    /*!< Hardware clear count by rising edge on timer input TIMB_<n>_PWM1, _<n>_=2/4/6/8 when m=1/3/5/7 or n=1/3/5/7 when m=2/4/6/8 */
-#define TIMERB_HWCLEAR_TIMB_N_PWM1_FALLING      TMRB_HCONR_HCLE4    /*!< Hardware clear count by falling edge on timer input TIMB_<n>_PWM1, _<n>_=2/4/6/8 when m=1/3/5/7 or n=1/3/5/7 when m=2/4/6/8 */
+#define TIMERB_HWCLEAR_INVALID                  ((uint16_t)0x0000u) /*!< Hardware clear is invalid */
+#define TIMERB_HWCLEAR_TIMB_T_PWM1_RISING       (TMRB_HCONR_HCLE0)  /*!< Hardware clear count by rising edge on timer input TIMB_<t>_PWM1, t = 1~8 */
+#define TIMERB_HWCLEAR_TIMB_T_PWM1_FALLING      (TMRB_HCONR_HCLE1)  /*!< Hardware clear count by falling edge on timer input TIMB_<t>_PWM1, t = 1~8 */
+#define TIMERB_HWCLEAR_EVT                      (TMRB_HCONR_HCLE2)  /*!< Hardware clear count by the timer TMRB_HTSSR specified event */
+#define TIMERB_HWCLEAR_TIMB_N_PWM1_RISING       (TMRB_HCONR_HCLE3)  /*!< Hardware clear count by rising edge on timer input TIMB_<n>_PWM1, _<n>_=2/4/6/8 when m=1/3/5/7 or n=1/3/5/7 when m=2/4/6/8 */
+#define TIMERB_HWCLEAR_TIMB_N_PWM1_FALLING      (TMRB_HCONR_HCLE4)  /*!< Hardware clear count by falling edge on timer input TIMB_<n>_PWM1, _<n>_=2/4/6/8 when m=1/3/5/7 or n=1/3/5/7 when m=2/4/6/8 */
 /**
  * @}
  */
@@ -423,12 +423,12 @@ typedef struct
  * @note TIMB_<N>_PWM1 _<N>_ is 2/4/6/8 when m=1/3/5/7 OR TIMB_N_PWM1 _<N>_ is 1/3/5/7 when 2/4/6/8
  * @{
  */
-#define TIMERB_HWUP_INVALID                     ((uint16_t)0x0000)  /*!< Hardware count up is invalid */
-#define TIMERB_HWUP_TIMB_T_PWM1_RISING          TMRB_HCUPR_HCUP8    /*!< Hardware count up by rising edge on timer input TIMB_<t>_PWM1, t = 1~8 */
-#define TIMERB_HWUP_TIMB_T_PWM1_FALLING         TMRB_HCUPR_HCUP9    /*!< Hardware count up by falling edge on timer input TIMB_<t>_PWM1, t = 1~8 */
-#define TIMERB_HWUP_EVT                         TMRB_HCUPR_HCUP10   /*!< Hardware count up by the timer TMRB_HTSSR specified event */
-#define TIMERB_HWUP_OVERFLOW                    TMRB_HCUPR_HCUP11   /*!< Hardware count up by overflow by TIMB_<n>, _<n>_=2/4/6/8 when m=1/3/5/7 or n=1/3/5/7 when m=2/4/6/8 */
-#define TIMERB_HWUP_UNDERFLOW                   TMRB_HCUPR_HCUP12   /*!< Hardware count up by underflow by TIMB_<n>, _<n>_=2/4/6/8 when m=1/3/5/7 or n=1/3/5/7 when m=2/4/6/8 */
+#define TIMERB_HWUP_INVALID                     ((uint16_t)0x0000u) /*!< Hardware count up is invalid */
+#define TIMERB_HWUP_TIMB_T_PWM1_RISING          (TMRB_HCUPR_HCUP8)  /*!< Hardware count up by rising edge on timer input TIMB_<t>_PWM1, t = 1~8 */
+#define TIMERB_HWUP_TIMB_T_PWM1_FALLING         (TMRB_HCUPR_HCUP9)  /*!< Hardware count up by falling edge on timer input TIMB_<t>_PWM1, t = 1~8 */
+#define TIMERB_HWUP_EVT                         (TMRB_HCUPR_HCUP10) /*!< Hardware count up by the timer TMRB_HTSSR specified event */
+#define TIMERB_HWUP_OVERFLOW                    (TMRB_HCUPR_HCUP11) /*!< Hardware count up by overflow by TIMB_<n>, _<n>_=2/4/6/8 when m=1/3/5/7 or n=1/3/5/7 when m=2/4/6/8 */
+#define TIMERB_HWUP_UNDERFLOW                   (TMRB_HCUPR_HCUP12) /*!< Hardware count up by underflow by TIMB_<n>, _<n>_=2/4/6/8 when m=1/3/5/7 or n=1/3/5/7 when m=2/4/6/8 */
 /**
  * @}
  */
@@ -439,12 +439,12 @@ typedef struct
  * @note TIMB_<N>_PWM1 _<N>_ is 2/4/6/8 when m=1/3/5/7 OR TIMB_N_PWM1 _<N>_ is 1/3/5/7 when 2/4/6/8
  * @{
  */
-#define TIMERB_HWDOWN_INVALID                   ((uint16_t)0x0000)  /*!< Hardware count down is invalid */
-#define TIMERB_HWDOWN_TIMB_T_PWM1_RISING        TMRB_HCDOR_HCDO8    /*!< Hardware count down by rising edge on timer input TIMB_<t>_PWM1, t = 1~8 */
-#define TIMERB_HWDOWN_TIMB_T_PWM1_FALLING       TMRB_HCDOR_HCDO9    /*!< Hardware count down by falling edge on timer input TIMB_<t>_PWM1, t = 1~8 */
-#define TIMERB_HWDOWN_EVT                       TMRB_HCDOR_HCDO10   /*!< Hardware count down by the timer TMRB_HTSSR specified event */
-#define TIMERB_HWDOWN_OVERFLOW                  TMRB_HCDOR_HCDO11   /*!< Hardware count down by overflow by TIMB_<n>, _<n>_=2/4/6/8 when m=1/3/5/7 or n=1/3/5/7 when m=2/4/6/8 */
-#define TIMERB_HWDOWN_UNDERFLOW                 TMRB_HCDOR_HCDO12   /*!< Hardware count down by underflow by TIMB_<n>, _<n>_=2/4/6/8 when m=1/3/5/7 or n=1/3/5/7 when m=2/4/6/8 */
+#define TIMERB_HWDOWN_INVALID                   ((uint16_t)0x0000u) /*!< Hardware count down is invalid */
+#define TIMERB_HWDOWN_TIMB_T_PWM1_RISING        (TMRB_HCDOR_HCDO8)  /*!< Hardware count down by rising edge on timer input TIMB_<t>_PWM1, t = 1~8 */
+#define TIMERB_HWDOWN_TIMB_T_PWM1_FALLING       (TMRB_HCDOR_HCDO9)  /*!< Hardware count down by falling edge on timer input TIMB_<t>_PWM1, t = 1~8 */
+#define TIMERB_HWDOWN_EVT                       (TMRB_HCDOR_HCDO10) /*!< Hardware count down by the timer TMRB_HTSSR specified event */
+#define TIMERB_HWDOWN_OVERFLOW                  (TMRB_HCDOR_HCDO11) /*!< Hardware count down by overflow by TIMB_<n>, _<n>_=2/4/6/8 when m=1/3/5/7 or n=1/3/5/7 when m=2/4/6/8 */
+#define TIMERB_HWDOWN_UNDERFLOW                 (TMRB_HCDOR_HCDO12) /*!< Hardware count down by underflow by TIMB_<n>, _<n>_=2/4/6/8 when m=1/3/5/7 or n=1/3/5/7 when m=2/4/6/8 */
 /**
  * @}
  */
@@ -482,7 +482,7 @@ typedef struct
  */
 __STATIC_INLINE void TIMERB_SetCounter(M0P_TMRB_TypeDef *TMRBx, uint16_t u16Value)
 {
-    WRITE_REG(TMRBx->CNTER, u16Value);
+    WRITE_REG16(TMRBx->CNTER, u16Value);
 }
 
 /**
@@ -501,7 +501,7 @@ __STATIC_INLINE void TIMERB_SetCounter(M0P_TMRB_TypeDef *TMRBx, uint16_t u16Valu
  */
 __STATIC_INLINE uint16_t TIMERB_GetCounter(M0P_TMRB_TypeDef *TMRBx)
 {
-    return READ_REG(TMRBx->CNTER);
+    return READ_REG16(TMRBx->CNTER);
 }
 
 /**
@@ -521,7 +521,7 @@ __STATIC_INLINE uint16_t TIMERB_GetCounter(M0P_TMRB_TypeDef *TMRBx)
  */
 __STATIC_INLINE void TIMERB_SetPeriod(M0P_TMRB_TypeDef *TMRBx, uint16_t u16Value)
 {
-    WRITE_REG(TMRBx->PERAR, u16Value);
+    WRITE_REG16(TMRBx->PERAR, u16Value);
 }
 
 /**
@@ -540,7 +540,7 @@ __STATIC_INLINE void TIMERB_SetPeriod(M0P_TMRB_TypeDef *TMRBx, uint16_t u16Value
  */
 __STATIC_INLINE uint16_t TIMERB_GetPeriod(M0P_TMRB_TypeDef *TMRBx)
 {
-    return READ_REG(TMRBx->PERAR);
+    return READ_REG16(TMRBx->PERAR);
 }
 
 /**
@@ -560,7 +560,7 @@ __STATIC_INLINE uint16_t TIMERB_GetPeriod(M0P_TMRB_TypeDef *TMRBx)
  */
 __STATIC_INLINE void TIMERB_SetCompare(M0P_TMRB_TypeDef *TMRBx, uint16_t u16Value)
 {
-    WRITE_REG(TMRBx->CMPAR, u16Value);
+    WRITE_REG16(TMRBx->CMPAR, u16Value);
 }
 
 /**
@@ -579,7 +579,7 @@ __STATIC_INLINE void TIMERB_SetCompare(M0P_TMRB_TypeDef *TMRBx, uint16_t u16Valu
  */
 __STATIC_INLINE uint16_t TIMERB_GetCompare(M0P_TMRB_TypeDef *TMRBx)
 {
-    return READ_REG(TMRBx->CMPAR);
+    return READ_REG16(TMRBx->CMPAR);
 }
 
 /**
@@ -598,7 +598,7 @@ __STATIC_INLINE uint16_t TIMERB_GetCompare(M0P_TMRB_TypeDef *TMRBx)
  */
 __STATIC_INLINE void TIMERB_Start(M0P_TMRB_TypeDef *TMRBx)
 {
-    SET_BIT(TMRBx->BCSTR, TMRB_BCSTR_START);
+    SET_REG16_BIT(TMRBx->BCSTR, TMRB_BCSTR_START);
 }
 
 /**
@@ -617,7 +617,7 @@ __STATIC_INLINE void TIMERB_Start(M0P_TMRB_TypeDef *TMRBx)
  */
 __STATIC_INLINE void TIMERB_Stop(M0P_TMRB_TypeDef *TMRBx)
 {
-    CLEAR_BIT(TMRBx->BCSTR, TMRB_BCSTR_START);
+    CLEAR_REG16_BIT(TMRBx->BCSTR, TMRB_BCSTR_START);
 }
 
 /**
@@ -636,7 +636,7 @@ __STATIC_INLINE void TIMERB_Stop(M0P_TMRB_TypeDef *TMRBx)
  */
 __STATIC_INLINE void TIMERB_EnableSyncStart(M0P_TMRB_TypeDef *TMRBx)
 {
-    SET_BIT(TMRBx->BCSTR, TMRB_BCSTR_SYNST);
+    SET_REG16_BIT(TMRBx->BCSTR, TMRB_BCSTR_SYNST);
 }
 
 /**
@@ -655,7 +655,7 @@ __STATIC_INLINE void TIMERB_EnableSyncStart(M0P_TMRB_TypeDef *TMRBx)
  */
 __STATIC_INLINE void TIMERB_DisableSyncStart(M0P_TMRB_TypeDef *TMRBx)
 {
-    CLEAR_BIT(TMRBx->BCSTR, TMRB_BCSTR_SYNST);
+    CLEAR_REG16_BIT(TMRBx->BCSTR, TMRB_BCSTR_SYNST);
 }
 
 /**
@@ -674,7 +674,7 @@ __STATIC_INLINE void TIMERB_DisableSyncStart(M0P_TMRB_TypeDef *TMRBx)
  */
 __STATIC_INLINE void TIMERB_EnableCmpMatchEvt(M0P_TMRB_TypeDef *TMRBx)
 {
-    SET_BIT(TMRBx->ECONR, TMRB_ECONR_ETEN1);
+    SET_REG16_BIT(TMRBx->ECONR, TMRB_ECONR_ETEN1);
 }
 
 /**
@@ -693,7 +693,7 @@ __STATIC_INLINE void TIMERB_EnableCmpMatchEvt(M0P_TMRB_TypeDef *TMRBx)
  */
 __STATIC_INLINE void TIMERB_DisableCmpMatchEvt(M0P_TMRB_TypeDef *TMRBx)
 {
-    CLEAR_BIT(TMRBx->ECONR, TMRB_ECONR_ETEN1);
+    CLEAR_REG16_BIT(TMRBx->ECONR, TMRB_ECONR_ETEN1);
 }
 
 /**
@@ -712,7 +712,7 @@ __STATIC_INLINE void TIMERB_DisableCmpMatchEvt(M0P_TMRB_TypeDef *TMRBx)
  */
 __STATIC_INLINE void TIMERB_IC_EnableNoiseFilter(M0P_TMRB_TypeDef *TMRBx)
 {
-    SET_BIT(TMRBx->CCONR, TMRB_CCONR_NOFIENCP);
+    SET_REG16_BIT(TMRBx->CCONR, TMRB_CCONR_NOFIENCP);
 }
 
 /**
@@ -731,7 +731,7 @@ __STATIC_INLINE void TIMERB_IC_EnableNoiseFilter(M0P_TMRB_TypeDef *TMRBx)
  */
 __STATIC_INLINE void TIMERB_IC_DisableNoiseFilter(M0P_TMRB_TypeDef *TMRBx)
 {
-    CLEAR_BIT(TMRBx->CCONR, TMRB_CCONR_NOFIENCP);
+    CLEAR_REG16_BIT(TMRBx->CCONR, TMRB_CCONR_NOFIENCP);
 }
 
 /**
@@ -750,7 +750,7 @@ __STATIC_INLINE void TIMERB_IC_DisableNoiseFilter(M0P_TMRB_TypeDef *TMRBx)
  */
 __STATIC_INLINE void TIMERB_OC_EnablePortOutput(M0P_TMRB_TypeDef *TMRBx)
 {
-    SET_BIT(TMRBx->PCONR, TMRB_PCONR_OUTEN);
+    SET_REG16_BIT(TMRBx->PCONR, TMRB_PCONR_OUTEN);
 }
 
 /**
@@ -769,7 +769,7 @@ __STATIC_INLINE void TIMERB_OC_EnablePortOutput(M0P_TMRB_TypeDef *TMRBx)
  */
 __STATIC_INLINE void TIMERB_OC_DisablePortOutput(M0P_TMRB_TypeDef *TMRBx)
 {
-    CLEAR_BIT(TMRBx->PCONR, TMRB_PCONR_OUTEN);
+    CLEAR_REG16_BIT(TMRBx->PCONR, TMRB_PCONR_OUTEN);
 }
 
 /**
@@ -779,7 +779,7 @@ __STATIC_INLINE void TIMERB_OC_DisablePortOutput(M0P_TMRB_TypeDef *TMRBx)
  */
 __STATIC_INLINE void TIMERB_SetTriggerSrc(en_event_src_t enEvtSrc)
 {
-    WRITE_REG(M0P_AOS->TMRB_HTSSR, enEvtSrc);
+    WRITE_REG32(M0P_AOS->TMRB_HTSSR, enEvtSrc);
 }
 
 /**
@@ -789,7 +789,7 @@ __STATIC_INLINE void TIMERB_SetTriggerSrc(en_event_src_t enEvtSrc)
  */
 __STATIC_INLINE en_event_src_t TIMERB_GetTriggerSrc(void)
 {
-    return (en_event_src_t)READ_REG(M0P_AOS->TMRB_HTSSR);
+    return (en_event_src_t)READ_REG32(M0P_AOS->TMRB_HTSSR);
 }
 
 /* Initialization and configuration TimerB base functions */

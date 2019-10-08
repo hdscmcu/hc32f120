@@ -73,50 +73,50 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* Define slave device address for example */
-#define DEVICE_ADDRESS                  0x06
+#define DEVICE_ADDRESS                  (0x06u)
 
 /* Define port and pin for SDA and SCL */
-#define I2C_SCL_PORT                    GPIO_PORT_6
-#define I2C_SCL_PIN                     GPIO_PIN_0
-#define I2C_SDA_PORT                    GPIO_PORT_6
-#define I2C_SDA_PIN                     GPIO_PIN_1
+#define I2C_SCL_PORT                    (GPIO_PORT_6)
+#define I2C_SCL_PIN                     (GPIO_PIN_0)
+#define I2C_SDA_PORT                    (GPIO_PORT_6)
+#define I2C_SDA_PIN                     (GPIO_PIN_1)
 
-#define TIMEOUT                         ((uint32_t)0x10000)
+#define TIMEOUT                         (0x10000ul)
 
-#define I2C_RET_OK                      0
-#define I2C_RET_ERROR                   1
+#define I2C_RET_OK                      (0u)
+#define I2C_RET_ERROR                   (1u)
 
-#define GENERATE_START                  0x00
-#define GENERATE_RESTART                0x01
+#define GENERATE_START                  (0x00u)
+#define GENERATE_RESTART                (0x01u)
 
-#define ADDRESS_W                       0x00
-#define ADDRESS_R                       0x01
+#define ADDRESS_W                       (0x00u)
+#define ADDRESS_R                       (0x01u)
 
 /* Define Write and read data length for the example */
-#define TEST_DATA_LEN                   128
+#define TEST_DATA_LEN                   (128u)
 /* Define i2c baudrate */
-#define I2C_BAUDRATE                    400000
+#define I2C_BAUDRATE                    (400000ul)
 
 /* I2C interrupt source and number define */
-#define I2C_EEI_IRQn     Int008_IRQn
-#define I2C_EEI_SOURCE   INT_IIC_EE1
-#define I2C_TXI_IRQn     Int020_IRQn
-#define I2C_TXI_SOURCE   INT_IIC_TXI
-#define I2C_RXI_IRQn     Int018_IRQn
-#define I2C_RXI_SOURCE   INT_IIC_RXI
-#define I2C_TEI_IRQn     Int016_IRQn
-#define I2C_TEI_SOURCE   INT_IIC_TEI
+#define I2C_EEI_IRQn                    (Int008_IRQn)
+#define I2C_EEI_SOURCE                  (INT_IIC_EE1)
+#define I2C_TXI_IRQn                    (Int020_IRQn)
+#define I2C_TXI_SOURCE                  (INT_IIC_TXI)
+#define I2C_RXI_IRQn                    (Int018_IRQn)
+#define I2C_RXI_SOURCE                  (INT_IIC_RXI)
+#define I2C_TEI_IRQn                    (Int016_IRQn)
+#define I2C_TEI_SOURCE                  (INT_IIC_TEI)
 
 /* Define for RGB LED */
-#define LED_RGB_PORT    GPIO_PORT_2
-#define LED_R_PORT      GPIO_PORT_2
-#define LED_G_PORT      GPIO_PORT_2
-#define LED_B_PORT      GPIO_PORT_2
-#define LED_R_PIN       GPIO_PIN_5
-#define LED_G_PIN       GPIO_PIN_6
-#define LED_B_PIN       GPIO_PIN_7
-#define LED_G_TOGGLE()  GPIO_TogglePins(LED_G_PORT, LED_G_PIN)
-#define LED_R_TOGGLE()  GPIO_TogglePins(LED_R_PORT, LED_R_PIN)
+#define LED_RGB_PORT                    (GPIO_PORT_2)
+#define LED_R_PORT                      (GPIO_PORT_2)
+#define LED_G_PORT                      (GPIO_PORT_2)
+#define LED_B_PORT                      (GPIO_PORT_2)
+#define LED_R_PIN                       (GPIO_PIN_5)
+#define LED_G_PIN                       (GPIO_PIN_6)
+#define LED_B_PIN                       (GPIO_PIN_7)
+#define LED_G_TOGGLE()                  (GPIO_TogglePins(LED_G_PORT, LED_G_PIN))
+#define LED_R_TOGGLE()                  (GPIO_TogglePins(LED_R_PORT, LED_R_PIN))
 
 
 /*******************************************************************************
@@ -141,15 +141,15 @@ static uint8_t BufRead(void);
  ******************************************************************************/
 uint8_t u8TxBuf[TEST_DATA_LEN];
 uint8_t u8RxBuf[TEST_DATA_LEN];
-uint32_t u32DataInOffset = 0;
-uint32_t u32DataOutOffset = 0;
-__IO uint8_t u8FinishFlag = 0;
+uint32_t u32DataInOffset = 0u;
+uint32_t u32DataOutOffset = 0u;
+__IO uint8_t u8FinishFlag = 0u;
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
  ******************************************************************************/
 /**
- * @brief  Main function of i2c_at24c02 project
+ * @brief  Main function
  * @param  None
  * @retval int32_t return value, if needed
  */
@@ -164,14 +164,14 @@ int32_t main(void)
     LedConfig();
 
     /* Test buffer initialize */
-    for(i=0; i<TEST_DATA_LEN; i++)
+    for(i=0u; i<TEST_DATA_LEN; i++)
     {
-        u8RxBuf[i] = 0;
+        u8RxBuf[i] = 0u;
     }
 
     /* Initialize I2C port*/
-    GPIO_SetFunc(I2C_SCL_PORT, I2C_SCL_PIN, GPIO_FUNC_I2C);
-    GPIO_SetFunc(I2C_SDA_PORT, I2C_SDA_PIN, GPIO_FUNC_I2C);
+    GPIO_SetFunc(I2C_SCL_PORT, I2C_SCL_PIN, GPIO_FUNC_4_I2C);
+    GPIO_SetFunc(I2C_SDA_PORT, I2C_SDA_PIN, GPIO_FUNC_4_I2C);
 
     /* Enable I2C Peripheral*/
     CLK_FcgPeriphClockCmd(CLK_FCG_I2C, Enable);
@@ -180,13 +180,16 @@ int32_t main(void)
     Slave_Initialize();
 
     /* Wait communicaiton finished*/
-    while(0 == u8FinishFlag);
+    while(0u == u8FinishFlag)
+    {
+        ;
+    }
 
     /* Communication finished */
     while(1)
     {
         LED_G_TOGGLE();
-        DDL_Delay1ms(500);
+        DDL_Delay1ms(500u);
     }
 
 }
@@ -231,7 +234,7 @@ static uint8_t Slave_Initialize(void)
 
     I2C_StructInit(&stcI2cInit);
     stcI2cInit.u32Baudrate = I2C_BAUDRATE;
-    stcI2cInit.u32SclTime = 5;
+    stcI2cInit.u32SclTime = 5u;
     stcI2cInit.u32I2cClkDiv = I2C_CLK_DIV1;
     I2C_Init(&stcI2cInit, &fErr);
 
@@ -245,7 +248,7 @@ static uint8_t Slave_Initialize(void)
     /* Register IRQ handler && configure NVIC. */
     stcIrqRegiCfg.enIRQn = I2C_EEI_IRQn;
     stcIrqRegiCfg.enIntSrc = I2C_EEI_SOURCE;
-    stcIrqRegiCfg.pfnCallback = I2C_EEI_Callback;
+    stcIrqRegiCfg.pfnCallback = &I2C_EEI_Callback;
     INTC_IrqRegistration(&stcIrqRegiCfg);
     NVIC_ClearPendingIRQ(stcIrqRegiCfg.enIRQn);
     NVIC_SetPriority(stcIrqRegiCfg.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -253,7 +256,7 @@ static uint8_t Slave_Initialize(void)
 
     stcIrqRegiCfg.enIRQn = I2C_RXI_IRQn;
     stcIrqRegiCfg.enIntSrc = I2C_RXI_SOURCE;
-    stcIrqRegiCfg.pfnCallback = I2C_RXI_Callback;
+    stcIrqRegiCfg.pfnCallback = &I2C_RXI_Callback;
     INTC_IrqRegistration(&stcIrqRegiCfg);
     NVIC_ClearPendingIRQ(stcIrqRegiCfg.enIRQn);
     NVIC_SetPriority(stcIrqRegiCfg.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -261,7 +264,7 @@ static uint8_t Slave_Initialize(void)
 
     stcIrqRegiCfg.enIRQn = I2C_TXI_IRQn;
     stcIrqRegiCfg.enIntSrc = I2C_TXI_SOURCE;
-    stcIrqRegiCfg.pfnCallback = I2C_TXI_Callback;
+    stcIrqRegiCfg.pfnCallback = &I2C_TXI_Callback;
     INTC_IrqRegistration(&stcIrqRegiCfg);
     NVIC_ClearPendingIRQ(stcIrqRegiCfg.enIRQn);
     NVIC_SetPriority(stcIrqRegiCfg.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -269,7 +272,7 @@ static uint8_t Slave_Initialize(void)
 
     stcIrqRegiCfg.enIRQn = I2C_TEI_IRQn;
     stcIrqRegiCfg.enIntSrc = I2C_TEI_SOURCE;
-    stcIrqRegiCfg.pfnCallback = I2C_TEI_Callback;
+    stcIrqRegiCfg.pfnCallback = &I2C_TEI_Callback;
     INTC_IrqRegistration(&stcIrqRegiCfg);
     NVIC_ClearPendingIRQ(stcIrqRegiCfg.enIRQn);
     NVIC_SetPriority(stcIrqRegiCfg.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -291,7 +294,7 @@ static uint8_t Slave_Initialize(void)
  */
 static void LedConfig(void)
 {
-    stc_gpio_init_t stcGpioInit = {0};
+    stc_gpio_init_t stcGpioInit = {0u};
 
     stcGpioInit.u16PinMode = PIN_MODE_OUT;
     stcGpioInit.u16PinState = PIN_STATE_SET;
@@ -358,7 +361,7 @@ static void I2C_EEI_Callback(void)
         /* Clear STOPF flag */
         I2C_ClearStatus(I2C_CLR_STOPFCLR);
         /* Communication finished */
-        u8FinishFlag = 1;
+        u8FinishFlag = 1u;
     }
 }
 
@@ -424,7 +427,10 @@ static void BufWrite(uint8_t u8Data)
     if(u32DataInOffset >= TEST_DATA_LEN)
     {
         //error
-        while(1);
+        while(1)
+        {
+            ;
+        }
     }
     u8RxBuf[u32DataInOffset] = u8Data;
     u32DataInOffset++;
@@ -441,7 +447,10 @@ static uint8_t BufRead(void)
     if(u32DataOutOffset >= TEST_DATA_LEN)
     {
         //error
-        while(1);
+        while(1)
+        {
+            ;
+        }
     }
     temp = u8RxBuf[u32DataOutOffset];
     u32DataOutOffset++;

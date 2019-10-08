@@ -54,7 +54,6 @@
  * Include files
  ******************************************************************************/
 #include "hc32_ddl.h"
-#include <stdio.h>
 
 /**
  * @addtogroup HC32F120_DDL_Examples
@@ -75,13 +74,13 @@
  ******************************************************************************/
 
 /* Test reset mode enum*/
-#define RESET_WDT                       0u
-#define RESET_XTALERR                   1u
-#define RESET_SOFTWARERST               2u
-#define RESET_LVD                       3u
+#define RESET_WDT                       (0u)
+#define RESET_XTALERR                   (1u)
+#define RESET_SOFTWARERST               (2u)
+#define RESET_LVD                       (3u)
 
 /* Modify for test reset mode, can be RESET_WDT,RESET_XTALERR or RESET_SOFTWARERST or RESET_LVD*/
-#define TEST_RESET_MODE                 RESET_WDT
+#define TEST_RESET_MODE                 (RESET_WDT)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -118,7 +117,7 @@ int32_t main(void)
 
     /* configuration uart for debug information */
     DDL_UartInit();
-    DDL_Delay1ms(10);
+    DDL_Delay1ms(10u);
 
     RMU_GetResetCause(&stcResetFlag);
     RMU_ClrResetFlag();
@@ -225,7 +224,7 @@ static void MakeReset(void)
 #elif (TEST_RESET_MODE == RESET_SOFTWARERST)
     /* Software reset MCU */
     printf("Software reset soon.\r\n");
-    printf(0);
+    printf(0u);
     NVIC_SystemReset();
 
 #elif (TEST_RESET_MODE == RESET_WDT)
@@ -271,18 +270,26 @@ static void MakeReset(void)
 static void WaitSw2_ShortPress(void)
 {
     /* Wait key up */
-    while(Pin_Set != GPIO_ReadInputPortPin(GPIO_PORT_7, GPIO_PIN_0));
-    DDL_Delay1ms(5);
+    while(Pin_Set != GPIO_ReadInputPortPin(GPIO_PORT_7, GPIO_PIN_0))
+    {
+        ;
+    }
+    DDL_Delay1ms(5u);
 
     /* Wait key down */
-    while(Pin_Reset != GPIO_ReadInputPortPin(GPIO_PORT_7, GPIO_PIN_0));
-    DDL_Delay1ms(5);
+    while(Pin_Reset != GPIO_ReadInputPortPin(GPIO_PORT_7, GPIO_PIN_0))
+    {
+        ;
+    }
+    DDL_Delay1ms(5u);
 
     /* Wait key up */
-    while(Pin_Set != GPIO_ReadInputPortPin(GPIO_PORT_7, GPIO_PIN_0));
-    DDL_Delay1ms(5);
+    while(Pin_Set != GPIO_ReadInputPortPin(GPIO_PORT_7, GPIO_PIN_0))
+    {
+        ;
+    }
+    DDL_Delay1ms(5u);
 }
-
 /**
  * @}
  */

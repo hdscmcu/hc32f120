@@ -72,21 +72,9 @@
 /*******************************************************************************
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
-/* Enable ADC peripheral. */
-#define ENABLE_ADC()                CLK_FcgPeriphClockCmd(CLK_FCG_ADC, Enable)
-
-/* Disable ADC peripheral. */
-#define DISABLE_ADC()               CLK_FcgPeriphClockCmd(CLK_FCG_ADC, Disable)
-
-/* Enable AOS. */
-#define ENABLE_AOS()                CLK_FcgPeriphClockCmd(CLK_FCG_AOS, Enable)
-
-/* Disable ADC. */
-#define DISABLE_AOS()               CLK_FcgPeriphClockCmd(CLK_FCG_AOS, Disable)
-
 /* ADC channels definition for this example. */
-#define AWD0_PIN                    ADC_ANI11
-#define AWD1_PIN                    ADC_ANI2
+#define AWD0_PIN                    (ADC_ANI11)
+#define AWD1_PIN                    (ADC_ANI2)
 #define AWD0_CH                     ((uint16_t)(1ul << AWD0_PIN))
 #define AWD1_CH                     ((uint16_t)(1ul << AWD1_PIN))
 
@@ -99,25 +87,25 @@
 #define ADC_SB_CHANNEL_COUNT        (2u)
 
 /* AWD definition for this example. */
-#define USE_AWD0                    1u
-#define ADW0_MD                     ADC_AWD_CMP_IN_RANGE
+#define USE_AWD0                    (1u)
+#define ADW0_MD                     (ADC_AWD_CMP_IN_RANGE)
 #define AWD0_DR0_LOWER              ((uint16_t)1000)
 #define AWD0_DR1_UPPER              ((uint16_t)4000)
 
-#define USE_AWD1                    1u
-#define ADW1_MD                     ADC_AWD_CMP_IN_RANGE
+#define USE_AWD1                    (1u)
+#define ADW1_MD                     (ADC_AWD_CMP_IN_RANGE)
 #define AWD1_DR0_LOWER              ((uint16_t)3000)
 #define AWD1_DR1_UPPER              ((uint16_t)4000)
 
 #if (USE_AWD0 && USE_AWD1)
-#define AWD_COMBINATION_MODE        ADC_AWD_COMB_OR
+#define AWD_COMBINATION_MODE        (ADC_AWD_COMB_OR)
 #endif // (USE_AWD0 && USE_AWD1)
 
 /* ADC channel sampling time. */
 #define ADC_SAMPLE_TIME             ((uint8_t)10)
 
 /* ADC resolution definition. */
-#define ADC_RESOLUTION              ADC_RESOLUTION_12B
+#define ADC_RESOLUTION              (ADC_RESOLUTION_12B)
 
 /* ADC accuracy. */
 #define ADC_ACCURACY                (1ul << 12u)
@@ -126,8 +114,8 @@
 #define ADC_VREF                    (3.29f)
 
 /* ADC interrupt flag bit mask definition. */
-#define ADC_AWD0_IRQ_BIT            ADC_FLAG_AWD0
-#define ADC_AWD1_IRQ_BIT            ADC_FLAG_AWD1
+#define ADC_AWD0_IRQ_BIT            (ADC_FLAG_AWD0)
+#define ADC_AWD1_IRQ_BIT            (ADC_FLAG_AWD1)
 
 /* Share interrupt definition. */
 #define SHARE_INTERRUPT
@@ -147,16 +135,13 @@ static void AdcTriggerConfig(void);
 
 static void AdcIrqConfig(void);
 
-void AdcCmp0_IrqHandler(void);
-void AdcCmp1_IrqHandler(void);
-
 static void AdcSetChannelPinAnalogMode(uint16_t u16Channel);
 static void AdcSetPinAnalogMode(uint8_t u8PinNbr);
 
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-static uint32_t m_u32AdcIrqFlag = 0u;
+static uint8_t m_u8AdcIrqFlag = 0u;
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -181,16 +166,16 @@ int32_t main(void)
     while (1u)
     {
         /* Check ADC AWD0. */
-        if (m_u32AdcIrqFlag & ADC_AWD0_IRQ_BIT)
+        if (m_u8AdcIrqFlag & ADC_AWD0_IRQ_BIT)
         {
-            m_u32AdcIrqFlag &= ~ADC_AWD0_IRQ_BIT;
+            m_u8AdcIrqFlag &= (uint8_t)(~ADC_AWD0_IRQ_BIT);
             // TODO: Your service code.
         }
 
         /* Check ADC AWD1. */
-        if (m_u32AdcIrqFlag & ADC_AWD1_IRQ_BIT)
+        if (m_u8AdcIrqFlag & ADC_AWD1_IRQ_BIT)
         {
-            m_u32AdcIrqFlag &= ~ADC_AWD1_IRQ_BIT;
+            m_u8AdcIrqFlag &= (uint8_t)(~ADC_AWD1_IRQ_BIT);
             // TODO: Your service code.
         }
     }
@@ -241,7 +226,7 @@ static void AdcInitConfig(void)
     stcInit.u8SampTime      = ADC_SAMPLE_TIME;
 
     /* 1. Enable ADC peripheral. */
-    ENABLE_ADC();
+    CLK_FcgPeriphClockCmd(CLK_FCG_ADC, Enable);
 
     /* 2. Initializes ADC. */
     ADC_Init(&stcInit);
@@ -315,7 +300,7 @@ static void AdcTriggerConfig(void)
     stcTrgCfg.u16TrgSrc = ADC_TRGSRC_EX_PIN;
 
     /* 1. Configures the function of pin ADTRGA's. */
-    GPIO_SetFunc(GPIO_PORT_1, GPIO_PIN_0, GPIO_FUNC_ADTRG);
+    GPIO_SetFunc(GPIO_PORT_1, GPIO_PIN_0, GPIO_FUNC_1_ADTRG);
     /* 2. Configrues the trigger source of sequence A. */
     ADC_ConfigTriggerSrc(u8Seq, &stcTrgCfg);
     /* 3. Enable the trigger source. */
@@ -329,7 +314,7 @@ static void AdcTriggerConfig(void)
     stcTrgCfg.u16TrgSrc = ADC_TRGSRC_IN_EVT0;
     stcTrgCfg.u32Event0 = EVT_ADC_EOCA;
     /* 1. Enable AOS. */
-    ENABLE_AOS();
+    CLK_FcgPeriphClockCmd(CLK_FCG_AOS, Enable);
     /* 2. Configrues the trigger source of sequence B. */
     ADC_ConfigTriggerSrc(u8Seq, &stcTrgCfg);
     /* 3. Enable the trigger source. */
@@ -372,7 +357,7 @@ static void AdcIrqConfig(void)
     /* Independent interrupt. */
     stcIrqRegiConf.enIntSrc    = INT_ADC_CMP0;
     stcIrqRegiConf.enIRQn      = Int020_IRQn;
-    stcIrqRegiConf.pfnCallback = AdcCmp0_IrqHandler;
+    stcIrqRegiConf.pfnCallback = &AdcCmp0_IrqHandler;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_02);
@@ -382,7 +367,7 @@ static void AdcIrqConfig(void)
     /* Configures AWD1 interrupt. */
     stcIrqRegiConf.enIntSrc    = INT_ADC_CMP1;
     stcIrqRegiConf.enIRQn      = Int022_IRQn;
-    stcIrqRegiConf.pfnCallback = AdcCmp1_IrqHandler;
+    stcIrqRegiConf.pfnCallback = &AdcCmp1_IrqHandler;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -403,7 +388,7 @@ void AdcCmp0_IrqHandler(void)
     if (ADC_AwdGetFlag(ADC_FLAG_AWD0) == Set)
     {
         ADC_AwdClrFlag(ADC_FLAG_AWD0);
-        m_u32AdcIrqFlag |= ADC_AWD0_IRQ_BIT;
+        m_u8AdcIrqFlag |= ADC_AWD0_IRQ_BIT;
     }
 }
 
@@ -418,13 +403,13 @@ void AdcCmp1_IrqHandler(void)
     if (ADC_AwdGetFlag(ADC_FLAG_AWD_COMB) == Set)
     {
         ADC_AwdClrFlag(ADC_FLAG_AWD_COMB);
-        m_u32AdcIrqFlag |= ADC_AWD1_IRQ_BIT;
+        m_u8AdcIrqFlag |= ADC_AWD1_IRQ_BIT;
     }
 #else
     if (ADC_AwdGetFlag(ADC_FLAG_AWD1) == Set)
     {
         ADC_AwdClrFlag(ADC_FLAG_AWD1);
-        m_u32AdcIrqFlag |= ADC_AWD1_IRQ_BIT;
+        m_u8AdcIrqFlag |= ADC_AWD1_IRQ_BIT;
     }
 #endif // #ifdef AWD_COMBINATION_MODE
 }
@@ -461,8 +446,9 @@ static void AdcSetChannelPinAnalogMode(uint16_t u16Channel)
  */
 static void AdcSetPinAnalogMode(uint8_t u8PinNbr)
 {
-    uint8_t u8Port;
-    uint8_t u8Pin;
+    uint8_t u8Port = GPIO_PORT_2;
+    uint8_t u8Pin  = GPIO_PIN_0;
+    uint8_t u8Flag = 1u;
 
     switch (u8PinNbr)
     {
@@ -527,10 +513,14 @@ static void AdcSetPinAnalogMode(uint8_t u8PinNbr)
         break;
 
     default:
-        return;
+        u8Flag = 0u;
+        break;
     }
 
-    GPIO_SetFunc(u8Port, u8Pin, GPIO_FUNC_ANIN);
+    if (u8Flag != 0u)
+    {
+        GPIO_SetFunc(u8Port, u8Pin, GPIO_FUNC_1_ANIN);
+    }
 }
 
 /**

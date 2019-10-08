@@ -101,14 +101,14 @@
 #define W25Q_BIT_15                 (1ul << 15)
 
 
-#define W25_CS_PORT                 GPIO_PORT_6
-#define W25_CS_PIN                  GPIO_PIN_3
-#define W25_SCK_PORT                GPIO_PORT_7
-#define W25_SCK_PIN                 GPIO_PIN_3
-#define W25_MOSI_PORT               GPIO_PORT_7
-#define W25_MOSI_PIN                GPIO_PIN_1
-#define W25_MISO_PORT               GPIO_PORT_7
-#define W25_MISO_PIN                GPIO_PIN_2
+#define W25_CS_PORT                 (GPIO_PORT_6)
+#define W25_CS_PIN                  (GPIO_PIN_3)
+#define W25_SCK_PORT                (GPIO_PORT_7)
+#define W25_SCK_PIN                 (GPIO_PIN_3)
+#define W25_MOSI_PORT               (GPIO_PORT_7)
+#define W25_MOSI_PIN                (GPIO_PIN_1)
+#define W25_MISO_PORT               (GPIO_PORT_7)
+#define W25_MISO_PIN                (GPIO_PIN_2)
 
 #define LOAD_CMD(a, cmd, addr)  do  {                                       \
                                         (a)[0u] = (cmd);                    \
@@ -147,11 +147,11 @@
  * @{
  */
 static void W25InitCsPin(void);
-static void W25Q_WriteCmd(uint8_t u8Cmd, uint8_t *pu8CmdData, uint32_t u32CmdDataLength);
+static void W25Q_WriteCmd(uint8_t u8Cmd, const uint8_t *pu8CmdData, uint32_t u32CmdDataLength);
 static void W25Q_ReadCmd(uint8_t u8Cmd, uint8_t *pu8CmdData, uint32_t u32CmdDataLength,
                          uint8_t *pu8Info, uint8_t u8InfoLength);
 
-static void W25Q_Wt(uint8_t u8Cmd, uint32_t u32Address, uint8_t *pu8Data, uint32_t u32DataLength);
+static void W25Q_Wt(uint8_t u8Cmd, uint32_t u32Address, const uint8_t *pu8Data, uint32_t u32DataLength);
 static void W25Q_Rd(uint8_t u8Cmd, uint32_t u32Address, uint8_t *pu8Data, uint32_t u32DataLength);
 
 static void W25Q_WaitBusy(void);
@@ -159,7 +159,7 @@ static void W25Q_WaitBusy(void);
 static void W25Q_WriteEnable(void);
 static void W25Q_WriteDisable(void);
 
-static void W25Q_WritePage(uint32_t u32Address, uint8_t *pu8Data, uint32_t u32DataLength);
+static void W25Q_WritePage(uint32_t u32Address, const uint8_t *pu8Data, uint32_t u32DataLength);
 /**
  * @}
  */
@@ -191,9 +191,9 @@ void W25Q_Init(stc_w25qxx_t *pstcW25qxx)
     CLK_FcgPeriphClockCmd(CLK_FCG_SPI, Enable);
 
     W25InitCsPin();
-    GPIO_SetFunc(W25_SCK_PORT, W25_SCK_PIN, GPIO_FUNC_SPI);     /* SPI_SCK -- P73 */
-    GPIO_SetFunc(W25_MOSI_PORT, W25_MOSI_PIN, GPIO_FUNC_SPI);   /* SPI_MOSI -- P71 */
-    GPIO_SetFunc(W25_MISO_PORT, W25_MISO_PIN, GPIO_FUNC_SPI);   /* SPI_MISO -- P72 */
+    GPIO_SetFunc(W25_SCK_PORT, W25_SCK_PIN, GPIO_FUNC_4_SPI);     /* SPI_SCK -- P73 */
+    GPIO_SetFunc(W25_MOSI_PORT, W25_MOSI_PIN, GPIO_FUNC_4_SPI);   /* SPI_MOSI -- P71 */
+    GPIO_SetFunc(W25_MISO_PORT, W25_MISO_PIN, GPIO_FUNC_4_SPI);   /* SPI_MISO -- P72 */
 
     /* Configuration SPI structure */
     stcspiInit.u32WireMode          = SPI_WIRE_3;
@@ -302,7 +302,7 @@ void W25Q_PowerDown(void)
 {
     W25Q_WriteCmd(W25Q_POWER_DOWN, NULL, 0u);
 
-    DDL_Delay1ms(1);
+    W25Q_DELAY_MS(1u);
 }
 
 /**
@@ -314,7 +314,7 @@ void W25Q_ReleasePowerDown(void)
 {
     W25Q_WriteCmd(W25Q_RELEASE_POWER_DOWN, NULL, 0u);
 
-    W25Q_DELAY_MS(1);
+    W25Q_DELAY_MS(1u);
 }
 
 /**
@@ -365,14 +365,14 @@ void W25Q_EraseBlock(uint32_t u32BlockAddress)
  * @param  [in]  u32NumByteToWrite  Buffer size in bytes.
  * @retval None
  */
-void W25Q_WriteData(uint32_t u32Address, uint8_t *pu8WriteBuf, uint32_t u32NumByteToWrite)
+void W25Q_WriteData(uint32_t u32Address, const uint8_t *pu8WriteBuf, uint32_t u32NumByteToWrite)
 {
     uint32_t u32SecAddr;
     uint32_t u32SecStart;
     uint32_t u32SecStop;
     uint32_t u32PageRemain;
     uint32_t u32PageAddr;
-    uint8_t *pu8Wt;
+    const uint8_t *pu8Wt;
 
     u32SecStart = u32Address / W25Q_SIZE_SECTOR;
     u32SecStop  = (u32Address + u32NumByteToWrite) / W25Q_SIZE_SECTOR;
@@ -451,7 +451,7 @@ static void W25InitCsPin(void)
  * @param  [in]  u32CmdDataLength   The length of the command data in bytes.
  * @retval None
  */
-static void W25Q_WriteCmd(uint8_t u8Cmd, uint8_t *pu8CmdData, uint32_t u32CmdDataLength)
+static void W25Q_WriteCmd(uint8_t u8Cmd, const uint8_t *pu8CmdData, uint32_t u32CmdDataLength)
 {
     W25Q_CS_ACTIVE();
     SPI_Transmit(&u8Cmd, 1u);
@@ -474,7 +474,7 @@ static void W25Q_ReadCmd(uint8_t u8Cmd, uint8_t *pu8CmdData, uint32_t u32CmdData
     W25Q_CS_ACTIVE();
     SPI_Transmit(&u8Cmd, 1u);
     SPI_Transmit(pu8CmdData, u32CmdDataLength);
-    SPI_Receive(pu8Info, u8InfoLength);
+    SPI_Receive(pu8Info, (uint32_t)u8InfoLength);
     W25Q_CS_INACTIVE();
 }
 
@@ -486,7 +486,7 @@ static void W25Q_ReadCmd(uint8_t u8Cmd, uint8_t *pu8CmdData, uint32_t u32CmdData
  * @param  [in]  u32DataLength      The length of the data in bytes.
  * @retval None
  */
-static void W25Q_Wt(uint8_t u8Cmd, uint32_t u32Address, uint8_t *pu8Data, uint32_t u32DataLength)
+static void W25Q_Wt(uint8_t u8Cmd, uint32_t u32Address, const uint8_t *pu8Data, uint32_t u32DataLength)
 {
     uint8_t au8Cmd[4u];
 
@@ -545,7 +545,10 @@ static void W25Q_WriteDisable(void)
  */
 static void W25Q_WaitBusy(void)
 {
-    while ((W25Q_ReadStatus() & W25Q_ST_BUSY) == W25Q_ST_BUSY);
+    while ((W25Q_ReadStatus() & W25Q_ST_BUSY) == W25Q_ST_BUSY)
+    {
+        ;
+    }
 }
 
 /**
@@ -555,7 +558,7 @@ static void W25Q_WaitBusy(void)
  * @param  [in]  u32DataLength      Size of the buffer in bytes.
  * @retval None
  */
-static void W25Q_WritePage(uint32_t u32Address, uint8_t *pu8Data, uint32_t u32DataLength)
+static void W25Q_WritePage(uint32_t u32Address, const uint8_t *pu8Data, uint32_t u32DataLength)
 {
     W25Q_WriteEnable();
     W25Q_Wt(W25Q_PAGE_PROGRAM, u32Address, pu8Data, u32DataLength);

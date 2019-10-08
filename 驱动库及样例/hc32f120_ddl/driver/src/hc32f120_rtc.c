@@ -115,23 +115,23 @@
 (   (RTC_HOUR12_AM == (x))                      ||                             \
     (RTC_HOUR12_PM == (x)))
 
-#define IS_RTC_YEAR(x)                          ((x) <= 99)
+#define IS_RTC_YEAR(x)                          ((x) <= 99u)
 
-#define IS_RTC_MONTH(x)                         (((x) >= 1) && ((x) <= 12))
+#define IS_RTC_MONTH(x)                         (((x) >= 1u) && ((x) <= 12u))
 
-#define IS_RTC_DAY(x)                           (((x) >= 1) && ((x) <= 31))
+#define IS_RTC_DAY(x)                           (((x) >= 1u) && ((x) <= 31u))
 
-#define IS_RTC_HOUR12(x)                        (((x) >= 1) && ((x) <= 12))
+#define IS_RTC_HOUR12(x)                        (((x) >= 1u) && ((x) <= 12u))
 
-#define IS_RTC_HOUR24(x)                        ((x) <= 23)
+#define IS_RTC_HOUR24(x)                        ((x) <= 23u)
 
-#define IS_RTC_MINUTE(x)                        ((x) <= 59)
+#define IS_RTC_MINUTE(x)                        ((x) <= 59u)
 
-#define IS_RTC_SECOND(x)                        ((x) <= 59)
+#define IS_RTC_SECOND(x)                        ((x) <= 59u)
 
-#define IS_RTC_WEEKDAY(x)                       ((x) <= 6)
+#define IS_RTC_WEEKDAY(x)                       ((x) <= 6u)
 
-#define IS_RTC_ALARM_WEEKDAY(x)                 ((x) <= 0x7F)
+#define IS_RTC_ALARM_WEEKDAY(x)                 ((x) <= 0x7Fu)
 
 #define IS_RTC_FLAG(x)                                                         \
 (   (RTC_FLAG_PERIOD == (x))                    ||                             \
@@ -146,7 +146,7 @@
 (   (RTC_INT_PERIOD == (x))                     ||                             \
     (RTC_INT_ALARM == (x)))
 
-#define IS_RTC_COMPENSATION_VALUE(x)            ((x) <= 0x1FF)
+#define IS_RTC_COMPENSATION_VALUE(x)            ((x) <= 0x1FFu)
 /**
  * @}
  */
@@ -185,12 +185,12 @@
 en_result_t RTC_DeInit(void)
 {
     uint32_t enRegSta;
-    uint32_t u32Timeout, u32TimeCnt = 0;
+    uint32_t u32Timeout, u32TimeCnt = 0ul;
     en_result_t enRet = Ok;
 
     bM0P_RTC->CR0_b.RESET = Reset;
     /* Waiting for normal count status or end of RTC software reset */
-    u32Timeout = SystemCoreClock >> 8;
+    u32Timeout = SystemCoreClock >> 8u;
     do
     {
         enRegSta = bM0P_RTC->CR0_b.RESET;
@@ -221,33 +221,37 @@ en_result_t RTC_DeInit(void)
  */
 en_result_t RTC_Init(const stc_rtc_init_t *pstcRtcInit)
 {
+    en_result_t enRet = Ok;
+
     if (NULL == pstcRtcInit)
     {
-        return ErrorInvalidParameter;
-    }
-
-    /* Check parameters */
-    DDL_ASSERT(IS_RTC_CLOCK_SOURCE(pstcRtcInit->u8ClockSource));
-    DDL_ASSERT(IS_RTC_HOUR_FORMAT(pstcRtcInit->u8HourFormat));
-    DDL_ASSERT(IS_RTC_PERIOD_INTERRUPT(pstcRtcInit->u8PeriodInterrupt));
-
-    /* RTC CR1 Configuration */
-    MODIFY_REG(M0P_RTC->CR1, (RTC_CR1_PRDS | RTC_CR1_AMPM),
-               (pstcRtcInit->u8PeriodInterrupt | pstcRtcInit->u8HourFormat));
-
-    /* RTC CR3 Configuration */
-    if (RTC_CLOCK_SOURCE_XTAL32 != pstcRtcInit->u8ClockSource)
-    {
-        MODIFY_REG(M0P_RTC->CR3, (RTC_CR3_LRCEN | RTC_CR3_RCKSEL),
-                   (pstcRtcInit->u8ClockSource | RTC_CR3_LRCEN));
+        enRet = ErrorInvalidParameter;
     }
     else
     {
-        MODIFY_REG(M0P_RTC->CR3, (RTC_CR3_LRCEN | RTC_CR3_RCKSEL),
-                   pstcRtcInit->u8ClockSource);
+        /* Check parameters */
+        DDL_ASSERT(IS_RTC_CLOCK_SOURCE(pstcRtcInit->u8ClockSource));
+        DDL_ASSERT(IS_RTC_HOUR_FORMAT(pstcRtcInit->u8HourFormat));
+        DDL_ASSERT(IS_RTC_PERIOD_INTERRUPT(pstcRtcInit->u8PeriodInterrupt));
+
+        /* RTC CR1 Configuration */
+        MODIFY_REG(M0P_RTC->CR1, (RTC_CR1_PRDS | RTC_CR1_AMPM),
+                   ((uint32_t)pstcRtcInit->u8PeriodInterrupt | pstcRtcInit->u8HourFormat));
+
+        /* RTC CR3 Configuration */
+        if (RTC_CLOCK_SOURCE_XTAL32 != pstcRtcInit->u8ClockSource)
+        {
+            MODIFY_REG(M0P_RTC->CR3, (RTC_CR3_LRCEN | RTC_CR3_RCKSEL),
+                       ((uint32_t)pstcRtcInit->u8ClockSource | RTC_CR3_LRCEN));
+        }
+        else
+        {
+            MODIFY_REG(M0P_RTC->CR3, (RTC_CR3_LRCEN | RTC_CR3_RCKSEL),
+                       (uint32_t)pstcRtcInit->u8ClockSource);
+        }
     }
 
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -261,16 +265,20 @@ en_result_t RTC_Init(const stc_rtc_init_t *pstcRtcInit)
  */
 en_result_t RTC_StructInit(stc_rtc_init_t *pstcRtcInit)
 {
+    en_result_t enRet = Ok;
+
     if (NULL == pstcRtcInit)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
+    }
+    else
+    {
+        pstcRtcInit->u8ClockSource = RTC_CLOCK_SOURCE_XTAL32;
+        pstcRtcInit->u8HourFormat = RTC_HOUR_FORMAT_12;
+        pstcRtcInit->u8PeriodInterrupt = RTC_PERIOD_INT_INVALID;
     }
 
-    pstcRtcInit->u8ClockSource = RTC_CLOCK_SOURCE_XTAL32;
-    pstcRtcInit->u8HourFormat = RTC_HOUR_FORMAT_12;
-    pstcRtcInit->u8PeriodInterrupt = RTC_PERIOD_INT_INVALID;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -283,7 +291,7 @@ en_result_t RTC_StructInit(stc_rtc_init_t *pstcRtcInit)
 en_result_t RTC_EnterRwMode(void)
 {
     uint32_t enRegSta;
-    uint32_t u32Timeout, u32TimeCnt = 0;
+    uint32_t u32Timeout, u32TimeCnt = 0ul;
     en_result_t enRet = Ok;
 
     /* Mode switch when RTC is running */
@@ -291,7 +299,7 @@ en_result_t RTC_EnterRwMode(void)
     {
         bM0P_RTC->CR2_b.WAIT = Set;
         /* Waiting for WAITF bit set */
-        u32Timeout = SystemCoreClock >> 8;
+        u32Timeout = SystemCoreClock >> 8u;
         do
         {
             enRegSta = bM0P_RTC->CR2_b.WAITF;
@@ -317,7 +325,7 @@ en_result_t RTC_EnterRwMode(void)
 en_result_t RTC_ExitRwMode(void)
 {
     uint32_t enRegSta;
-    uint32_t u32Timeout, u32TimeCnt = 0;
+    uint32_t u32Timeout, u32TimeCnt = 0ul;
     en_result_t enRet = Ok;
 
     /* Mode switch when RTC is running */
@@ -325,7 +333,7 @@ en_result_t RTC_ExitRwMode(void)
     {
         bM0P_RTC->CR2_b.WAIT = Reset;
         /* Waiting for WAITF bit reset */
-        u32Timeout = SystemCoreClock >> 8;
+        u32Timeout = SystemCoreClock >> 8u;
         do
         {
             enRegSta = bM0P_RTC->CR2_b.WAITF;
@@ -370,11 +378,11 @@ void RTC_PeriodIntConfig(uint8_t u8IntCond)
     }
 
     /* RTC CR1 Configuration */
-    MODIFY_REG(M0P_RTC->CR1, RTC_CR1_PRDS, u8IntCond);
+    MODIFY_REG(M0P_RTC->CR1, RTC_CR1_PRDS, (uint32_t)u8IntCond);
 
     if ((Set == enIntSta) && (Set == enRtcSta))
     {
-        MODIFY_REG(M0P_RTC->CR2, RTC_CR2_PRDF, RTC_CR2_PRDIE);
+        MODIFY_REG(M0P_RTC->CR2, RTC_CR2_PRDF, (uint32_t)RTC_CR2_PRDIE);
     }
 }
 
@@ -388,42 +396,40 @@ void RTC_PeriodIntConfig(uint8_t u8IntCond)
 en_result_t RTC_LowPowerCheck(void)
 {
     uint32_t enRegSta;
-    uint32_t u32Timeout, u32TimeCnt = 0;
+    uint32_t u32Timeout, u32TimeCnt = 0ul;
     en_result_t enRet = Ok;
 
     /* Check RTC work status */
-    if (Reset == bM0P_RTC->CR1_b.START)
+    if (Reset != bM0P_RTC->CR1_b.START)
     {
-        return enRet;
-    }
-
-    bM0P_RTC->CR2_b.WAIT = Set;
-    /* Waiting for RTC WAITF bit set */
-    u32Timeout = SystemCoreClock >> 8;
-    do
-    {
-        enRegSta = bM0P_RTC->CR2_b.WAITF;
-        u32TimeCnt++;
-    } while ((u32TimeCnt < u32Timeout) && (Set != enRegSta));
-
-    if (Set != enRegSta)
-    {
-        enRet = ErrorTimeout;
-    }
-    else
-    {
-        bM0P_RTC->CR2_b.WAIT = Reset;
-        /* Waiting for RTC WAITF bit reset */
-        u32TimeCnt = 0;
+        bM0P_RTC->CR2_b.WAIT = Set;
+        /* Waiting for RTC WAITF bit set */
+        u32Timeout = SystemCoreClock >> 8u;
         do
         {
             enRegSta = bM0P_RTC->CR2_b.WAITF;
             u32TimeCnt++;
-        } while ((u32TimeCnt < u32Timeout) && (Reset != enRegSta));
+        } while ((u32TimeCnt < u32Timeout) && (Set != enRegSta));
 
-        if (Reset != enRegSta)
+        if (Set != enRegSta)
         {
             enRet = ErrorTimeout;
+        }
+        else
+        {
+            bM0P_RTC->CR2_b.WAIT = Reset;
+            /* Waiting for RTC WAITF bit reset */
+            u32TimeCnt = 0ul;
+            do
+            {
+                enRegSta = bM0P_RTC->CR2_b.WAITF;
+                u32TimeCnt++;
+            } while ((u32TimeCnt < u32Timeout) && (Reset != enRegSta));
+
+            if (Reset != enRegSta)
+            {
+                enRet = ErrorTimeout;
+            }
         }
     }
 
@@ -441,8 +447,8 @@ void RTC_SetClkCompenValue(uint16_t u16CompenVal)
     /* Check parameters */
     DDL_ASSERT(IS_RTC_COMPENSATION_VALUE(u16CompenVal));
 
-    bM0P_RTC->ERRCRH_b.COMP8 = (u16CompenVal >> 8) & 0x01;
-    WRITE_REG(M0P_RTC->ERRCRL, (u16CompenVal & 0x00FF));
+    bM0P_RTC->ERRCRH_b.COMP8 = ((uint32_t)u16CompenVal >> 8u) & 0x01u;
+    WRITE_REG(M0P_RTC->ERRCRL, ((uint32_t)u16CompenVal & 0x00FFu));
 }
 
 /**
@@ -459,56 +465,55 @@ void RTC_SetClkCompenValue(uint16_t u16CompenVal)
  *           - Error: Set date failed
  *           - ErrorInvalidParameter: Invalid parameter
  */
-en_result_t RTC_SetDate(uint8_t u8Format, const stc_rtc_date_t *pstcRtcDate)
+en_result_t RTC_SetDate(uint8_t u8Format, stc_rtc_date_t *pstcRtcDate)
 {
     en_result_t enRet = Ok;
 
     if (NULL == pstcRtcDate)
     {
-        return ErrorInvalidParameter;
-    }
-    /* Check parameters */
-    DDL_ASSERT(IS_RTC_DATA_FORMAT(u8Format));
-
-    if (RTC_DATA_FORMAT_DEC == u8Format)
-    {
-        DDL_ASSERT(IS_RTC_YEAR(pstcRtcDate->u8Year));
-        DDL_ASSERT(IS_RTC_MONTH(pstcRtcDate->u8Month));
-        DDL_ASSERT(IS_RTC_DAY(pstcRtcDate->u8Day));
+        enRet = ErrorInvalidParameter;
     }
     else
     {
-        DDL_ASSERT(IS_RTC_YEAR(BCD2DEC(pstcRtcDate->u8Year)));
-        DDL_ASSERT(IS_RTC_MONTH(BCD2DEC(pstcRtcDate->u8Month)));
-        DDL_ASSERT(IS_RTC_DAY(BCD2DEC(pstcRtcDate->u8Day)));
-    }
-    DDL_ASSERT(IS_RTC_WEEKDAY(pstcRtcDate->u8Weekday));
-
-    /* Enter read/write mode */
-    if (Ok != RTC_EnterRwMode())
-    {
-        enRet = Error;
-    }
-    else
-    {
-        if (RTC_DATA_FORMAT_DEC == u8Format)
+        /* Check parameters */
+        DDL_ASSERT(IS_RTC_DATA_FORMAT(u8Format));
+        if (RTC_DATA_FORMAT_BCD == u8Format)
         {
-            WRITE_REG(M0P_RTC->YEAR, DEC2BCD(pstcRtcDate->u8Year));
-            WRITE_REG(M0P_RTC->MON, DEC2BCD(pstcRtcDate->u8Month));
-            WRITE_REG(M0P_RTC->DAY, DEC2BCD(pstcRtcDate->u8Day));
+            DDL_ASSERT(IS_RTC_YEAR(pstcRtcDate->u8Year));
+            DDL_ASSERT(IS_RTC_MONTH(pstcRtcDate->u8Month));
+            DDL_ASSERT(IS_RTC_DAY(pstcRtcDate->u8Day));
         }
         else
         {
+            DDL_ASSERT(IS_RTC_YEAR(BCD2DEC(pstcRtcDate->u8Year)));
+            DDL_ASSERT(IS_RTC_MONTH(BCD2DEC(pstcRtcDate->u8Month)));
+            DDL_ASSERT(IS_RTC_DAY(BCD2DEC(pstcRtcDate->u8Day)));
+        }
+        DDL_ASSERT(IS_RTC_WEEKDAY(pstcRtcDate->u8Weekday));
+
+        /* Enter read/write mode */
+        if (Ok != RTC_EnterRwMode())
+        {
+            enRet = Error;
+        }
+        else
+        {
+            if (RTC_DATA_FORMAT_DEC == u8Format)
+            {
+                pstcRtcDate->u8Year = DEC2BCD((uint32_t)pstcRtcDate->u8Year);
+                pstcRtcDate->u8Month = DEC2BCD((uint32_t)pstcRtcDate->u8Month);
+                pstcRtcDate->u8Day = DEC2BCD((uint32_t)pstcRtcDate->u8Day);
+            }
             WRITE_REG(M0P_RTC->YEAR, pstcRtcDate->u8Year);
             WRITE_REG(M0P_RTC->MON, pstcRtcDate->u8Month);
             WRITE_REG(M0P_RTC->DAY, pstcRtcDate->u8Day);
-        }
-        WRITE_REG(M0P_RTC->WEEK, pstcRtcDate->u8Weekday);
+            WRITE_REG(M0P_RTC->WEEK, pstcRtcDate->u8Weekday);
 
-        /* Exit read/write mode */
-        if (Ok != RTC_ExitRwMode())
-        {
-            enRet = Error;
+            /* Exit read/write mode */
+            if (Ok != RTC_ExitRwMode())
+            {
+                enRet = Error;
+            }
         }
     }
 
@@ -526,18 +531,22 @@ en_result_t RTC_SetDate(uint8_t u8Format, const stc_rtc_date_t *pstcRtcDate)
  */
 en_result_t RTC_DateStructInit(stc_rtc_date_t *pstcRtcDate)
 {
+    en_result_t enRet = Ok;
+
     if (NULL == pstcRtcDate)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
+    }
+    else
+    {
+        /* xx00 January 01 Monday */
+        pstcRtcDate->u8Year = 0u;
+        pstcRtcDate->u8Month = RTC_MONTH_JANUARY;
+        pstcRtcDate->u8Day = 1u;
+        pstcRtcDate->u8Weekday = RTC_WEEKDAY_MONDAY;
     }
 
-    /* xx00 January 01 Monday */
-    pstcRtcDate->u8Year = 0;
-    pstcRtcDate->u8Month = RTC_MONTH_JANUARY;
-    pstcRtcDate->u8Day = 1;
-    pstcRtcDate->u8Weekday = RTC_WEEKDAY_MONDAY;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -560,36 +569,39 @@ en_result_t RTC_GetDate(uint8_t u8Format, stc_rtc_date_t *pstcRtcDate)
 
     if (NULL == pstcRtcDate)
     {
-        return ErrorInvalidParameter;
-    }
-    /* Check parameters */
-    DDL_ASSERT(IS_RTC_DATA_FORMAT(u8Format));
-
-    /* Enter read/write mode */
-    if (Ok != RTC_EnterRwMode())
-    {
-        enRet = Error;
+        enRet = ErrorInvalidParameter;
     }
     else
     {
-        /* Get RTC date registers */
-        pstcRtcDate->u8Year = READ_REG(M0P_RTC->YEAR);
-        pstcRtcDate->u8Month = READ_REG(M0P_RTC->MON);
-        pstcRtcDate->u8Day = READ_REG(M0P_RTC->DAY);
-        pstcRtcDate->u8Weekday = READ_REG(M0P_RTC->WEEK);
+        /* Check parameters */
+        DDL_ASSERT(IS_RTC_DATA_FORMAT(u8Format));
 
-        /* Check decimal format*/
-        if (RTC_DATA_FORMAT_DEC == u8Format)
-        {
-            pstcRtcDate->u8Year = BCD2DEC(pstcRtcDate->u8Year);
-            pstcRtcDate->u8Month = BCD2DEC(pstcRtcDate->u8Month);
-            pstcRtcDate->u8Day = BCD2DEC(pstcRtcDate->u8Day);
-        }
-
-        /* exit read/write mode */
-        if (Ok != RTC_ExitRwMode())
+        /* Enter read/write mode */
+        if (Ok != RTC_EnterRwMode())
         {
             enRet = Error;
+        }
+        else
+        {
+            /* Get RTC date registers */
+            pstcRtcDate->u8Year = (uint8_t)READ_REG(M0P_RTC->YEAR);
+            pstcRtcDate->u8Month = (uint8_t)READ_REG(M0P_RTC->MON);
+            pstcRtcDate->u8Day = (uint8_t)READ_REG(M0P_RTC->DAY);
+            pstcRtcDate->u8Weekday = (uint8_t)READ_REG(M0P_RTC->WEEK);
+
+            /* Check decimal format*/
+            if (RTC_DATA_FORMAT_DEC == u8Format)
+            {
+                pstcRtcDate->u8Year = BCD2DEC(pstcRtcDate->u8Year);
+                pstcRtcDate->u8Month = BCD2DEC(pstcRtcDate->u8Month);
+                pstcRtcDate->u8Day = BCD2DEC(pstcRtcDate->u8Day);
+            }
+
+            /* exit read/write mode */
+            if (Ok != RTC_ExitRwMode())
+            {
+                enRet = Error;
+            }
         }
     }
 
@@ -610,73 +622,65 @@ en_result_t RTC_GetDate(uint8_t u8Format, stc_rtc_date_t *pstcRtcDate)
  *           - Error: Set time failed
  *           - ErrorInvalidParameter: Invalid parameter
  */
-en_result_t RTC_SetTime(uint8_t u8Format, const stc_rtc_time_t *pstcRtcTime)
+en_result_t RTC_SetTime(uint8_t u8Format, stc_rtc_time_t *pstcRtcTime)
 {
     en_result_t enRet = Ok;
 
     if (NULL == pstcRtcTime)
     {
-        return ErrorInvalidParameter;
-    }
-    /* Check parameters */
-    DDL_ASSERT(IS_RTC_DATA_FORMAT(u8Format));
-
-    if (RTC_DATA_FORMAT_DEC == u8Format)
-    {
-        if (RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM)
-        {
-            DDL_ASSERT(IS_RTC_HOUR12(pstcRtcTime->u8Hour));
-            DDL_ASSERT(IS_RTC_HOUR12_AM_PM(pstcRtcTime->u8AmPm));
-        }
-        else
-        {
-            DDL_ASSERT(IS_RTC_HOUR24(pstcRtcTime->u8Hour));
-        }
-        DDL_ASSERT(IS_RTC_MINUTE(pstcRtcTime->u8Minute));
-        DDL_ASSERT(IS_RTC_SECOND(pstcRtcTime->u8Second));
+        enRet = ErrorInvalidParameter;
     }
     else
     {
-        if (RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM)
-        {
-            DDL_ASSERT(IS_RTC_HOUR12(BCD2DEC(pstcRtcTime->u8Hour)));
-            DDL_ASSERT(IS_RTC_HOUR12_AM_PM(pstcRtcTime->u8AmPm));
-        }
-        else
-        {
-            DDL_ASSERT(IS_RTC_HOUR24(BCD2DEC(pstcRtcTime->u8Hour)));
-        }
-        DDL_ASSERT(IS_RTC_MINUTE(BCD2DEC(pstcRtcTime->u8Minute)));
-        DDL_ASSERT(IS_RTC_SECOND(BCD2DEC(pstcRtcTime->u8Second)));
-    }
+        /* Check parameters */
+        DDL_ASSERT(IS_RTC_DATA_FORMAT(u8Format));
 
-    /* Enter read/write mode */
-    if (Ok != RTC_EnterRwMode())
-    {
-        enRet = Error;
-    }
-    else
-    {
         if (RTC_DATA_FORMAT_DEC == u8Format)
         {
-            if ((RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM) &&
-                (RTC_HOUR12_PM == pstcRtcTime->u8AmPm))
+            if (RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM)
             {
-                WRITE_REG(M0P_RTC->HOUR, (DEC2BCD(pstcRtcTime->u8Hour) | RTC_HOUR12_PM));
+                DDL_ASSERT(IS_RTC_HOUR12(pstcRtcTime->u8Hour));
+                DDL_ASSERT(IS_RTC_HOUR12_AM_PM(pstcRtcTime->u8AmPm));
             }
             else
             {
-                WRITE_REG(M0P_RTC->HOUR, DEC2BCD(pstcRtcTime->u8Hour));
+                DDL_ASSERT(IS_RTC_HOUR24(pstcRtcTime->u8Hour));
             }
-            WRITE_REG(M0P_RTC->MIN, DEC2BCD(pstcRtcTime->u8Minute));
-            WRITE_REG(M0P_RTC->SEC, DEC2BCD(pstcRtcTime->u8Second));
+            DDL_ASSERT(IS_RTC_MINUTE(pstcRtcTime->u8Minute));
+            DDL_ASSERT(IS_RTC_SECOND(pstcRtcTime->u8Second));
         }
         else
         {
+            if (RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM)
+            {
+                DDL_ASSERT(IS_RTC_HOUR12(BCD2DEC(pstcRtcTime->u8Hour)));
+                DDL_ASSERT(IS_RTC_HOUR12_AM_PM(pstcRtcTime->u8AmPm));
+            }
+            else
+            {
+                DDL_ASSERT(IS_RTC_HOUR24(BCD2DEC(pstcRtcTime->u8Hour)));
+            }
+            DDL_ASSERT(IS_RTC_MINUTE(BCD2DEC(pstcRtcTime->u8Minute)));
+            DDL_ASSERT(IS_RTC_SECOND(BCD2DEC(pstcRtcTime->u8Second)));
+        }
+
+        /* Enter read/write mode */
+        if (Ok != RTC_EnterRwMode())
+        {
+            enRet = Error;
+        }
+        else
+        {
+            if (RTC_DATA_FORMAT_DEC == u8Format)
+            {
+                pstcRtcTime->u8Hour = DEC2BCD((uint32_t)pstcRtcTime->u8Hour);
+                pstcRtcTime->u8Minute = DEC2BCD((uint32_t)pstcRtcTime->u8Minute);
+                pstcRtcTime->u8Second = DEC2BCD((uint32_t)pstcRtcTime->u8Second);
+            }
             if ((RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM) &&
                 (RTC_HOUR12_PM == pstcRtcTime->u8AmPm))
             {
-                WRITE_REG(M0P_RTC->HOUR, (pstcRtcTime->u8Hour | RTC_HOUR12_PM));
+                WRITE_REG(M0P_RTC->HOUR, ((uint32_t)pstcRtcTime->u8Hour | RTC_HOUR12_PM));
             }
             else
             {
@@ -684,12 +688,12 @@ en_result_t RTC_SetTime(uint8_t u8Format, const stc_rtc_time_t *pstcRtcTime)
             }
             WRITE_REG(M0P_RTC->MIN, pstcRtcTime->u8Minute);
             WRITE_REG(M0P_RTC->SEC, pstcRtcTime->u8Second);
-        }
 
-        /* Exit read/write mode */
-        if (Ok != RTC_ExitRwMode())
-        {
-            enRet = Error;
+            /* Exit read/write mode */
+            if (Ok != RTC_ExitRwMode())
+            {
+                enRet = Error;
+            }
         }
     }
 
@@ -707,18 +711,22 @@ en_result_t RTC_SetTime(uint8_t u8Format, const stc_rtc_time_t *pstcRtcTime)
  */
 en_result_t RTC_TimeStructInit(stc_rtc_time_t *pstcRtcTime)
 {
+    en_result_t enRet = Ok;
+
     if (NULL == pstcRtcTime)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
+    }
+    else
+    {
+        /* Am: 06h:00m:00s */
+        pstcRtcTime->u8Hour = 6u;
+        pstcRtcTime->u8Minute = 0u;
+        pstcRtcTime->u8Second = 0u;
+        pstcRtcTime->u8AmPm = RTC_HOUR12_AM;
     }
 
-    /* Am: 06h:00m:00s */
-    pstcRtcTime->u8Hour = 6;
-    pstcRtcTime->u8Minute = 0;
-    pstcRtcTime->u8Second = 0;
-    pstcRtcTime->u8AmPm = RTC_HOUR12_AM;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -741,47 +749,50 @@ en_result_t RTC_GetTime(uint8_t u8Format, stc_rtc_time_t *pstcRtcTime)
 
     if (NULL == pstcRtcTime)
     {
-        return ErrorInvalidParameter;
-    }
-    /* Check parameters */
-    DDL_ASSERT(IS_RTC_DATA_FORMAT(u8Format));
-
-    /* Enter read/write mode */
-    if (Ok != RTC_EnterRwMode())
-    {
-        enRet = Error;
+        enRet = ErrorInvalidParameter;
     }
     else
     {
-        /* Get RTC time registers */
-        pstcRtcTime->u8Hour = READ_REG(M0P_RTC->HOUR);
-        pstcRtcTime->u8Minute = READ_REG(M0P_RTC->MIN);
-        pstcRtcTime->u8Second = READ_REG(M0P_RTC->SEC);
-        if (RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM)
-        {
-            if (RTC_HOUR12_PM == (pstcRtcTime->u8Hour & RTC_HOUR12_PM))
-            {
-                CLEAR_BIT(pstcRtcTime->u8Hour, RTC_HOUR12_PM);
-                pstcRtcTime->u8AmPm = RTC_HOUR12_PM;
-            }
-            else
-            {
-                pstcRtcTime->u8AmPm = RTC_HOUR12_AM;
-            }
-        }
+        /* Check parameters */
+        DDL_ASSERT(IS_RTC_DATA_FORMAT(u8Format));
 
-        /* Check decimal format*/
-        if (RTC_DATA_FORMAT_DEC == u8Format)
-        {
-            pstcRtcTime->u8Hour = BCD2DEC(pstcRtcTime->u8Hour);
-            pstcRtcTime->u8Minute = BCD2DEC(pstcRtcTime->u8Minute);
-            pstcRtcTime->u8Second = BCD2DEC(pstcRtcTime->u8Second);
-        }
-
-        /* exit read/write mode */
-        if (Ok != RTC_ExitRwMode())
+        /* Enter read/write mode */
+        if (Ok != RTC_EnterRwMode())
         {
             enRet = Error;
+        }
+        else
+        {
+            /* Get RTC time registers */
+            pstcRtcTime->u8Hour = (uint8_t)READ_REG(M0P_RTC->HOUR);
+            pstcRtcTime->u8Minute = (uint8_t)READ_REG(M0P_RTC->MIN);
+            pstcRtcTime->u8Second = (uint8_t)READ_REG(M0P_RTC->SEC);
+            if (RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM)
+            {
+                if (RTC_HOUR12_PM == (pstcRtcTime->u8Hour & RTC_HOUR12_PM))
+                {
+                    pstcRtcTime->u8Hour &= (uint8_t)(~RTC_HOUR12_PM);
+                    pstcRtcTime->u8AmPm = RTC_HOUR12_PM;
+                }
+                else
+                {
+                    pstcRtcTime->u8AmPm = RTC_HOUR12_AM;
+                }
+            }
+
+            /* Check decimal format*/
+            if (RTC_DATA_FORMAT_DEC == u8Format)
+            {
+                pstcRtcTime->u8Hour = BCD2DEC(pstcRtcTime->u8Hour);
+                pstcRtcTime->u8Minute = BCD2DEC(pstcRtcTime->u8Minute);
+                pstcRtcTime->u8Second = BCD2DEC(pstcRtcTime->u8Second);
+            }
+
+            /* exit read/write mode */
+            if (Ok != RTC_ExitRwMode())
+            {
+                enRet = Error;
+            }
         }
     }
 
@@ -801,73 +812,67 @@ en_result_t RTC_GetTime(uint8_t u8Format, stc_rtc_time_t *pstcRtcTime)
  *           - Ok: Set RTC alarm time success
  *           - ErrorInvalidParameter: Invalid parameter
  */
-en_result_t RTC_SetAlarm(uint8_t u8Format, const stc_rtc_alarm_t *pstcRtcAlarm)
+en_result_t RTC_SetAlarm(uint8_t u8Format, stc_rtc_alarm_t *pstcRtcAlarm)
 {
+    en_result_t enRet = Ok;
+
     if (NULL == pstcRtcAlarm)
     {
-        return ErrorInvalidParameter;
-    }
-    /* Check parameters */
-    DDL_ASSERT(IS_RTC_DATA_FORMAT(u8Format));
-
-    if (RTC_DATA_FORMAT_DEC == u8Format)
-    {
-        if (RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM)
-        {
-            DDL_ASSERT(IS_RTC_HOUR12(pstcRtcAlarm->u8AlarmHour));
-            DDL_ASSERT(IS_RTC_HOUR12_AM_PM(pstcRtcAlarm->u8AlarmAmPm));
-        }
-        else
-        {
-            DDL_ASSERT(IS_RTC_HOUR24(pstcRtcAlarm->u8AlarmHour));
-        }
-        DDL_ASSERT(IS_RTC_MINUTE(pstcRtcAlarm->u8AlarmMinute));
+        enRet = ErrorInvalidParameter;
     }
     else
     {
-        if (RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM)
-        {
-            DDL_ASSERT(IS_RTC_HOUR12(BCD2DEC(pstcRtcAlarm->u8AlarmHour)));
-            DDL_ASSERT(IS_RTC_HOUR12_AM_PM(pstcRtcAlarm->u8AlarmAmPm));
-        }
-        else
-        {
-            DDL_ASSERT(IS_RTC_HOUR24(BCD2DEC(pstcRtcAlarm->u8AlarmHour)));
-        }
-        DDL_ASSERT(IS_RTC_MINUTE(BCD2DEC(pstcRtcAlarm->u8AlarmMinute)));
-    }
-    DDL_ASSERT(IS_RTC_ALARM_WEEKDAY(pstcRtcAlarm->u8AlarmWeekday));
+        /* Check parameters */
+        DDL_ASSERT(IS_RTC_DATA_FORMAT(u8Format));
 
-    /* Configure alarm registers */
-    if (RTC_DATA_FORMAT_DEC == u8Format)
-    {
-        if ((RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM) &&
-            (RTC_HOUR12_PM == pstcRtcAlarm->u8AlarmAmPm))
+        if (RTC_DATA_FORMAT_DEC == u8Format)
         {
-            WRITE_REG(M0P_RTC->ALMHOUR, (DEC2BCD(pstcRtcAlarm->u8AlarmHour) | RTC_HOUR12_PM));
+            if (RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM)
+            {
+                DDL_ASSERT(IS_RTC_HOUR12(pstcRtcAlarm->u8AlarmHour));
+                DDL_ASSERT(IS_RTC_HOUR12_AM_PM(pstcRtcAlarm->u8AlarmAmPm));
+            }
+            else
+            {
+                DDL_ASSERT(IS_RTC_HOUR24(pstcRtcAlarm->u8AlarmHour));
+            }
+            DDL_ASSERT(IS_RTC_MINUTE(pstcRtcAlarm->u8AlarmMinute));
         }
         else
         {
-            WRITE_REG(M0P_RTC->ALMHOUR, DEC2BCD(pstcRtcAlarm->u8AlarmHour));
+            if (RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM)
+            {
+                DDL_ASSERT(IS_RTC_HOUR12(BCD2DEC(pstcRtcAlarm->u8AlarmHour)));
+                DDL_ASSERT(IS_RTC_HOUR12_AM_PM(pstcRtcAlarm->u8AlarmAmPm));
+            }
+            else
+            {
+                DDL_ASSERT(IS_RTC_HOUR24(BCD2DEC(pstcRtcAlarm->u8AlarmHour)));
+            }
+            DDL_ASSERT(IS_RTC_MINUTE(BCD2DEC(pstcRtcAlarm->u8AlarmMinute)));
         }
-        WRITE_REG(M0P_RTC->ALMMIN, DEC2BCD(pstcRtcAlarm->u8AlarmMinute));
-    }
-    else
-    {
+        DDL_ASSERT(IS_RTC_ALARM_WEEKDAY(pstcRtcAlarm->u8AlarmWeekday));
+
+        /* Configure alarm registers */
+        if (RTC_DATA_FORMAT_DEC == u8Format)
+        {
+            pstcRtcAlarm->u8AlarmHour = DEC2BCD((uint32_t)pstcRtcAlarm->u8AlarmHour);
+            pstcRtcAlarm->u8AlarmMinute = DEC2BCD((uint32_t)pstcRtcAlarm->u8AlarmMinute);
+        }
         if ((RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM) &&
             (RTC_HOUR12_PM == pstcRtcAlarm->u8AlarmAmPm))
         {
-            WRITE_REG(M0P_RTC->ALMHOUR, (pstcRtcAlarm->u8AlarmHour | RTC_HOUR12_PM));
+            WRITE_REG(M0P_RTC->ALMHOUR, ((uint32_t)pstcRtcAlarm->u8AlarmHour | RTC_HOUR12_PM));
         }
         else
         {
             WRITE_REG(M0P_RTC->ALMHOUR, pstcRtcAlarm->u8AlarmHour);
         }
         WRITE_REG(M0P_RTC->ALMMIN, pstcRtcAlarm->u8AlarmMinute);
+        WRITE_REG(M0P_RTC->ALMWEEK, pstcRtcAlarm->u8AlarmWeekday);
     }
-    WRITE_REG(M0P_RTC->ALMWEEK, pstcRtcAlarm->u8AlarmWeekday);
 
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -881,18 +886,22 @@ en_result_t RTC_SetAlarm(uint8_t u8Format, const stc_rtc_alarm_t *pstcRtcAlarm)
  */
 en_result_t RTC_AlarmStructInit(stc_rtc_alarm_t *pstcRtcAlarm)
 {
+    en_result_t enRet = Ok;
+
     if (NULL == pstcRtcAlarm)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
+    }
+    else
+    {
+        /* Monday Am: 6h:00m */
+        pstcRtcAlarm->u8AlarmAmPm = RTC_HOUR12_AM;
+        pstcRtcAlarm->u8AlarmHour = 6u;
+        pstcRtcAlarm->u8AlarmMinute = 0u;
+        pstcRtcAlarm->u8AlarmWeekday = RTC_ALARM_WEEKDAY_MONDAY;
     }
 
-    /* Monday Am: 6h:00m */
-    pstcRtcAlarm->u8AlarmAmPm = RTC_HOUR12_AM;
-    pstcRtcAlarm->u8AlarmHour = 6;
-    pstcRtcAlarm->u8AlarmMinute = 0;
-    pstcRtcAlarm->u8AlarmWeekday = RTC_ALARM_WEEKDAY_MONDAY;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -910,38 +919,43 @@ en_result_t RTC_AlarmStructInit(stc_rtc_alarm_t *pstcRtcAlarm)
  */
 en_result_t RTC_GetAlarm(uint8_t u8Format, stc_rtc_alarm_t *pstcRtcAlarm)
 {
+    en_result_t enRet = Ok;
+
     if (NULL == pstcRtcAlarm)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
     }
-    /* Check parameters */
-    DDL_ASSERT(IS_RTC_DATA_FORMAT(u8Format));
-
-    /* Get RTC date and time register */
-    pstcRtcAlarm->u8AlarmWeekday = READ_REG(M0P_RTC->ALMWEEK);
-    pstcRtcAlarm->u8AlarmMinute = READ_REG(M0P_RTC->ALMMIN);
-    pstcRtcAlarm->u8AlarmHour = READ_REG(M0P_RTC->ALMHOUR);
-    if (RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM)
+    else
     {
-        if (RTC_HOUR12_PM == (pstcRtcAlarm->u8AlarmHour & RTC_HOUR12_PM))
+        /* Check parameters */
+        DDL_ASSERT(IS_RTC_DATA_FORMAT(u8Format));
+
+        /* Get RTC date and time register */
+        pstcRtcAlarm->u8AlarmWeekday = (uint8_t)READ_REG(M0P_RTC->ALMWEEK);
+        pstcRtcAlarm->u8AlarmMinute = (uint8_t)READ_REG(M0P_RTC->ALMMIN);
+        pstcRtcAlarm->u8AlarmHour = (uint8_t)READ_REG(M0P_RTC->ALMHOUR);
+        if (RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM)
         {
-            CLEAR_BIT(pstcRtcAlarm->u8AlarmHour, RTC_HOUR12_PM);
-            pstcRtcAlarm->u8AlarmAmPm = RTC_HOUR12_PM;
+            if (RTC_HOUR12_PM == (pstcRtcAlarm->u8AlarmHour & RTC_HOUR12_PM))
+            {
+                pstcRtcAlarm->u8AlarmHour &= (uint8_t)(~RTC_HOUR12_PM);
+                pstcRtcAlarm->u8AlarmAmPm = RTC_HOUR12_PM;
+            }
+            else
+            {
+                pstcRtcAlarm->u8AlarmAmPm = RTC_HOUR12_AM;
+            }
         }
-        else
+
+        /* Check decimal format*/
+        if (RTC_DATA_FORMAT_DEC == u8Format)
         {
-            pstcRtcAlarm->u8AlarmAmPm = RTC_HOUR12_AM;
+            pstcRtcAlarm->u8AlarmHour = BCD2DEC(pstcRtcAlarm->u8AlarmHour);
+            pstcRtcAlarm->u8AlarmMinute = BCD2DEC(pstcRtcAlarm->u8AlarmMinute);
         }
     }
 
-    /* Check decimal format*/
-    if (RTC_DATA_FORMAT_DEC == u8Format)
-    {
-        pstcRtcAlarm->u8AlarmHour = BCD2DEC(pstcRtcAlarm->u8AlarmHour);
-        pstcRtcAlarm->u8AlarmMinute = BCD2DEC(pstcRtcAlarm->u8AlarmMinute);
-    }
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -994,7 +1008,7 @@ void RTC_IntCmd(uint8_t u8IntSource, en_functional_state_t enNewSta)
     }
     else
     {
-        CLEAR_BIT(M0P_RTC->CR2, u8IntSource);
+        CLEAR_BIT(M0P_RTC->CR2, (uint32_t)u8IntSource);
     }
 }
 
@@ -1038,7 +1052,7 @@ void RTC_ClearFlag(uint8_t u8Flag)
     /* Check parameters */
     DDL_ASSERT(IS_RTC_FLAG(u8Flag));
 
-    CLEAR_BIT(M0P_RTC->CR2, u8Flag);
+    CLEAR_BIT(M0P_RTC->CR2, (uint32_t)u8Flag);
 }
 
 /**
@@ -1079,7 +1093,7 @@ void RTC_ClearIntFlag(uint8_t u8IntFlag)
     /* Check parameters */
     DDL_ASSERT(IS_RTC_INT_FLAG(u8IntFlag));
 
-    CLEAR_BIT(M0P_RTC->CR2, u8IntFlag);
+    CLEAR_BIT(M0P_RTC->CR2, (uint32_t)u8IntFlag);
 }
 
 /**

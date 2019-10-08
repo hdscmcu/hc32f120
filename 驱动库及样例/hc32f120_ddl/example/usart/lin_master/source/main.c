@@ -95,41 +95,38 @@ typedef struct
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* Key Port/Pin definition */
-#define KEY_PORT                        GPIO_PORT_7
-#define KEY_PIN                         GPIO_PIN_0
+#define KEY_PORT                        (GPIO_PORT_7)
+#define KEY_PIN                         (GPIO_PIN_0)
 
 /* Red LED Port/Pin definition */
-#define LED_R_PORT                      GPIO_PORT_2
-#define LED_R_PIN                       GPIO_PIN_5
-#define LED_R_ON()                      GPIO_ResetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_OFF()                     GPIO_SetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_TOGGLE()                  GPIO_TogglePins(LED_R_PORT, LED_R_PIN)
+#define LED_R_PORT                      (GPIO_PORT_2)
+#define LED_R_PIN                       (GPIO_PIN_5)
+#define LED_R_ON()                      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_OFF()                     (GPIO_SetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_TOGGLE()                  (GPIO_TogglePins(LED_R_PORT, LED_R_PIN))
 
 /* Green LED Port/Pin definition */
-#define LED_G_PORT                      GPIO_PORT_2
-#define LED_G_PIN                       GPIO_PIN_6
-#define LED_G_ON()                      GPIO_ResetPins(LED_G_PORT, LED_G_PIN)
-#define LED_G_OFF()                     GPIO_SetPins(LED_G_PORT, LED_G_PIN)
-#define LED_G_TOGGLE()                  GPIO_TogglePins(LED_G_PORT, LED_G_PIN)
+#define LED_G_PORT                      (GPIO_PORT_2)
+#define LED_G_PIN                       (GPIO_PIN_6)
+#define LED_G_ON()                      (GPIO_ResetPins(LED_G_PORT, LED_G_PIN))
+#define LED_G_OFF()                     (GPIO_SetPins(LED_G_PORT, LED_G_PIN))
+#define LED_G_TOGGLE()                  (GPIO_TogglePins(LED_G_PORT, LED_G_PIN))
 
 /* USART RX/TX Port/Pin definition */
-#define LIN_RX_PORT                     GPIO_PORT_1
-#define LIN_RX_PIN                      GPIO_PIN_6      /* P16: USART1_RX_B */
+#define LIN_RX_PORT                     (GPIO_PORT_1)
+#define LIN_RX_PIN                      (GPIO_PIN_6)      /* P16: USART1_RX_B */
 
-#define LIN_TX_PORT                     GPIO_PORT_1
-#define LIN_TX_PIN                      GPIO_PIN_7      /* P17: USART1_TX_B */
+#define LIN_TX_PORT                     (GPIO_PORT_1)
+#define LIN_TX_PIN                      (GPIO_PIN_7)      /* P17: USART1_TX_B */
 
 /* LIN transceiver chip sleep Port/Pin definition */
-#define LIN_SLEEP_PORT                  GPIO_PORT_1
-#define LIN_SLEEP_PIN                   GPIO_PIN_4      /* P14: LINSLP_N */
+#define LIN_SLEEP_PORT                  (GPIO_PORT_1)
+#define LIN_SLEEP_PIN                   (GPIO_PIN_4)      /* P14: LINSLP_N */
 
 /* Interrupt number definition */
-#define LIN_UNIT_RX_IRQn                Int010_IRQn
-#define LIN_UNIT_ERR_IRQn               Int008_IRQn
-#define LIN_TIMERB_UNIT_CMP_IRQn        Int016_IRQn
-
-/* Frame data buffer size */
-#define FRAME_DATA_BUF_SIZE(x)          (sizeof (x.au8Data))
+#define LIN_UNIT_RX_IRQn                (Int010_IRQn)
+#define LIN_UNIT_ERR_IRQn               (Int008_IRQn)
+#define LIN_TIMERB_UNIT_CMP_IRQn        (Int016_IRQn)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -140,47 +137,11 @@ typedef struct
  ******************************************************************************/
 static void SystemClockConfig(void);
 static void LedConfig(void);
-static en_key_state_t KeyGetState(stc_key_t *pstcKey);
+static en_key_state_t KeyGetState(const stc_key_t *pstcKey);
 
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-static stc_key_t m_stcKeySw2 = {
-    .u8Port = KEY_PORT,
-    .u8Pin = KEY_PIN,
-    .enPressPinState = Pin_Reset,
-};
-
-static stc_lin_frame_t m_stcTxFrame = {
-    .u8PID = 0x01 | LIN_FRAME_DATA_BYTES_8,
-    .u8Length = 8,
-};
-
-static stc_lin_frame_t m_stcRxFrame = {
-    .u8PID = 0x01 | LIN_FRAME_DATA_BYTES_8,
-    .u8Length = 8,
-};
-
-static stc_lin_hanlde_t m_stcLinHandle = {
-    .stcLinInit = {
-        .u32Baudrate = 9600ul,
-        .u32ClkMode = USART_INTCLK_NONE_OUTPUT,
-        .u32ClkPrescaler = USART_CLK_PRESCALER_DIV4,
-        .u32OversamplingBits = USART_OVERSAMPLING_BITS_8,
-        .u32SbDetectPolarity = USART_SB_DETECT_FALLING,
-    },
-    .stcPinCfg = {
-        .u8RxPort = LIN_RX_PORT,
-        .u8RxPin = LIN_RX_PIN,
-        .u8TxPort = LIN_TX_PORT,
-        .u8TxPin = LIN_TX_PIN,
-    },
-    .stcIrqnCfg = {
-        .UsartRxIRQn = LIN_UNIT_RX_IRQn,
-        .UsartErrIRQn = LIN_UNIT_ERR_IRQn,
-    },
-    .enLinState = LinStateWakeup,
-};
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -230,25 +191,28 @@ static void LedConfig(void)
  *           - KeyIdle: Key isn't pressed.
  *           - KeyRelease: Released after key is pressed.
  */
-static en_key_state_t KeyGetState(stc_key_t *pstcKey)
+static en_key_state_t KeyGetState(const stc_key_t *pstcKey)
 {
-    DDL_ASSERT(NULL != pstcKey);
+    en_key_state_t enKeyState = KeyIdle;
 
-    if (pstcKey->enPressPinState != GPIO_ReadInputPortPin(pstcKey->u8Port, pstcKey->u8Pin))
+    if (NULL != pstcKey)
     {
-        return KeyIdle;
+        if (pstcKey->enPressPinState == GPIO_ReadInputPortPin(pstcKey->u8Port, pstcKey->u8Pin))
+        {
+            DDL_Delay1ms(20ul);
+
+            if (pstcKey->enPressPinState == GPIO_ReadInputPortPin(pstcKey->u8Port, pstcKey->u8Pin))
+            {
+                while (pstcKey->enPressPinState == GPIO_ReadInputPortPin(pstcKey->u8Port, pstcKey->u8Pin))
+                {
+                    ;
+                }
+                enKeyState = KeyRelease;
+            }
+        }
     }
 
-    DDL_Delay1ms(20);    /* Key anti-shake */
-
-    if (pstcKey->enPressPinState != GPIO_ReadInputPortPin(pstcKey->u8Port, pstcKey->u8Pin))
-    {
-        return KeyIdle;
-    }
-
-    while (pstcKey->enPressPinState == GPIO_ReadInputPortPin(pstcKey->u8Port, pstcKey->u8Pin));
-
-    return KeyRelease;
+    return enKeyState;
 }
 
 /**
@@ -260,6 +224,41 @@ int32_t main(void)
 {
     uint8_t i;
     stc_gpio_init_t stcGpioInit = {0};
+    const stc_key_t stcKeySw2 = {
+        .u8Port = KEY_PORT,
+        .u8Pin = KEY_PIN,
+        .enPressPinState = Pin_Reset,
+    };
+    static stc_lin_frame_t m_stcTxFrame = {
+        .u8PID = (0x01u | (uint8_t)LIN_FRAME_DATA_BYTES_8),
+        .u8Length = 8u,
+    };
+
+    static stc_lin_frame_t m_stcRxFrame = {
+        .u8PID = (0x01u | (uint8_t)LIN_FRAME_DATA_BYTES_8),
+        .u8Length = 8u,
+    };
+
+    static stc_lin_hanlde_t m_stcLinHandle = {
+        .stcLinInit = {
+            .u32Baudrate = 9600ul,
+            .u32ClkMode = USART_INTCLK_NONE_OUTPUT,
+            .u32ClkPrescaler = USART_CLK_PRESCALER_DIV4,
+            .u32OversamplingBits = USART_OVERSAMPLING_BITS_8,
+            .u32SbDetectPolarity = USART_SB_DETECT_FALLING,
+        },
+        .stcPinCfg = {
+            .u8RxPort = LIN_RX_PORT,
+            .u8RxPin = LIN_RX_PIN,
+            .u8TxPort = LIN_TX_PORT,
+            .u8TxPin = LIN_TX_PIN,
+        },
+        .stcIrqnCfg = {
+            .UsartRxIRQn = LIN_UNIT_RX_IRQn,
+            .UsartErrIRQn = LIN_UNIT_ERR_IRQn,
+        },
+        .enLinState = LinStateWakeup,
+    };
 
     /* Configure system clock. */
     SystemClockConfig();
@@ -277,13 +276,16 @@ int32_t main(void)
     while (1)
     {
         /* Wait key release */
-        while (KeyRelease !=  KeyGetState(&m_stcKeySw2));
+        while (KeyRelease !=  KeyGetState(&stcKeySw2))
+        {
+            ;
+        }
 
         /* Send wakeup signal */
         LIN_SendWakeupSignal(&m_stcLinHandle);
 
         /* Node must prepare to receive frame in range of 100ms after wakeup signal*/
-        DDL_Delay1ms(100);
+        DDL_Delay1ms(100ul);
 
         /* LIN master send frame */
         LIN_MASTER_SendFrame(&m_stcLinHandle, &m_stcTxFrame);
@@ -292,7 +294,7 @@ int32_t main(void)
         LIN_MASTER_RecFrame(&m_stcLinHandle, &m_stcRxFrame, LIN_REC_WAITING_FOREVER);
 
         /* Compare TX/RX frame data */
-        if (memcmp(m_stcRxFrame.au8Data , m_stcTxFrame.au8Data, FRAME_DATA_BUF_SIZE(m_stcTxFrame)) == 0)
+        if (memcmp(m_stcRxFrame.au8Data , m_stcTxFrame.au8Data, sizeof (m_stcTxFrame.au8Data)) == 0)
         {
             LED_R_OFF();
             LED_G_TOGGLE();
@@ -303,7 +305,7 @@ int32_t main(void)
             LED_G_OFF();
         }
 
-        for (i = 0; i < FRAME_DATA_BUF_SIZE(m_stcTxFrame); i++)
+        for (i = 0u; i < sizeof (m_stcTxFrame.au8Data); i++)
         {
             m_stcTxFrame.au8Data[i]++;
         }

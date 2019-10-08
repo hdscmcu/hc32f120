@@ -107,47 +107,47 @@ typedef struct
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* Key Port/Pin definition */
-#define KEY_PORT                        GPIO_PORT_7
-#define KEY_PIN                         GPIO_PIN_0
+#define KEY_PORT                        (GPIO_PORT_7)
+#define KEY_PIN                         (GPIO_PIN_0)
 
 /* Red LED Port/Pin definition */
-#define LED_R_PORT                      GPIO_PORT_2
-#define LED_R_PIN                       GPIO_PIN_5
-#define LED_R_ON()                      GPIO_ResetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_OFF()                     GPIO_SetPins(LED_R_PORT, LED_R_PIN)
+#define LED_R_PORT                      (GPIO_PORT_2)
+#define LED_R_PIN                       (GPIO_PIN_5)
+#define LED_R_ON()                      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_OFF()                     (GPIO_SetPins(LED_R_PORT, LED_R_PIN))
 
 /* Green LED Port/Pin definition */
-#define LED_G_PORT                      GPIO_PORT_2
-#define LED_G_PIN                       GPIO_PIN_6
-#define LED_G_ON()                      GPIO_ResetPins(LED_G_PORT, LED_G_PIN)
-#define LED_G_OFF()                     GPIO_SetPins(LED_G_PORT, LED_G_PIN)
-#define LED_G_TOGGLE()                  GPIO_TogglePins(LED_G_PORT, LED_G_PIN)
+#define LED_G_PORT                      (GPIO_PORT_2)
+#define LED_G_PIN                       (GPIO_PIN_6)
+#define LED_G_ON()                      (GPIO_ResetPins(LED_G_PORT, LED_G_PIN))
+#define LED_G_OFF()                     (GPIO_SetPins(LED_G_PORT, LED_G_PIN))
+#define LED_G_TOGGLE()                  (GPIO_TogglePins(LED_G_PORT, LED_G_PIN))
 
 /* UART RX/TX Port/Pin definition */
-#define UART_RX_PORT                    GPIO_PORT_0
-#define UART_RX_PIN                     GPIO_PIN_1      /* P01: USART2_RX_B */
+#define UART_RX_PORT                    (GPIO_PORT_0)
+#define UART_RX_PIN                     (GPIO_PIN_1)      /* P01: USART2_RX_B */
 
-#define UART_TX_PORT                    GPIO_PORT_0
-#define UART_TX_PIN                     GPIO_PIN_0      /* P00: USART2_TX_B */
+#define UART_TX_PORT                    (GPIO_PORT_0)
+#define UART_TX_PIN                     (GPIO_PIN_0)      /* P00: USART2_TX_B */
 
 /* UART unit definition */
-#define UART_UNIT                       M0P_USART2
+#define UART_UNIT                       (M0P_USART2)
 
 /* UART unit interrupt definition */
-#define UART_UNIT_ERR_INT               INT_USART_2_EI
-#define UART_UNIT_ERR_IRQn              Int016_IRQn
+#define UART_UNIT_ERR_INT               (INT_USART_2_EI)
+#define UART_UNIT_ERR_IRQn              (Int016_IRQn)
 
-#define UART_UNIT_RX_INT                INT_USART_2_RI
-#define UART_UNIT_RX_IRQn               Int018_IRQn
+#define UART_UNIT_RX_INT                (INT_USART_2_RI)
+#define UART_UNIT_RX_IRQn               (Int018_IRQn)
 
-#define UART_UNIT_TX_INT                INT_USART_2_TI
-#define UART_UNIT_TX_IRQn               Int020_IRQn
+#define UART_UNIT_TX_INT                (INT_USART_2_TI)
+#define UART_UNIT_TX_IRQn               (Int020_IRQn)
 
-#define UART_UNIT_TCI_INT               INT_USART_2_TCI
-#define UART_UNIT_TCI_IRQn              Int022_IRQn
+#define UART_UNIT_TCI_INT               (INT_USART_2_TCI)
+#define UART_UNIT_TCI_IRQn              (Int022_IRQn)
 
 /* Function clock gate definition */
-#define FUNCTION_CLK_GATE               CLK_FCG_UART2
+#define FUNCTION_CLK_GATE               (CLK_FCG_UART2)
 
 /* UART multiple processor ID definition */
 #define UART_MASTER_STATION_ID          (0x20u)
@@ -166,7 +166,7 @@ typedef struct
  ******************************************************************************/
 static void SystemClockConfig(void);
 static void LedConfig(void);
-static en_key_state_t KeyGetState(stc_key_t *pstcKey);
+static en_key_state_t KeyGetState(const stc_key_t *pstcKey);
 static void UartTxIrqCallback(void);
 static void UartTcIrqCallback(void);
 static void UartRxIrqCallback(void);
@@ -179,31 +179,13 @@ static uint32_t UsartGetSilenceModeState(void);
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-static stc_key_t m_stcKeySw2 = {
-    .u8Port = KEY_PORT,
-    .u8Pin = KEY_PIN,
-    .enPressPinState = Pin_Reset,
-};
-
-static uint32_t m_u32UartSilenceMode;
+static uint32_t m_u32UartSilenceMode = 0ul;
 
 static stc_ring_buffer_t m_stcRingBuf = {
-    .u16InIdx = 0,
-    .u16OutIdx = 0,
-    .u16UsedSize = 0,
+    .u16InIdx = 0u,
+    .u16OutIdx = 0u,
+    .u16UsedSize = 0u,
     .u16Capacity = RING_BUFFER_SIZE,
-};
-
-static const stc_uart_multiprocessor_init_t m_stcUartMultiProcessorInit = {
-    .u32Baudrate = 9600,
-    .u32BitDirection = USART_LSB,
-    .u32StopBit = USART_STOP_BITS_1,
-    .u32DataWidth = USART_DATA_WIDTH_BITS_8,
-    .u32ClkMode = USART_INTCLK_NONE_OUTPUT,
-    .u32ClkPrescaler = USART_CLK_PRESCALER_DIV4,
-    .u32OversamplingBits = USART_OVERSAMPLING_BITS_8,
-    .u32NoiseFilterState = USART_NOISE_FILTER_DISABLE,
-    .u32SbDetectPolarity = USART_SB_DETECT_FALLING,
 };
 
 /*******************************************************************************
@@ -254,25 +236,28 @@ static void LedConfig(void)
  *           - KeyIdle: Key isn't pressed.
  *           - KeyRelease: Released after key is pressed.
  */
-static en_key_state_t KeyGetState(stc_key_t *pstcKey)
+static en_key_state_t KeyGetState(const stc_key_t *pstcKey)
 {
-    DDL_ASSERT(NULL != pstcKey);
+    en_key_state_t enKeyState = KeyIdle;
 
-    if (pstcKey->enPressPinState != GPIO_ReadInputPortPin(pstcKey->u8Port, pstcKey->u8Pin))
+    if (NULL != pstcKey)
     {
-        return KeyIdle;
+       if (pstcKey->enPressPinState == GPIO_ReadInputPortPin(pstcKey->u8Port, pstcKey->u8Pin))
+        {
+            DDL_Delay1ms(20ul);
+
+            if (pstcKey->enPressPinState == GPIO_ReadInputPortPin(pstcKey->u8Port, pstcKey->u8Pin))
+            {
+                while (pstcKey->enPressPinState == GPIO_ReadInputPortPin(pstcKey->u8Port, pstcKey->u8Pin))
+                {
+                    ;
+                }
+                enKeyState = KeyRelease;
+            }
+        }
     }
 
-    DDL_Delay1ms(20);
-
-    if (pstcKey->enPressPinState != GPIO_ReadInputPortPin(pstcKey->u8Port, pstcKey->u8Pin))
-    {
-        return KeyIdle;
-    }
-
-    while (pstcKey->enPressPinState == GPIO_ReadInputPortPin(pstcKey->u8Port, pstcKey->u8Pin));
-
-    return KeyRelease;
+    return enKeyState;
 }
 
 /**
@@ -282,20 +267,22 @@ static en_key_state_t KeyGetState(stc_key_t *pstcKey)
  */
 static void UartTxIrqCallback(void)
 {
-    uint8_t u8Data;
+    uint8_t u8Data = 0u;
+    en_flag_status_t enFlag = USART_GetFlag(UART_UNIT, USART_FLAG_TXE);
+    en_functional_state_t enState = USART_GetFuncState(UART_UNIT, USART_INT_TXE);
 
-    if ((Set == USART_GetFlag(UART_UNIT, USART_FLAG_TXE)) &&
-        (Enable == USART_GetFuncState(UART_UNIT, USART_INT_TXE)))
+    if ((Set == enFlag) && (Enable == enState))
     {
         USART_SendId(UART_UNIT, UART_SLAVE_STATION_ID);
 
         while (Reset == USART_GetFlag(UART_UNIT, USART_FLAG_TC))   /* Wait Tx data register empty */
         {
+            ;
         }
 
         if (Ok == RingBufRead(&m_stcRingBuf, &u8Data))
         {
-            USART_SendData(UART_UNIT, u8Data);
+            USART_SendData(UART_UNIT, (uint16_t)u8Data);
         }
 
         if (IS_RING_BUFFER_EMPYT(&m_stcRingBuf))
@@ -313,8 +300,10 @@ static void UartTxIrqCallback(void)
  */
 static void UartTcIrqCallback(void)
 {
-    if ((Set == USART_GetFlag(UART_UNIT, USART_FLAG_TC)) &&
-        (Enable == USART_GetFuncState(UART_UNIT, USART_INT_TC)))
+    en_flag_status_t enFlag = USART_GetFlag(UART_UNIT, USART_FLAG_TC);
+    en_functional_state_t enState = USART_GetFuncState(UART_UNIT, USART_INT_TC);
+
+    if ((Set == enFlag) && (Enable == enState))
     {
         /* Disable TX function */
         USART_FuncCmd(UART_UNIT, (USART_TX | USART_RX | USART_INT_TC), Disable);
@@ -331,12 +320,13 @@ static void UartTcIrqCallback(void)
  */
 static void UartRxIrqCallback(void)
 {
-    uint8_t u8RxData;
+    uint8_t u8RxData = 0u;
+    en_flag_status_t enFlag = USART_GetFlag(UART_UNIT, USART_FLAG_RXNE);
+    en_functional_state_t enState = USART_GetFuncState(UART_UNIT, USART_INT_RX);
 
-    if ((Set == USART_GetFlag(UART_UNIT, USART_FLAG_RXNE)) &&
-        (Enable == USART_GetFuncState(UART_UNIT, USART_INT_RX)))
+    if ((Set == enFlag) && (Enable == enState))
     {
-        u8RxData = USART_RecData(UART_UNIT);
+        u8RxData = (uint8_t)USART_RecData(UART_UNIT);
 
         if ((Reset == USART_GetFlag(UART_UNIT, USART_FLAG_MPB)) &&
             (USART_UART_NORMAL_MODE == UsartGetSilenceModeState()))
@@ -378,16 +368,20 @@ static void UartRxErrIrqCallback(void)
  */
 static en_result_t RingBufWrite(stc_ring_buffer_t *pstcBuffer, uint8_t u8Data)
 {
+    en_result_t enRet = Ok;
+
     if (pstcBuffer->u16UsedSize >= pstcBuffer->u16Capacity)
     {
-        return ErrorBufferFull;
+        enRet = ErrorBufferFull;
+    }
+    else
+    {
+        pstcBuffer->au8Buf[pstcBuffer->u16InIdx++] = u8Data;
+        pstcBuffer->u16InIdx %= pstcBuffer->u16Capacity;
+        pstcBuffer->u16UsedSize++;
     }
 
-    pstcBuffer->au8Buf[pstcBuffer->u16InIdx++] = u8Data;
-    pstcBuffer->u16InIdx %= pstcBuffer->u16Capacity;
-    pstcBuffer->u16UsedSize++;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -400,16 +394,20 @@ static en_result_t RingBufWrite(stc_ring_buffer_t *pstcBuffer, uint8_t u8Data)
  */
 static en_result_t RingBufRead(stc_ring_buffer_t *pstcBuffer, uint8_t *pu8Data)
 {
+    en_result_t enRet = Ok;
+
     if (!pstcBuffer->u16UsedSize)
     {
-        return ErrorNotReady;
+        enRet = ErrorNotReady;
+    }
+    else
+    {
+        *pu8Data = pstcBuffer->au8Buf[pstcBuffer->u16OutIdx++];
+        pstcBuffer->u16OutIdx %= pstcBuffer->u16Capacity;
+        pstcBuffer->u16UsedSize--;
     }
 
-    *pu8Data = pstcBuffer->au8Buf[pstcBuffer->u16OutIdx++];
-    pstcBuffer->u16OutIdx %= pstcBuffer->u16Capacity;
-    pstcBuffer->u16UsedSize--;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -444,9 +442,25 @@ static uint32_t UsartGetSilenceModeState(void)
  */
 int32_t main(void)
 {
-    static uint8_t u8TxData = 0;
-    static uint8_t u8RxData = 0;
+    static uint8_t u8TxData = 0u;
+    static uint8_t u8RxData = 0u;
     stc_irq_regi_config_t stcIrqRegiConf;
+    stc_key_t stcKeySw2 = {
+        .u8Port = KEY_PORT,
+        .u8Pin = KEY_PIN,
+        .enPressPinState = Pin_Reset,
+    };
+    const stc_uart_multiprocessor_init_t stcUartMultiProcessorInit = {
+        .u32Baudrate = 9600ul,
+        .u32BitDirection = USART_LSB,
+        .u32StopBit = USART_STOP_BITS_1,
+        .u32DataWidth = USART_DATA_WIDTH_BITS_8,
+        .u32ClkMode = USART_INTCLK_NONE_OUTPUT,
+        .u32ClkPrescaler = USART_CLK_PRESCALER_DIV4,
+        .u32OversamplingBits = USART_OVERSAMPLING_BITS_8,
+        .u32NoiseFilterState = USART_NOISE_FILTER_DISABLE,
+        .u32SbDetectPolarity = USART_SB_DETECT_FALLING,
+    };
 
     /* Configure system clock. */
     SystemClockConfig();
@@ -458,8 +472,8 @@ int32_t main(void)
     LedConfig();
 
     /* Configure USART RX/TX pin. */
-    GPIO_SetFunc(UART_RX_PORT, UART_RX_PIN, GPIO_FUNC_USART);
-    GPIO_SetFunc(UART_TX_PORT, UART_TX_PIN, GPIO_FUNC_USART);
+    GPIO_SetFunc(UART_RX_PORT, UART_RX_PIN, GPIO_FUNC_3_USART);
+    GPIO_SetFunc(UART_TX_PORT, UART_TX_PIN, GPIO_FUNC_3_USART);
 
     /* Enable peripheral clock */
     CLK_FcgPeriphClockCmd(FUNCTION_CLK_GATE, Enable);
@@ -468,12 +482,12 @@ int32_t main(void)
     UsartSetSilenceModeState(USART_UART_SILENCE_MODE);
 
     /* Initialize UART function. */
-    USART_MultiProcessorInit(UART_UNIT, &m_stcUartMultiProcessorInit);
+    USART_MultiProcessorInit(UART_UNIT, &stcUartMultiProcessorInit);
 
     /* Register error IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = UART_UNIT_ERR_IRQn;
     stcIrqRegiConf.enIntSrc = UART_UNIT_ERR_INT;
-    stcIrqRegiConf.pfnCallback = UartRxErrIrqCallback;
+    stcIrqRegiConf.pfnCallback = &UartRxErrIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -482,7 +496,7 @@ int32_t main(void)
     /* Register RX IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = UART_UNIT_RX_IRQn;
     stcIrqRegiConf.enIntSrc = UART_UNIT_RX_INT;
-    stcIrqRegiConf.pfnCallback = UartRxIrqCallback;
+    stcIrqRegiConf.pfnCallback = &UartRxIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_00);
@@ -491,7 +505,7 @@ int32_t main(void)
     /* Register TX IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = UART_UNIT_TX_IRQn;
     stcIrqRegiConf.enIntSrc = UART_UNIT_TX_INT;
-    stcIrqRegiConf.pfnCallback = UartTxIrqCallback;
+    stcIrqRegiConf.pfnCallback = &UartTxIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -500,7 +514,7 @@ int32_t main(void)
     /* Register TC IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = UART_UNIT_TCI_IRQn;
     stcIrqRegiConf.enIntSrc = UART_UNIT_TCI_INT;
-    stcIrqRegiConf.pfnCallback = UartTcIrqCallback;
+    stcIrqRegiConf.pfnCallback = &UartTcIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -509,7 +523,10 @@ int32_t main(void)
     while (1)
     {
         /* Wait key release */
-        while (KeyRelease != KeyGetState(&m_stcKeySw2));
+        while (KeyRelease != KeyGetState(&stcKeySw2))
+        {
+            ;
+        }
 
         RingBufWrite(&m_stcRingBuf, u8TxData);
 
@@ -517,6 +534,7 @@ int32_t main(void)
 
         while (IS_RING_BUFFER_EMPYT(&m_stcRingBuf))
         {
+            ;
         }
 
         RingBufRead(&m_stcRingBuf, &u8RxData);

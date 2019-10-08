@@ -122,6 +122,9 @@ int32_t main(void)
  */
 static void SystemClockConfig(void)
 {
+    /* Set EFM read latency when system clock greater than 24MHz. */
+    EFM_SetLatency(EFM_LATENCY_1);
+
     /* Configure the system clock to HRC32MHz. */
     CLK_HRCInit(CLK_HRC_ON, CLK_HRCFREQ_32);
 }

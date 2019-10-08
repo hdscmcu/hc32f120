@@ -115,7 +115,7 @@ void SysTick_Resume(void);
         ((x) ? (void)0 : DDL_AssertHandler((uint8_t *)__FILE__, __LINE__));    \
     }while(0)
     /* Exported function */
-    void DDL_AssertHandler(uint8_t *file, uint32_t line);
+    void DDL_AssertHandler(const uint8_t *file, int16_t line);
 #else
     #define DDL_ASSERT(x)               ((void)0u)
 #endif /* __DEBUG */

@@ -73,12 +73,12 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* LED_R Port/Pin definition */
-#define LED_R_PORT                      GPIO_PORT_2
-#define LED_R_PIN                       GPIO_PIN_5
+#define LED_R_PORT                      (GPIO_PORT_2)
+#define LED_R_PIN                       (GPIO_PIN_5)
 
-#define LED_R_ON()                      GPIO_ResetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_OFF()                     GPIO_SetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_TOGGLE()                  GPIO_TogglePins(LED_R_PORT, LED_R_PIN)
+#define LED_R_ON()                      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_OFF()                     (GPIO_SetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_TOGGLE()                  (GPIO_TogglePins(LED_R_PORT, LED_R_PIN))
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -100,12 +100,12 @@
  * @param  None
  * @retval None
  */
-void NMI_IrqCallback(void)
+static void NMI_IrqCallback(void)
 {
     /* NMI Pin */
-    if (Set == NMI_GetNmiSrc(INTC_NMIFR_NMIF))
+    if (Set == NMI_GetNmiSrc((uint8_t)INTC_NMIFR_NMIF))
     {
-        NMI_ClrNmiSrc(INTC_NMIFR_NMIF);
+        NMI_ClrNmiSrc((uint8_t)INTC_NMIFR_NMIF);
         LED_R_TOGGLE();
     }
 }

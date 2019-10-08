@@ -85,8 +85,8 @@
 /**
  * @brief Definitions of ADC trigger event registers.
  */
-#define ADC_TRG_EVT0_REG                    M0P_AOS->ADC_ITRGSELR0
-#define ADC_TRG_EVT1_REG                    M0P_AOS->ADC_ITRGSELR1
+#define ADC_TRG_EVT0_REG                    (M0P_AOS->ADC_ITRGSELR0)
+#define ADC_TRG_EVT1_REG                    (M0P_AOS->ADC_ITRGSELR1)
 
 /**
  * @defgroup ADC_Check_Parameters_Validity ADC check parameters validity
@@ -123,6 +123,9 @@
 (   ((x) == ADC_SEQ_A)                      ||                                 \
     ((x) == ADC_SEQ_B))
 
+#define IS_AWD_NUMBER(x)                                                       \
+(   ((x) == ADC_AWD_0)                      ||                                 \
+    ((x) == ADC_AWD_1))
 #define IS_ADC_SAMPLE_TIME(x)                                                  \
 (   ((x) >= 5u))
 
@@ -234,33 +237,33 @@
  */
 en_result_t ADC_Init(const stc_adc_init_t *pstcInit)
 {
-    if (pstcInit == NULL)
+    en_result_t enRet = ErrorInvalidParameter;
+
+    if (pstcInit != NULL)
     {
-        return ErrorInvalidParameter;
+        DDL_ASSERT(IS_ADC_SCAN_CONV_MODE(pstcInit->u16ScanConvMode));
+        DDL_ASSERT(IS_ADC_RESOLUTION(pstcInit->u16Resolution));
+        DDL_ASSERT(IS_ADC_AUTO_CLEAR_CMD(pstcInit->u16AutoClearCmd));
+        DDL_ASSERT(IS_ADC_DATA_ALIGN(pstcInit->u16DataAlign));
+        DDL_ASSERT(IS_ADC_SA_RESTART_FROM(pstcInit->u16RestrtFrom));
+
+        /* Configures scan convert mode, resolution, data automatically cleared cmd
+           and data alignment. */
+        M0P_ADC->CR0 = pstcInit->u16ScanConvMode  |   \
+                       pstcInit->u16Resolution    |   \
+                       pstcInit->u16AutoClearCmd  |   \
+                       pstcInit->u16DataAlign;
+
+        /* Configures sampling time. */
+        M0P_ADC->SSTR = pstcInit->u8SampTime;
+
+        /* Configures the channel sequence A restart from. */
+        M0P_ADC->CR1  = pstcInit->u16RestrtFrom;
+
+        enRet = Ok;
     }
 
-    DDL_ASSERT(IS_ADC_SCAN_CONV_MODE(pstcInit->u16ScanConvMode));
-    DDL_ASSERT(IS_ADC_RESOLUTION(pstcInit->u16Resolution));
-    DDL_ASSERT(IS_ADC_AUTO_CLEAR_CMD(pstcInit->u16AutoClearCmd));
-    DDL_ASSERT(IS_ADC_DATA_ALIGN(pstcInit->u16DataAlign));
-    DDL_ASSERT(IS_ADC_SA_RESTART_FROM(pstcInit->u16RestrtFrom));
-
-    ADC_DeInit();
-
-    /* Configures scan convert mode, resolution, data automatically cleared cmd
-       and data alignment. */
-    M0P_ADC->CR0 = pstcInit->u16ScanConvMode  |   \
-                   pstcInit->u16Resolution    |   \
-                   pstcInit->u16AutoClearCmd  |   \
-                   pstcInit->u16DataAlign;
-
-    /* Configures sampling time. */
-    M0P_ADC->SSTR = pstcInit->u8SampTime;
-
-    /* Configures the channel sequence A restart from. */
-    M0P_ADC->CR1  = pstcInit->u16RestrtFrom;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -294,19 +297,21 @@ void ADC_DeInit(void)
  */
 en_result_t ADC_StructInit(stc_adc_init_t *pstcInit)
 {
-    if (pstcInit == NULL)
+    en_result_t enRet = ErrorInvalidParameter;
+
+    if (pstcInit != NULL)
     {
-        return ErrorInvalidParameter;
+        pstcInit->u16ScanConvMode = ADC_MODE_SA_SINGLE;
+        pstcInit->u16Resolution   = ADC_RESOLUTION_10B;
+        pstcInit->u16AutoClearCmd = ADC_AUTO_CLR_DISABLE;
+        pstcInit->u16DataAlign    = ADC_DATA_ALIGN_RIGHT;
+        pstcInit->u8SampTime      = 20u;
+        pstcInit->u16RestrtFrom   = ADC_SA_RESTRT_FROM_INT_CH;
+
+        enRet = Ok;
     }
 
-    pstcInit->u16ScanConvMode = ADC_MODE_SA_SINGLE;
-    pstcInit->u16Resolution   = ADC_RESOLUTION_10B;
-    pstcInit->u16AutoClearCmd = ADC_AUTO_CLR_DISABLE;
-    pstcInit->u16DataAlign    = ADC_DATA_ALIGN_RIGHT;
-    pstcInit->u8SampTime      = 20;
-    pstcInit->u16RestrtFrom   = ADC_SA_RESTRT_FROM_INT_CH;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -327,6 +332,8 @@ void ADC_AddAdcChannel(uint8_t u8Seq, uint16_t u16Channel)
     uint16_t u16Ch;
 
     u16Ch = u16Channel & ADC_CH_ALL;
+
+    DDL_ASSERT(IS_ADC_SEQUENCE(u8Seq));
 
     /* Configures the channels. */
     if (u8Seq == ADC_SEQ_A)
@@ -370,53 +377,55 @@ void ADC_SetExChannel(uint8_t u8ExCh)
 en_result_t ADC_ConfigTriggerSrc(uint8_t u8Seq, const stc_adc_trg_cfg_t *pstcTrgCfg)
 {
     uint8_t u8Offset;
+    en_result_t enRet = ErrorInvalidParameter;
 
-    if (pstcTrgCfg == NULL)
+    if (pstcTrgCfg != NULL)
     {
-        return ErrorInvalidParameter;
+        DDL_ASSERT(IS_ADC_SEQUENCE(u8Seq));
+        DDL_ASSERT(IS_ADC_TRIGGER_SRC(pstcTrgCfg->u16TrgSrc));
+
+        /* Disable the specified sequence's trigger source. */
+        ADC_TriggerSrcCmd(u8Seq, Disable);
+
+        if (u8Seq == ADC_SEQ_A)
+        {
+            u8Offset = 0u;
+            DDL_ASSERT(IS_ADC_SA_TRIGGER_EVT(pstcTrgCfg->u32Event0));
+            DDL_ASSERT(IS_ADC_SA_TRIGGER_EVT(pstcTrgCfg->u32Event1));
+        }
+        else
+        {
+            u8Offset = 8u;
+            DDL_ASSERT(IS_ADC_SB_TRIGGER_EVT(pstcTrgCfg->u32Event0));
+            DDL_ASSERT(IS_ADC_SB_TRIGGER_EVT(pstcTrgCfg->u32Event1));
+        }
+
+        switch (pstcTrgCfg->u16TrgSrc)
+        {
+            case ADC_TRGSRC_IN_EVT0:
+                ADC_TRG_EVT0_REG = pstcTrgCfg->u32Event0;
+                break;
+
+            case ADC_TRGSRC_IN_EVT1:
+                ADC_TRG_EVT1_REG = pstcTrgCfg->u32Event1;
+                break;
+
+            case ADC_TRGSRC_IN_EVT0_EVT1:
+                ADC_TRG_EVT0_REG = pstcTrgCfg->u32Event0;
+                ADC_TRG_EVT1_REG = pstcTrgCfg->u32Event1;
+                break;
+
+            default:
+                break;
+        }
+
+        M0P_ADC->TRGSR &= (uint16_t)(~(ADC_TRGSRC_MASK << u8Offset));
+        M0P_ADC->TRGSR |= (uint16_t)(pstcTrgCfg->u16TrgSrc << u8Offset);
+
+        enRet = Ok;
     }
 
-    DDL_ASSERT(IS_ADC_TRIGGER_SRC(pstcTrgCfg->u16TrgSrc));
-
-    /* Disable the specified sequence's trigger source. */
-    ADC_TriggerSrcCmd(u8Seq, Disable);
-
-    if (u8Seq == ADC_SEQ_A)
-    {
-        u8Offset = 0u;
-        DDL_ASSERT(IS_ADC_SA_TRIGGER_EVT(pstcTrgCfg->u32Event0));
-        DDL_ASSERT(IS_ADC_SA_TRIGGER_EVT(pstcTrgCfg->u32Event1));
-    }
-    else
-    {
-        u8Offset = 8u;
-        DDL_ASSERT(IS_ADC_SB_TRIGGER_EVT(pstcTrgCfg->u32Event0));
-        DDL_ASSERT(IS_ADC_SB_TRIGGER_EVT(pstcTrgCfg->u32Event1));
-    }
-
-    switch (pstcTrgCfg->u16TrgSrc)
-    {
-        case ADC_TRGSRC_IN_EVT0:
-            ADC_TRG_EVT0_REG = pstcTrgCfg->u32Event0;
-            break;
-
-        case ADC_TRGSRC_IN_EVT1:
-            ADC_TRG_EVT1_REG = pstcTrgCfg->u32Event1;
-            break;
-
-        case ADC_TRGSRC_IN_EVT0_EVT1:
-            ADC_TRG_EVT0_REG = pstcTrgCfg->u32Event0;
-            ADC_TRG_EVT1_REG = pstcTrgCfg->u32Event1;
-            break;
-
-        default:
-            break;
-    }
-
-    M0P_ADC->TRGSR &= ~(ADC_TRGSRC_MASK << u8Offset);
-    M0P_ADC->TRGSR |= pstcTrgCfg->u16TrgSrc << u8Offset;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -429,16 +438,18 @@ en_result_t ADC_ConfigTriggerSrc(uint8_t u8Seq, const stc_adc_trg_cfg_t *pstcTrg
  */
 en_result_t ADC_TriggerSrcStructInit(stc_adc_trg_cfg_t *pstcTrgCfg)
 {
-    if (pstcTrgCfg == NULL)
+    en_result_t enRet = ErrorInvalidParameter;
+
+    if (pstcTrgCfg != NULL)
     {
-        return ErrorInvalidParameter;
+        pstcTrgCfg->u16TrgSrc = ADC_TRGSRC_IN_EVT0;
+        pstcTrgCfg->u32Event0 = EVT_AOS_STRG;
+        pstcTrgCfg->u32Event1 = EVT_AOS_STRG;
+
+        enRet = Ok;
     }
 
-    pstcTrgCfg->u16TrgSrc = ADC_TRGSRC_IN_EVT0;
-    pstcTrgCfg->u32Event0 = EVT_AOS_STRG;
-    pstcTrgCfg->u32Event1 = EVT_AOS_STRG;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -455,6 +466,7 @@ en_result_t ADC_TriggerSrcStructInit(stc_adc_trg_cfg_t *pstcTrgCfg)
  */
 void ADC_TriggerSrcCmd(uint8_t u8Seq, en_functional_state_t enNewState)
 {
+    DDL_ASSERT(IS_ADC_SEQUENCE(u8Seq));
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
 
     if (u8Seq == ADC_SEQ_A)
@@ -481,6 +493,7 @@ void ADC_TriggerSrcCmd(uint8_t u8Seq, en_functional_state_t enNewState)
  */
 void ADC_AdcIntCmd(uint8_t u8Seq, en_functional_state_t enNewState)
 {
+    DDL_ASSERT(IS_ADC_SEQUENCE(u8Seq));
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
 
     if (u8Seq == ADC_SEQ_A)
@@ -505,7 +518,14 @@ void ADC_AdcIntCmd(uint8_t u8Seq, en_functional_state_t enNewState)
  */
 en_flag_status_t ADC_GetEocFlag(uint8_t u8Flag)
 {
-    return (en_flag_status_t)((M0P_ADC->ISR & u8Flag) != 0u);
+    en_flag_status_t enFlag = Reset;
+
+    if ((M0P_ADC->ISR & u8Flag) != 0u)
+    {
+        enFlag = Set;
+    }
+
+    return enFlag;
 }
 
 /**
@@ -524,75 +544,82 @@ void ADC_ClrEocFlag(uint8_t u8Flag)
 
 /**
  * @brief  Starts ADC conversion of sequence A.
- * @param  [in]  pu16Dest           Pointer to the buffer the ADC data to be stored.
+ * @param  [out] pu16Dest           Pointer to the buffer the ADC data to be stored.
+ * @param  [in]  u8Length           The length of the array pointed by pu16Dest.
  * @param  [in]  u32Timeout         Timeout value(millisecond).
  * @retval An en_result_t enumeration value.
  *   @arg  Ok:                      No errors occurred.
  *   @arg  ErrorInvalidParameter:   pu16Dest == NULL or u32Timeout == 0.
  *   @arg  ErrorTimeout:            ADC works timeout.
  */
-en_result_t ADC_SaPolling(uint16_t *pu16Dest, uint32_t u32Timeout)
+en_result_t ADC_PollingSa(uint16_t *pu16Dest, uint8_t u8Length, uint32_t u32Timeout)
 {
-    en_result_t   enRet;
+    en_result_t   enRet = ErrorInvalidParameter;
+    uint16_t      u16Channel;
     uint32_t      u32AdcTimeout;
     __IO uint32_t u32TimeCount;
 
-    if ((pu16Dest == NULL) || (u32Timeout == 0u))
+    if ((pu16Dest != NULL) && (u8Length != 0u) && (u32Timeout != 0u))
     {
-        return ErrorInvalidParameter;
-    }
+        /* 10 is the number of required instructions cycles for the below loop statement. */
+        u32AdcTimeout = u32Timeout * (SystemCoreClock / 10u / 1000u);
 
-    /* 10 is the number of required instructions cycles for the below loop statement. */
-    u32AdcTimeout = u32Timeout * (SystemCoreClock / 10u / 1000u);
+        ADC_Start();
 
-    ADC_Start();
-
-    /* Polling and check timeout. */
-    u32TimeCount = 0u;
-    enRet = ErrorTimeout;
-    while (u32TimeCount < u32AdcTimeout)
-    {
-        if (bM0P_ADC->ISR_b.EOCAF != 0u)
+        /* Polling and check timeout. */
+        u32TimeCount = 0u;
+        enRet = ErrorTimeout;
+        while (u32TimeCount < u32AdcTimeout)
         {
-            enRet = Ok;
-            break;
+            if (bM0P_ADC->ISR_b.EOCAF != 0u)
+            {
+                if (u8Length >= ADC_CH_COUNT)
+                {
+                    ADC_GetAllData(pu16Dest, ADC_CH_COUNT);
+                }
+                else
+                {
+                    u16Channel = M0P_ADC->CHSELRA0;
+                    ADC_GetChannelData(u16Channel, pu16Dest, u8Length);
+                }
+                enRet = Ok;
+                break;
+            }
+            u32TimeCount++;
         }
-        u32TimeCount++;
-    }
 
-    if (enRet == Ok)
-    {
-        ADC_GetSeqData(ADC_SEQ_A, pu16Dest);
+        bM0P_ADC->ISCLRR_b.CLREOCAF = 1u;
     }
-
-    bM0P_ADC->ISCLRR_b.CLREOCAF = 1u;
 
     return enRet;
 }
 
 /**
- * @brief  Get the ADC data of the specified sequence.
- * @param  [in]  u8Seq              The specified sequence.
- *                                  This parameter can be a value of @ref ADC_Sequence
- *   @arg  ADC_SEQ_A
- *   @arg  ADC_SEQ_B
+ * @brief  Get all of the ADC data.
  * @param  [out] pu16Dest           Pointer to the buffer the ADC data to be stored.
- * @retval None
+ * @param  [in]  u8Length           The length of the array pointed by the pointer pu16Dest.
+ *                                  It must be no less than @ref ADC_Channel_Count
+ * @retval An en_result_t enumeration value.
+ *   @arg  Ok:                      No errors occurred.
+ *   @arg  ErrorInvalidParameter:   pu16Dest == NULL or u8Length < ADC_CH_COUNT.
  */
-void ADC_GetSeqData(uint8_t u8Seq, uint16_t *pu16Dest)
+en_result_t ADC_GetAllData(uint16_t *pu16Dest, uint8_t u8Length)
 {
-    uint16_t u16Channel;
+    uint8_t  i;
+    en_result_t enRet = ErrorInvalidParameter;
+    __IO uint16_t *io16AdcDr = &M0P_ADC->DR0;
 
-    if (u8Seq == ADC_SEQ_A)
+    if ((pu16Dest != NULL) && (u8Length >= ADC_CH_COUNT))
     {
-        u16Channel = M0P_ADC->CHSELRA0;
-    }
-    else
-    {
-        u16Channel = M0P_ADC->CHSELRB0;
+        for (i = 0u; i < ADC_CH_COUNT; i++)
+        {
+            pu16Dest[i] = io16AdcDr[i];
+        }
+
+        enRet = Ok;
     }
 
-    ADC_GetChannelData(u16Channel, pu16Dest);
+    return enRet;
 }
 
 /**
@@ -601,33 +628,59 @@ void ADC_GetSeqData(uint8_t u8Seq, uint16_t *pu16Dest)
  *                                  This parameter can be values of @ref ADC_Channels
  *   @arg  ADC_CH0 ~ ADC_CH11
  * @param  [out] pu16Dest           Pointer to the buffer the ADC data to be stored.
- * @retval None
+ * @param  [in]  u8Length           The length of the array pointed by pu16Dest.
+ * @retval An en_result_t enumeration value.
+ *   @arg  Ok:                      No errors occurred.
+ *   @arg  ErrorInvalidParameter:   u16Channel == 0 or pu16Dest == NULL or u8Length == 0
  */
-void ADC_GetChannelData(uint16_t u16Channel, uint16_t *pu16Dest)
+en_result_t ADC_GetChannelData(uint16_t u16Channel, uint16_t *pu16Dest, uint8_t u8Length)
 {
     uint8_t i;
     uint8_t j;
+    en_result_t enRet = ErrorInvalidParameter;
     __IO uint16_t *io16AdcDr = NULL;
 
-    if ((u16Channel == 0u) || (pu16Dest == NULL))
+    if ((u16Channel != 0u) && (pu16Dest != NULL) && (u8Length != 0u))
     {
-        return;
-    }
-
-    i = 0u;
-    j = 0u;
-    io16AdcDr = &M0P_ADC->DR0;
-    u16Channel &= ADC_CH_ALL;
-    while (u16Channel)
-    {
-        if (u16Channel & 0x1u)
+        i = 0u;
+        j = 0u;
+        io16AdcDr = &M0P_ADC->DR0;
+        u16Channel &= ADC_CH_ALL;
+        while (u16Channel && u8Length)
         {
-            pu16Dest[j++] = io16AdcDr[i];
+            if (u16Channel & 0x1u)
+            {
+                pu16Dest[j++] = io16AdcDr[i];
+                u8Length--;
+            }
+
+            u16Channel >>= 1u;
+            i++;
         }
 
-        u16Channel >>= 1u;
-        i++;
+        enRet = Ok;
     }
+
+    return enRet;
+}
+
+/**
+ * @brief  Get the ADC value of the specified ADC pin.
+ * @param  [in]  u8AdcPin           The ADC pin number.
+ *                                  This parameter can be a value of @ref ADC_Pin_Number
+ * @retval An uint16_t value -- the ADC value of the specified ADC pin.
+ */
+uint16_t ADC_GetValue(uint8_t u8AdcPin)
+{
+    uint16_t u16Ret = (uint16_t)0xFFFF;
+    __IO uint16_t *io16AdcDr = &M0P_ADC->DR0;
+
+    if (u8AdcPin <= ADC_ANI11)
+    {
+        u16Ret = io16AdcDr[u8AdcPin];
+    }
+
+    return u16Ret;
 }
 
 /**
@@ -645,36 +698,39 @@ void ADC_GetChannelData(uint16_t u16Channel, uint16_t *pu16Dest)
  */
 en_result_t ADC_AwdConfig(uint8_t u8AwdNbr, const stc_awd_cfg_t *pstcAwdCfg)
 {
-    if (pstcAwdCfg == NULL)
+    en_result_t enRet = ErrorInvalidParameter;
+
+    if (pstcAwdCfg != NULL)
     {
-        return ErrorInvalidParameter;
+        DDL_ASSERT(IS_AWD_NUMBER(u8AwdNbr));
+        DDL_ASSERT(IS_AWD_PIN_NUMBER(pstcAwdCfg->u8AdcPin));
+        DDL_ASSERT(IS_AWD_CMP_MODE(pstcAwdCfg->u16AwdMd));
+
+        /* Disable AWDx. */
+        ADC_AwdCmd(u8AwdNbr, Disable);
+
+        /* Disable combination mode. */
+        M0P_ADC->AWDCR &= (uint16_t)(~ADC_AWD_COMB_MASK);
+
+        if (u8AwdNbr == ADC_AWD_0)
+        {
+            bM0P_ADC->AWDCR_b.AWD0MD = (uint32_t)pstcAwdCfg->u16AwdMd;
+            M0P_ADC->AWD0DR0  = pstcAwdCfg->u16Dr0;
+            M0P_ADC->AWD0DR1  = pstcAwdCfg->u16Dr1;
+            M0P_ADC->AWD0CHSR = pstcAwdCfg->u8AdcPin;
+        }
+        else
+        {
+            bM0P_ADC->AWDCR_b.AWD1MD = (uint32_t)pstcAwdCfg->u16AwdMd;
+            M0P_ADC->AWD1DR0  = pstcAwdCfg->u16Dr0;
+            M0P_ADC->AWD1DR1  = pstcAwdCfg->u16Dr1;
+            M0P_ADC->AWD1CHSR = pstcAwdCfg->u8AdcPin;
+        }
+
+        enRet = Ok;
     }
 
-    DDL_ASSERT(IS_AWD_PIN_NUMBER(pstcAwdCfg->u8AdcPin));
-    DDL_ASSERT(IS_AWD_CMP_MODE(pstcAwdCfg->u16AwdMd));
-
-    /* Disable AWDx. */
-    ADC_AwdCmd(u8AwdNbr, Disable);
-
-    /* Disable combination mode. */
-    M0P_ADC->AWDCR &= ~ADC_AWD_COMB_MASK;
-
-    if (u8AwdNbr == ADC_AWD_0)
-    {
-        bM0P_ADC->AWDCR_b.AWD0MD = (uint32_t)pstcAwdCfg->u16AwdMd;
-        M0P_ADC->AWD0DR0  = pstcAwdCfg->u16Dr0;
-        M0P_ADC->AWD0DR1  = pstcAwdCfg->u16Dr1;
-        M0P_ADC->AWD0CHSR = pstcAwdCfg->u8AdcPin;
-    }
-    else
-    {
-        bM0P_ADC->AWDCR_b.AWD1MD = (uint32_t)pstcAwdCfg->u16AwdMd;
-        M0P_ADC->AWD1DR0  = pstcAwdCfg->u16Dr0;
-        M0P_ADC->AWD1DR1  = pstcAwdCfg->u16Dr1;
-        M0P_ADC->AWD1CHSR = pstcAwdCfg->u8AdcPin;
-    }
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -691,6 +747,7 @@ en_result_t ADC_AwdConfig(uint8_t u8AwdNbr, const stc_awd_cfg_t *pstcAwdCfg)
  */
 void ADC_AwdCmd(uint8_t u8AwdNbr, en_functional_state_t enNewState)
 {
+    DDL_ASSERT(IS_AWD_NUMBER(u8AwdNbr));
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
 
     if (u8AwdNbr == ADC_AWD_0)
@@ -717,6 +774,7 @@ void ADC_AwdCmd(uint8_t u8AwdNbr, en_functional_state_t enNewState)
  */
 void ADC_AwdIntCmd(uint8_t u8AwdNbr, en_functional_state_t enNewState)
 {
+    DDL_ASSERT(IS_AWD_NUMBER(u8AwdNbr));
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
 
     if (u8AwdNbr == ADC_AWD_0)
@@ -743,7 +801,7 @@ void ADC_AwdConfigCombMode(uint16_t u16ComMd)
 {
     DDL_ASSERT(IS_AWD_COMB_MODE(u16ComMd));
 
-    M0P_ADC->AWDCR &= ~ADC_AWD_COMB_MASK;
+    M0P_ADC->AWDCR &= (uint16_t)(~ADC_AWD_COMB_MASK);
     M0P_ADC->AWDCR |= u16ComMd;
 }
 
@@ -760,7 +818,14 @@ void ADC_AwdConfigCombMode(uint16_t u16ComMd)
  */
 en_flag_status_t ADC_AwdGetFlag(uint8_t u8Flag)
 {
-    return (en_flag_status_t)((M0P_ADC->AWDSR & u8Flag) != 0u);
+    en_flag_status_t enFlag = Reset;
+
+    if ((M0P_ADC->AWDSR & u8Flag) != 0u)
+    {
+        enFlag = Set;
+    }
+
+    return enFlag;
 }
 
 /**

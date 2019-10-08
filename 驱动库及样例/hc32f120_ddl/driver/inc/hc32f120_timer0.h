@@ -130,17 +130,17 @@ typedef struct
 /** @defgroup TIMER0_Clock_Division_define TIMER0 clock division define
  * @{
  */
-#define TIMER0_CLK_DIV1     (uint32_t)((uint32_t)0<<TMR0_BCONR_CKDIVA_POS)
-#define TIMER0_CLK_DIV2     (uint32_t)((uint32_t)1<<TMR0_BCONR_CKDIVA_POS)
-#define TIMER0_CLK_DIV4     (uint32_t)((uint32_t)2<<TMR0_BCONR_CKDIVA_POS)
-#define TIMER0_CLK_DIV8     (uint32_t)((uint32_t)3<<TMR0_BCONR_CKDIVA_POS)
-#define TIMER0_CLK_DIV16    (uint32_t)((uint32_t)4<<TMR0_BCONR_CKDIVA_POS)
-#define TIMER0_CLK_DIV32    (uint32_t)((uint32_t)5<<TMR0_BCONR_CKDIVA_POS)
-#define TIMER0_CLK_DIV64    (uint32_t)((uint32_t)6<<TMR0_BCONR_CKDIVA_POS)
-#define TIMER0_CLK_DIV128   (uint32_t)((uint32_t)7<<TMR0_BCONR_CKDIVA_POS)
-#define TIMER0_CLK_DIV256   (uint32_t)((uint32_t)8<<TMR0_BCONR_CKDIVA_POS)
-#define TIMER0_CLK_DIV512   (uint32_t)((uint32_t)9<<TMR0_BCONR_CKDIVA_POS)
-#define TIMER0_CLK_DIV1024  (uint32_t)((uint32_t)10<<TMR0_BCONR_CKDIVA_POS)
+#define TIMER0_CLK_DIV1     (uint32_t)(0ul<<TMR0_BCONR_CKDIVA_POS)
+#define TIMER0_CLK_DIV2     (uint32_t)(1ul<<TMR0_BCONR_CKDIVA_POS)
+#define TIMER0_CLK_DIV4     (uint32_t)(2ul<<TMR0_BCONR_CKDIVA_POS)
+#define TIMER0_CLK_DIV8     (uint32_t)(3ul<<TMR0_BCONR_CKDIVA_POS)
+#define TIMER0_CLK_DIV16    (uint32_t)(4ul<<TMR0_BCONR_CKDIVA_POS)
+#define TIMER0_CLK_DIV32    (uint32_t)(5ul<<TMR0_BCONR_CKDIVA_POS)
+#define TIMER0_CLK_DIV64    (uint32_t)(6ul<<TMR0_BCONR_CKDIVA_POS)
+#define TIMER0_CLK_DIV128   (uint32_t)(7ul<<TMR0_BCONR_CKDIVA_POS)
+#define TIMER0_CLK_DIV256   (uint32_t)(8ul<<TMR0_BCONR_CKDIVA_POS)
+#define TIMER0_CLK_DIV512   (uint32_t)(9ul<<TMR0_BCONR_CKDIVA_POS)
+#define TIMER0_CLK_DIV1024  (uint32_t)(10ul<<TMR0_BCONR_CKDIVA_POS)
 
 /**
  * @}
@@ -149,10 +149,10 @@ typedef struct
 /** @defgroup TIMER0_Clock_Source_define TIMER0 clock source define
  * @{
  */
-#define TIMER0_CLK_SRC_HCLK         (uint32_t)0x00000000
-#define TIMER0_CLK_SRC_INTHWTRIG    TMR0_BCONR_SYNCLKA
-#define TIMER0_CLK_SRC_LRC          (uint32_t)0x00000000
-#define TIMER0_CLK_SRC_XTAL32       TMR0_BCONR_ASYNCLKA
+#define TIMER0_CLK_SRC_HCLK         (0x00000000ul)
+#define TIMER0_CLK_SRC_INTHWTRIG    (TMR0_BCONR_SYNCLKA)
+#define TIMER0_CLK_SRC_LRC          (0x00000000ul)
+#define TIMER0_CLK_SRC_XTAL32       (TMR0_BCONR_ASYNCLKA)
 /**
  * @}
  */
@@ -160,8 +160,8 @@ typedef struct
 /** @defgroup TIMER0_Clock_Mode_define TIMER0 clock mode define
  * @{
  */
-#define TIMER0_CLK_SYNC             (uint32_t)0x00000000
-#define TIMER0_CLK_ASYNC            TMR0_BCONR_SYNSA
+#define TIMER0_CLK_SYNC             (0x00000000ul)
+#define TIMER0_CLK_ASYNC            (TMR0_BCONR_SYNSA)
 /**
  * @}
  */
@@ -169,8 +169,8 @@ typedef struct
 /** @defgroup TIMER0_Function_define TIMER0 Function define
  * @{
  */
-#define TIMER0_FUNC_CMP             (uint32_t)0x00000000
-#define TIMER0_FUNC_CAPTURE         (TMR0_BCONR_CAPMDA | TMR0_BCONR_HICPA)
+#define TIMER0_FUNC_CMP             (0x00000000ul)
+#define TIMER0_FUNC_CAPTURE         ((TMR0_BCONR_CAPMDA | TMR0_BCONR_HICPA))
 /**
  * @}
  */
@@ -178,10 +178,10 @@ typedef struct
 /** @defgroup TIMER0_HardwareTrigger_Func_define TIMER0 hardware trigger function define
  * @{
  */
-#define TIMER0_BT_HWTRG_FUNC_START  TMR0_BCONR_HSTAA
-#define TIMER0_BT_HWTRG_FUNC_CLEAR  TMR0_BCONR_HCLEA
-#define TIMER0_BT_HWTRG_FUNC_STOP   TMR0_BCONR_HSTPA
-#define TIMER0_BT_HWTRG_FUNC_NONE   (uint32_t)0x00000000
+#define TIMER0_BT_HWTRG_FUNC_START  (TMR0_BCONR_HSTAA)
+#define TIMER0_BT_HWTRG_FUNC_CLEAR  (TMR0_BCONR_HCLEA)
+#define TIMER0_BT_HWTRG_FUNC_STOP   (TMR0_BCONR_HSTPA)
+#define TIMER0_BT_HWTRG_FUNC_NONE   (0x00000000ul)
 
 /**
  * @}
@@ -204,7 +204,7 @@ typedef struct
  */
 
 en_result_t TIMER0_StructInit(stc_tim0_init_t* pstcInitStruct);
-en_result_t TIMER0_Init(const stc_tim0_init_t* pstcBaseInit);
+en_result_t TIMER0_Init(const stc_tim0_init_t* pstcTmr0Init);
 void TIMER0_DeInit(void);
 
 void TIMER0_Cmd(en_functional_state_t enCmd);

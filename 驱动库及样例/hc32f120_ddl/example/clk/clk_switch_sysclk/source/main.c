@@ -98,16 +98,25 @@
 static void WaitSw1_ShortPress(void)
 {
     /* Wait key up */
-    while(Pin_Set != GPIO_ReadInputPortPin(GPIO_PORT_6, GPIO_PIN_2));
-    DDL_Delay1ms(5);
+    while(Pin_Set != GPIO_ReadInputPortPin(GPIO_PORT_6, GPIO_PIN_2))
+    {
+        ;
+    }
+    DDL_Delay1ms(5u);
 
     /* Wait key down */
-    while(Pin_Reset != GPIO_ReadInputPortPin(GPIO_PORT_6, GPIO_PIN_2));
-    DDL_Delay1ms(5);
+    while(Pin_Reset != GPIO_ReadInputPortPin(GPIO_PORT_6, GPIO_PIN_2))
+    {
+        ;
+    }
+    DDL_Delay1ms(5u);
 
     /* Wait key up */
-    while(Pin_Set != GPIO_ReadInputPortPin(GPIO_PORT_6, GPIO_PIN_2));
-    DDL_Delay1ms(5);
+    while(Pin_Set != GPIO_ReadInputPortPin(GPIO_PORT_6, GPIO_PIN_2))
+    {
+        ;
+    }
+    DDL_Delay1ms(5u);
 }
 
 /**
@@ -123,7 +132,7 @@ int32_t main(void)
     /* Confiure clock output system clock */
     CLK_MCOConfig(CLK_MCOSOURCCE_SYSCLK, CLK_MCODIV_1);
     /* Confiure clock output pin */
-    GPIO_SetFunc(GPIO_PORT_1, GPIO_PIN_5, GPIO_FUNC_PULBUZ);
+    GPIO_SetFunc(GPIO_PORT_1, GPIO_PIN_5, GPIO_FUNC_1_PULBUZ);
 
     /* SW1 */
     WaitSw1_ShortPress();
@@ -143,7 +152,6 @@ int32_t main(void)
     /* SW1 */
     WaitSw1_ShortPress();
 
-
     /* Switch system clock from HRC(default) to XTAL */
     CLK_SetSysclkSrc(CLK_SYSCLKSOURCE_XTAL);
 
@@ -162,7 +170,10 @@ int32_t main(void)
     CLK_SetSysclkSrc(CLK_SYSCLKSOURCE_XTAL32);
 
 
-    while(1);
+    while(1)
+    {
+        ;
+    }
 }
 
 /**

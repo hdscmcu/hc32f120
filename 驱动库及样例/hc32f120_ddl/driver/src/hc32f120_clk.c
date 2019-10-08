@@ -81,8 +81,8 @@
  * @{
  */
 
-#define CLK_TIMEOUT             0x1000U
-#define CLK_XTAL_TIMEOUT        0x20000U
+#define CLK_TIMEOUT             (0x1000u)
+#define CLK_XTAL_TIMEOUT        (0x20000ul)
 
 
 /**
@@ -128,9 +128,9 @@
         ((STA) == CLK_XTALSTD_ON))
 
 /* Paramer valid check for XTALSTD mode */
-#define IS_VALID_CLK_XTALSTD_MODE(MODE)                                        \
-(       ((MODE) == CLK_XTALSTD_MODE_RST)            ||                         \
-        ((MODE) == CLK_XTALSTD_MODE_INT))
+#define IS_VALID_CLK_XTALSTD_MODE(MD)                                          \
+(       ((MD) == CLK_XTALSTD_MODE_RST)            ||                           \
+        ((MD) == CLK_XTALSTD_MODE_INT))
 
 /* Paramer valid check for XTALSTD interrupt state */
 #define IS_VALID_CLK_XTALSTD_INT_STATE(STA)                                    \
@@ -239,10 +239,10 @@
         ((DIV) == CLK_MCODIV_128))
 
 /* Parameter valid check for CLK stable flag. */
-#define IS_VALID_CLK_STB_FLAG(FLAG)                                            \
-(       ((FLAG) == CLK_FLAG_HRCSTB)                 ||                         \
-        ((FLAG) == CLK_FLAG_XTALSTB)                ||                         \
-        ((FLAG) == CLK_FLAG_XTAL32STB))
+#define IS_VALID_CLK_STB_FLAG(x)                                               \
+(       ((x) == CLK_FLAG_HRCSTB)                 ||                            \
+        ((x) == CLK_FLAG_XTALSTB)                ||                            \
+        ((x) == CLK_FLAG_XTAL32STB))
 /**
  * @}
  */
@@ -287,26 +287,26 @@ void CLK_DeInit(void)
     CLK_REG_WRITE_ENABLE();
 
     /* Reset peripheral clock */
-    M0P_CMU->FCG = 0xFFFFFFFF;
+    M0P_CMU->FCG = 0xFFFFFFFFu;
 
     /* Reset system clock / HCLK divider */
-    M0P_CMU->SCKDIVR = 0x00;
-    M0P_CMU->PERICKSEL = 0x00;
+    M0P_CMU->SCKDIVR = 0x00u;
+    M0P_CMU->PERICKSEL = 0x00u;
 
     /* Reset MCO */
-    M0P_CMU->MCO1CFGR = 0x00;
+    M0P_CMU->MCO1CFGR = 0x00u;
 
     /* Reset the system source */
-    M0P_CMU->CKSWR = 0x00;
+    M0P_CMU->CKSWR = 0x00u;
 
     /* Reset HRC LRC XTAL XTAL32 */
-    M0P_CMU->HRCCR = 0x00;
-    M0P_CMU->LRCCR = 0x00;
-    M0P_CMU->XTALCR = 0x01;
-    M0P_CMU->XTAL32CR = 0x01;
+    M0P_CMU->HRCCR = 0x00u;
+    M0P_CMU->LRCCR = 0x00u;
+    M0P_CMU->XTALCR = 0x01u;
+    M0P_CMU->XTAL32CR = 0x01u;
 
     /* Reset XTALSTD */
-    M0P_CMU->XTALSTDCR = 0x00;
+    M0P_CMU->XTALSTDCR = 0x00u;
 
     /* Disbale register write. */
     CLK_REG_WRITE_DISABLE();
@@ -326,19 +326,24 @@ void CLK_DeInit(void)
  */
 en_result_t CLK_XtalStrucInit(stc_clk_xtal_init_t* pstcXtal)
 {
+    en_result_t enRet = Ok;
+
     /* Check if pointer is NULL */
     if (NULL == pstcXtal)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
     }
-    /* Configure to default value */
-    pstcXtal->u8XtalState   = CLK_XTAL_OFF;
-    pstcXtal->u8XtalMode    = CLK_XTALMODE_OSC;
-    pstcXtal->u8XtalDrv     = CLK_XTALDRV_HIGH;
-    pstcXtal->u8XtalSupDrv  = CLK_XTAL_SUPDRV_ON;
-    pstcXtal->u8XtalStb     = CLK_XTALSTB_8;
+    else
+    {
+        /* Configure to default value */
+        pstcXtal->u8XtalState   = CLK_XTAL_OFF;
+        pstcXtal->u8XtalMode    = CLK_XTALMODE_OSC;
+        pstcXtal->u8XtalDrv     = CLK_XTALDRV_HIGH;
+        pstcXtal->u8XtalSupDrv  = CLK_XTAL_SUPDRV_ON;
+        pstcXtal->u8XtalStb     = CLK_XTALSTB_8;
+    }
 
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -353,68 +358,81 @@ en_result_t CLK_XtalStrucInit(stc_clk_xtal_init_t* pstcXtal)
   */
 en_result_t CLK_XTALInit(const stc_clk_xtal_init_t* pstcXtal)
 {
-    uint32_t u32timeout = 0;
+    uint32_t u32timeout = 0ul;
+    en_result_t enRet = Ok;
 
     if (pstcXtal == NULL)
     {
-        return ErrorInvalidParameter;
-    }
-
-    /* Paramers check */
-    DDL_ASSERT(IS_VALID_CLK_XTAL_STATE(pstcXtal->u8XtalState));
-
-    /* Enable register write. */
-    CLK_REG_WRITE_ENABLE();
-
-    if(CLK_XTAL_OFF == pstcXtal->u8XtalState)
-    {
-        /* When the XTAL is used as system clock in these case XTAL will not disabled */
-        if(CLK_SYSCLKSOURCE_XTAL == READ_BIT(M0P_CMU->CKSWR, CMU_CKSWR_CKSW))
-        {
-            return Error;
-        }
-
-        /* Disable XTAL */
-        M0P_CMU->XTALCR = CLK_XTAL_OFF;
-        /* Wait XTAL stop */
-        while(CLK_FLAG_XTALSTB == READ_BIT(M0P_CMU->OSCSTBSR, CMU_OSCSTBSR_XTALSTBF))
-        {
-            u32timeout++;
-            if(u32timeout > CLK_XTAL_TIMEOUT)
-            {
-                return ErrorTimeout;
-            }
-        }
+        enRet = ErrorInvalidParameter;
     }
     else
     {
         /* Paramers check */
-        DDL_ASSERT(IS_VALID_CLK_XTAL_MODE(pstcXtal->u8XtalMode));
-        DDL_ASSERT(IS_VALID_CLK_XTALDRV_MODE(pstcXtal->u8XtalDrv));
-        DDL_ASSERT(IS_VALID_CLK_XTAL_SUPDRV_STATE(pstcXtal->u8XtalSupDrv));
-        DDL_ASSERT(IS_VALID_CLK_XTALSTB_SEL(pstcXtal->u8XtalStb));
+        DDL_ASSERT(IS_VALID_CLK_XTAL_STATE(pstcXtal->u8XtalState));
 
-        /* Configure XTAL mode, driver ability, super_driver */
-        M0P_CMU->XTALCFGR = pstcXtal->u8XtalDrv | pstcXtal->u8XtalMode | pstcXtal->u8XtalSupDrv;
-        /* Configure XTAL stable time */
-        M0P_CMU->XTALSTBCR = pstcXtal->u8XtalStb;
-        /* Enable XTAL */
-        M0P_CMU->XTALCR = CLK_XTAL_ON;
-        /* Wait XTAL stable */
-        while(CLK_FLAG_XTALSTB != READ_BIT(M0P_CMU->OSCSTBSR, CMU_OSCSTBSR_XTALSTBF))
+        /* Enable register write. */
+        CLK_REG_WRITE_ENABLE();
+
+        if(CLK_XTAL_OFF == pstcXtal->u8XtalState)
         {
-            u32timeout++;
-            if(u32timeout > CLK_XTAL_TIMEOUT)
+            /* When the XTAL is used as system clock in these case XTAL will not disabled */
+            if(CLK_SYSCLKSOURCE_XTAL == READ_BIT(M0P_CMU->CKSWR, CMU_CKSWR_CKSW))
             {
-                return ErrorTimeout;
+                enRet = Error;
+            }
+            else
+            {
+                /* Disable XTAL */
+                M0P_CMU->XTALCR = CLK_XTAL_OFF;
+                /* Wait XTAL stop */
+                while(CLK_FLAG_XTALSTB == READ_BIT(M0P_CMU->OSCSTBSR, CMU_OSCSTBSR_XTALSTBF))
+                {
+                    u32timeout++;
+                    if(u32timeout > CLK_XTAL_TIMEOUT)
+                    {
+                        enRet = ErrorTimeout;
+                    }
+                    else
+                    {
+                        /* code */
+                    }
+                }
             }
         }
+        else
+        {
+            /* Paramers check */
+            DDL_ASSERT(IS_VALID_CLK_XTAL_MODE(pstcXtal->u8XtalMode));
+            DDL_ASSERT(IS_VALID_CLK_XTALDRV_MODE(pstcXtal->u8XtalDrv));
+            DDL_ASSERT(IS_VALID_CLK_XTAL_SUPDRV_STATE(pstcXtal->u8XtalSupDrv));
+            DDL_ASSERT(IS_VALID_CLK_XTALSTB_SEL(pstcXtal->u8XtalStb));
+
+            /* Configure XTAL mode, driver ability, super_driver */
+            M0P_CMU->XTALCFGR = pstcXtal->u8XtalDrv | pstcXtal->u8XtalMode | pstcXtal->u8XtalSupDrv;
+            /* Configure XTAL stable time */
+            M0P_CMU->XTALSTBCR = pstcXtal->u8XtalStb;
+            /* Enable XTAL */
+            M0P_CMU->XTALCR = CLK_XTAL_ON;
+            /* Wait XTAL stable */
+            while(CLK_FLAG_XTALSTB != READ_BIT(M0P_CMU->OSCSTBSR, CMU_OSCSTBSR_XTALSTBF))
+            {
+                u32timeout++;
+                if(u32timeout > CLK_XTAL_TIMEOUT)
+                {
+                    enRet = ErrorTimeout;
+                }
+                else
+                {
+                    /* code */
+                }
+            }
+        }
+
+        /* Disbale register write. */
+        CLK_REG_WRITE_DISABLE();
     }
 
-    /* Disbale register write. */
-    CLK_REG_WRITE_DISABLE();
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -430,18 +448,23 @@ en_result_t CLK_XTALInit(const stc_clk_xtal_init_t* pstcXtal)
  */
 en_result_t CLK_Xtal32StrucInit(stc_clk_xtal32_init_t* pstcXtal32)
 {
+    en_result_t enRet = Ok;
+
     /* Check if pointer is NULL */
     if (NULL == pstcXtal32)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
     }
-    /* Configure to default value */
-    pstcXtal32->u8Xtal32State   = CLK_XTAL32_OFF;
-    pstcXtal32->u8Xtal32Drv     = CLK_XTAL32DRV_MID;
-    pstcXtal32->u8Xtal32SupDrv  = CLK_XTAL32_SUPDRV_OFF;
-    pstcXtal32->u8Xtal32NF      = CLK_XTAL32NF_FULL;
+    else
+    {
+        /* Configure to default value */
+        pstcXtal32->u8Xtal32State   = CLK_XTAL32_OFF;
+        pstcXtal32->u8Xtal32Drv     = CLK_XTAL32DRV_MID;
+        pstcXtal32->u8Xtal32SupDrv  = CLK_XTAL32_SUPDRV_OFF;
+        pstcXtal32->u8Xtal32NF      = CLK_XTAL32NF_FULL;
+    }
 
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -455,67 +478,80 @@ en_result_t CLK_Xtal32StrucInit(stc_clk_xtal32_init_t* pstcXtal32)
  */
 en_result_t CLK_XTAL32Init(const stc_clk_xtal32_init_t* pstcXtal32)
 {
-    uint32_t u32timeout = 0;
+    uint32_t u32timeout = 0ul;
+    en_result_t enRet = Ok;
 
     if (pstcXtal32 == NULL)
     {
-        return ErrorInvalidParameter;
-    }
-
-    /* Paramers check */
-    DDL_ASSERT(IS_VALID_CLK_XTAL32_STATE(pstcXtal32->u8Xtal32State));
-
-    /* Enable register write. */
-    CLK_REG_WRITE_ENABLE();
-
-    if(CLK_XTAL32_OFF == pstcXtal32->u8Xtal32State)
-    {
-        /* When the XTAL32 is used as system clock in these case XTAL32 will not disabled */
-        if(CLK_SYSCLKSOURCE_XTAL32 == READ_BIT(M0P_CMU->CKSWR, CMU_CKSWR_CKSW))
-        {
-            return Error;
-        }
-
-        /* Disable XTAL32 */
-        M0P_CMU->XTAL32CR = CLK_XTAL32_OFF;
-        /* Wait XTAL32 stop */
-        while(CLK_FLAG_XTAL32STB == READ_BIT(M0P_CMU->OSCSTBSR, CMU_OSCSTBSR_XTAL32STBF))
-        {
-            u32timeout++;
-            if(u32timeout > CLK_TIMEOUT)
-            {
-                return ErrorTimeout;
-            }
-        }
+        enRet = ErrorInvalidParameter;
     }
     else
     {
         /* Paramers check */
-        DDL_ASSERT(IS_VALID_CLK_XTAL32DRV_MODE(pstcXtal32->u8Xtal32Drv));
-        DDL_ASSERT(IS_VALID_CLK_XTAL32_SUPDRV_STATE(pstcXtal32->u8Xtal32SupDrv));
-        DDL_ASSERT(IS_VALID_CLK_XTAL32_FILT_SEL(pstcXtal32->u8Xtal32NF));
+        DDL_ASSERT(IS_VALID_CLK_XTAL32_STATE(pstcXtal32->u8Xtal32State));
 
-        /* Configure the XTAL32 driver ability and super_driver */
-        M0P_CMU->XTAL32CFGR = pstcXtal32->u8Xtal32Drv | pstcXtal32->u8Xtal32SupDrv;
-        /* Configure the XTAL32 filtering */
-        M0P_CMU->XTAL32NFR = pstcXtal32->u8Xtal32NF;
-        /* Enable XTAL32 */
-        M0P_CMU->XTAL32CR = CLK_XTAL32_ON;
-        /* Wait XTAL32 stable */
-        while(CLK_FLAG_XTAL32STB != READ_BIT(M0P_CMU->OSCSTBSR, CMU_OSCSTBSR_XTAL32STBF))
+        /* Enable register write. */
+        CLK_REG_WRITE_ENABLE();
+
+        if(CLK_XTAL32_OFF == pstcXtal32->u8Xtal32State)
         {
-            u32timeout++;
-            if(u32timeout > CLK_TIMEOUT)
+            /* When the XTAL32 is used as system clock in these case XTAL32 will not disabled */
+            if(CLK_SYSCLKSOURCE_XTAL32 == READ_BIT(M0P_CMU->CKSWR, CMU_CKSWR_CKSW))
             {
-                return ErrorTimeout;
+                enRet = Error;
+            }
+            else
+            {
+                /* Disable XTAL32 */
+                M0P_CMU->XTAL32CR = CLK_XTAL32_OFF;
+                /* Wait XTAL32 stop */
+                while(CLK_FLAG_XTAL32STB == READ_BIT(M0P_CMU->OSCSTBSR, CMU_OSCSTBSR_XTAL32STBF))
+                {
+                    u32timeout++;
+                    if(u32timeout > CLK_TIMEOUT)
+                    {
+                        enRet = ErrorTimeout;
+                    }
+                    else
+                    {
+                        /* code */
+                    }
+                }
             }
         }
+        else
+        {
+            /* Paramers check */
+            DDL_ASSERT(IS_VALID_CLK_XTAL32DRV_MODE(pstcXtal32->u8Xtal32Drv));
+            DDL_ASSERT(IS_VALID_CLK_XTAL32_SUPDRV_STATE(pstcXtal32->u8Xtal32SupDrv));
+            DDL_ASSERT(IS_VALID_CLK_XTAL32_FILT_SEL(pstcXtal32->u8Xtal32NF));
+
+            /* Configure the XTAL32 driver ability and super_driver */
+            M0P_CMU->XTAL32CFGR = pstcXtal32->u8Xtal32Drv | pstcXtal32->u8Xtal32SupDrv;
+            /* Configure the XTAL32 filtering */
+            M0P_CMU->XTAL32NFR = pstcXtal32->u8Xtal32NF;
+            /* Enable XTAL32 */
+            M0P_CMU->XTAL32CR = CLK_XTAL32_ON;
+            /* Wait XTAL32 stable */
+            while(CLK_FLAG_XTAL32STB != READ_BIT(M0P_CMU->OSCSTBSR, CMU_OSCSTBSR_XTAL32STBF))
+            {
+                u32timeout++;
+                if(u32timeout > CLK_TIMEOUT)
+                {
+                    enRet = ErrorTimeout;
+                }
+                else
+                {
+                    /* code */
+                }
+            }
+        }
+
+        /* Disbale register write. */
+        CLK_REG_WRITE_DISABLE();
     }
 
-    /* Disbale register write. */
-    CLK_REG_WRITE_DISABLE();
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -542,7 +578,8 @@ en_result_t CLK_XTAL32Init(const stc_clk_xtal32_init_t* pstcXtal32)
  */
 en_result_t CLK_HRCInit(uint8_t HRCState, uint8_t HRCFreq)
 {
-    uint32_t u32timeout = 0;
+    uint32_t u32timeout = 0ul;
+    en_result_t enRet = Ok;
 
     /* Paramers check */
     DDL_ASSERT(IS_VALID_CLK_HRC_STATE(HRCState));
@@ -555,17 +592,24 @@ en_result_t CLK_HRCInit(uint8_t HRCState, uint8_t HRCFreq)
         /* When the HRC is used as system clock in these case HRC will not disabled */
         if(CLK_SYSCLKSOURCE_HRC == READ_BIT(M0P_CMU->CKSWR, CMU_CKSWR_CKSW))
         {
-            return Error;
+            enRet = Error;
         }
-        /* Disable HRC */
-        M0P_CMU->HRCCR = CLK_HRC_OFF;
-        /* Wait HRC stop */
-        while(CLK_FLAG_HRCSTB == READ_BIT(M0P_CMU->OSCSTBSR, CMU_OSCSTBSR_HRCSTBF))
+        else
         {
-            u32timeout++;
-            if(u32timeout > CLK_TIMEOUT)
+            /* Disable HRC */
+            M0P_CMU->HRCCR = CLK_HRC_OFF;
+            /* Wait HRC stop */
+            while(CLK_FLAG_HRCSTB == READ_BIT(M0P_CMU->OSCSTBSR, CMU_OSCSTBSR_HRCSTBF))
             {
-                return ErrorTimeout;
+                u32timeout++;
+                if(u32timeout > CLK_TIMEOUT)
+                {
+                    enRet = ErrorTimeout;
+                }
+                else
+                {
+                    /* code */
+                }
             }
         }
     }
@@ -591,7 +635,11 @@ en_result_t CLK_HRCInit(uint8_t HRCState, uint8_t HRCFreq)
             u32timeout++;
             if(u32timeout > CLK_TIMEOUT)
             {
-                return ErrorTimeout;
+                enRet = ErrorTimeout;
+            }
+            else
+            {
+                /* code */
             }
         }
     }
@@ -602,7 +650,7 @@ en_result_t CLK_HRCInit(uint8_t HRCState, uint8_t HRCFreq)
     /* Update system clock */
     SystemCoreClockUpdate();
 
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -615,6 +663,7 @@ en_result_t CLK_HRCInit(uint8_t HRCState, uint8_t HRCFreq)
  */
 en_result_t CLK_LRCInit(uint8_t LRCState)
 {
+    en_result_t enRet = Ok;
     /* Paramers check */
     DDL_ASSERT(IS_VALID_CLK_LRC_STATE(LRCState));
 
@@ -626,10 +675,13 @@ en_result_t CLK_LRCInit(uint8_t LRCState)
         /* When the LRC is used as system clock in these case LRC will not disabled */
         if(CLK_SYSCLKSOURCE_LRC == READ_BIT(M0P_CMU->CKSWR, CMU_CKSWR_CKSW))
         {
-            return Error;
+            enRet = Error;
         }
-        /* Disable LRC */
-        M0P_CMU->LRCCR = CLK_LRC_OFF;
+        else
+        {
+            /* Disable LRC */
+            M0P_CMU->LRCCR = CLK_LRC_OFF;
+        }
     }
     else
     {
@@ -640,7 +692,7 @@ en_result_t CLK_LRCInit(uint8_t LRCState)
     /* Disbale register write. */
     CLK_REG_WRITE_DISABLE();
 
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -656,18 +708,23 @@ en_result_t CLK_LRCInit(uint8_t LRCState)
  */
 en_result_t CLK_XtalStdStrucInit(stc_clk_xtalstd_init_t* pstcXtalStd)
 {
+    en_result_t enRet = Ok;
+
     /* Check if pointer is NULL */
     if (NULL == pstcXtalStd)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
     }
-    /* Configure to default value */
-    pstcXtalStd->u8XtalStdState = CLK_XTALSTD_OFF;
-    pstcXtalStd->u8XtalStdMode  = CLK_XTALSTD_MODE_INT;
-    pstcXtalStd->u8XtalStdInt   = CLK_XTALSTD_RST_OFF;
-    pstcXtalStd->u8XtalStdRst   = CLK_XTALSTD_INT_OFF;
+    else
+    {
+        /* Configure to default value */
+        pstcXtalStd->u8XtalStdState = CLK_XTALSTD_OFF;
+        pstcXtalStd->u8XtalStdMode  = CLK_XTALSTD_MODE_INT;
+        pstcXtalStd->u8XtalStdInt   = CLK_XTALSTD_RST_OFF;
+        pstcXtalStd->u8XtalStdRst   = CLK_XTALSTD_INT_OFF;
+    }
 
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -681,35 +738,39 @@ en_result_t CLK_XtalStdStrucInit(stc_clk_xtalstd_init_t* pstcXtalStd)
  */
 en_result_t CLK_XTALStdInit(const stc_clk_xtalstd_init_t* pstcXtalStd)
 {
+    en_result_t enRet = Ok;
+
     if (pstcXtalStd == NULL)
     {
-        return ErrorInvalidParameter;
-    }
-
-    /* Paramer valid check */
-    DDL_ASSERT(IS_VALID_CLK_XTALSTD_STATE(pstcXtalStd->u8XtalStdState));
-
-    /* Enable register write. */
-    CLK_REG_WRITE_ENABLE();
-
-    if(CLK_XTALSTD_OFF == pstcXtalStd->u8XtalStdState)
-    {
-        /* Disbale XTAL status detection */
-        CLEAR_BIT(M0P_CMU->XTALSTDCR, CMU_XTALSTDCR_XTALSTDE);
+        enRet = ErrorInvalidParameter;
     }
     else
     {
         /* Paramer valid check */
-        DDL_ASSERT(IS_VALID_CLK_XTALSTD_MODE(pstcXtalStd->u8XtalStdMode));
-        DDL_ASSERT(IS_VALID_CLK_XTALSTD_INT_STATE(pstcXtalStd->u8XtalStdInt));
-        DDL_ASSERT(IS_VALID_CLK_XTALSTD_RST_STATE(pstcXtalStd->u8XtalStdRst));
+        DDL_ASSERT(IS_VALID_CLK_XTALSTD_STATE(pstcXtalStd->u8XtalStdState));
 
-        /* Confiure XTALSTD and enable XTALSTD */
-        M0P_CMU->XTALSTDCR = pstcXtalStd->u8XtalStdState | pstcXtalStd->u8XtalStdMode | \
-                             pstcXtalStd->u8XtalStdInt   | pstcXtalStd->u8XtalStdRst;
+        /* Enable register write. */
+        CLK_REG_WRITE_ENABLE();
+
+        if(CLK_XTALSTD_OFF == pstcXtalStd->u8XtalStdState)
+        {
+            /* Disbale XTAL status detection */
+            bM0P_CMU->XTALSTDCR_b.XTALSTDE = (uint32_t)CLK_XTALSTD_OFF;
+        }
+        else
+        {
+            /* Paramer valid check */
+            DDL_ASSERT(IS_VALID_CLK_XTALSTD_MODE(pstcXtalStd->u8XtalStdMode));
+            DDL_ASSERT(IS_VALID_CLK_XTALSTD_INT_STATE(pstcXtalStd->u8XtalStdInt));
+            DDL_ASSERT(IS_VALID_CLK_XTALSTD_RST_STATE(pstcXtalStd->u8XtalStdRst));
+
+            /* Confiure XTALSTD and enable XTALSTD */
+            M0P_CMU->XTALSTDCR = pstcXtalStd->u8XtalStdState | pstcXtalStd->u8XtalStdMode | \
+                                pstcXtalStd->u8XtalStdInt   | pstcXtalStd->u8XtalStdRst;
+        }
     }
 
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -729,8 +790,8 @@ void CLK_SetSysclkSrc(uint8_t u8Src)
     /* Enable register write. */
     CLK_REG_WRITE_ENABLE();
 
-    /* Set system clock divider */
-    MODIFY_REG(M0P_CMU->CKSWR, CMU_CKSWR_CKSW, u8Src);
+    /* Set system clock source */
+    M0P_CMU->CKSWR = u8Src;
 
     /* Disbale register write. */
     CLK_REG_WRITE_DISABLE();
@@ -759,7 +820,7 @@ void CLK_SetSysclkDiv(uint8_t u8Div)
     CLK_REG_WRITE_ENABLE();
 
     /* Set system clock divider */
-    MODIFY_REG(M0P_CMU->SCKDIVR, CMU_SCKDIVR_SCKDIV, u8Div);
+    M0P_CMU->SCKDIVR = u8Div;
 
     /* Disbale register write. */
     CLK_REG_WRITE_DISABLE();
@@ -787,8 +848,8 @@ void CLK_SetADClkDiv(uint8_t u8Div)
     /* Enable register write. */
     CLK_REG_WRITE_ENABLE();
 
-    /* Set system clock divider */
-    MODIFY_REG(M0P_CMU->PERICKSEL, CMU_PERICKSEL_PERICKSEL, u8Div);
+    /* Set ADC clock divider */
+    M0P_CMU->PERICKSEL = u8Div;
 
     /* Disbale register write. */
     CLK_REG_WRITE_DISABLE();
@@ -901,14 +962,7 @@ void CLK_MCOCmd(en_functional_state_t enNewState)
     CLK_REG_WRITE_ENABLE();
 
     /* Enable or disable clock output. */
-    if(Enable == enNewState)
-    {
-        SET_BIT(M0P_CMU->MCO1CFGR, CMU_MCO1CFGR_MCO1EN);
-    }
-    else
-    {
-        CLEAR_BIT(M0P_CMU->MCO1CFGR, CMU_MCO1CFGR_MCO1EN);
-    }
+    bM0P_CMU->MCO1CFGR_b.MCO1EN = enNewState;
 
     /* Disbale register write. */
     CLK_REG_WRITE_DISABLE();

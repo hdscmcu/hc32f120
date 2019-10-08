@@ -72,18 +72,6 @@
 /*******************************************************************************
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
-/* Enable ADC peripheral. */
-#define ENABLE_ADC()                CLK_FcgPeriphClockCmd(CLK_FCG_ADC, Enable)
-
-/* Disable ADC peripheral. */
-#define DISABLE_ADC()               CLK_FcgPeriphClockCmd(CLK_FCG_ADC, Disable)
-
-/* Enable AOS. */
-#define ENABLE_AOS()                CLK_FcgPeriphClockCmd(CLK_FCG_AOS, Enable)
-
-/* Disable ADC. */
-#define DISABLE_AOS()               CLK_FcgPeriphClockCmd(CLK_FCG_AOS, Disable)
-
 /* ADC channels definition for this example. */
 #define ADC_SA_CHANNEL              (ADC_CH0 | ADC_CH11)
 #define ADC_SA_CHANNEL_COUNT        (2u)
@@ -95,7 +83,7 @@
 #define ADC_SAMPLE_TIME             ((uint8_t)10)
 
 /* ADC resolution definition. */
-#define ADC_RESOLUTION              ADC_RESOLUTION_12B
+#define ADC_RESOLUTION              (ADC_RESOLUTION_12B)
 
 /* ADC accuracy. */
 #define ADC_ACCURACY                (1ul << 12u)
@@ -153,7 +141,7 @@ int32_t main(void)
     {
         if (ADC_GetEocFlag(ADC_FLAG_EOCA) == Set)
         {
-            ADC_GetSeqData(ADC_SEQ_A, (uint16_t *)&m_au16AdcSaVal[0u]);
+            ADC_GetChannelData(ADC_SA_CHANNEL, (uint16_t *)&m_au16AdcSaVal[0u], ADC_SA_CHANNEL_COUNT);
             ADC_ClrEocFlag(ADC_FLAG_EOCA);
             m_f32Vol = ((float)m_au16AdcSaVal[1u] * ADC_VREF) / ((float)ADC_ACCURACY);
             (void)m_f32Vol;
@@ -162,7 +150,7 @@ int32_t main(void)
 
         if (ADC_GetEocFlag(ADC_FLAG_EOCB) == Set)
         {
-            ADC_GetSeqData(ADC_SEQ_B, (uint16_t *)&m_au16AdcSbVal[0u]);
+            ADC_GetChannelData(ADC_SB_CHANNEL, (uint16_t *)&m_au16AdcSbVal[0u], ADC_SB_CHANNEL_COUNT);
             ADC_ClrEocFlag(ADC_FLAG_EOCB);
             // TODO: Use the ADC data.
         }
@@ -212,7 +200,7 @@ static void AdcInitConfig(void)
     stcInit.u8SampTime      = ADC_SAMPLE_TIME;
 
     /* 1. Enable ADC peripheral. */
-    ENABLE_ADC();
+    CLK_FcgPeriphClockCmd(CLK_FCG_ADC, Enable);
 
     /* 2. Initializes ADC. */
     ADC_Init(&stcInit);
@@ -260,7 +248,7 @@ static void AdcTriggerConfig(void)
     stcTrgCfg.u16TrgSrc = ADC_TRGSRC_EX_PIN;
 
     /* 1. Configures the function of pin ADTRGA. */
-    GPIO_SetFunc(GPIO_PORT_1, GPIO_PIN_0, GPIO_FUNC_ADTRG);
+    GPIO_SetFunc(GPIO_PORT_1, GPIO_PIN_0, GPIO_FUNC_1_ADTRG);
     /* 2. Configrues the trigger source of sequence A. */
     ADC_ConfigTriggerSrc(u8Seq, &stcTrgCfg);
     /* 3. Enable the trigger source. */
@@ -274,7 +262,7 @@ static void AdcTriggerConfig(void)
     stcTrgCfg.u16TrgSrc = ADC_TRGSRC_IN_EVT0;
     stcTrgCfg.u32Event0 = EVT_ADC_EOCA;
     /* 1. Enable AOS */
-    ENABLE_AOS();
+    CLK_FcgPeriphClockCmd(CLK_FCG_AOS, Enable);
     /* 2. Configrues the trigger source of sequence B. */
     ADC_ConfigTriggerSrc(u8Seq, &stcTrgCfg);
     /* 3. Enable the trigger source. */
@@ -313,8 +301,9 @@ static void AdcSetChannelPinAnalogMode(uint16_t u16Channel)
  */
 static void AdcSetPinAnalogMode(uint8_t u8PinNbr)
 {
-    uint8_t u8Port;
-    uint8_t u8Pin;
+    uint8_t u8Port = GPIO_PORT_2;
+    uint8_t u8Pin  = GPIO_PIN_0;
+    uint8_t u8Flag = 1u;
 
     switch (u8PinNbr)
     {
@@ -379,10 +368,14 @@ static void AdcSetPinAnalogMode(uint8_t u8PinNbr)
         break;
 
     default:
-        return;
+        u8Flag = 0u;
+        break;
     }
 
-    GPIO_SetFunc(u8Port, u8Pin, GPIO_FUNC_ANIN);
+    if (u8Flag != 0u)
+    {
+        GPIO_SetFunc(u8Port, u8Pin, GPIO_FUNC_1_ANIN);
+    }
 }
 
 /**

@@ -105,7 +105,7 @@
 
 #define IS_CTC_RELOAD_VAL(x)                    ((x) <= (CTC_CR2_RLDVAL >> CTC_CR2_RLDVAL_POS))
 
-#define IS_CTC_TRM_VAL(x)                       ((x) <= (CTC_CR1_TRIMVAL >> CTC_CR1_TRIMVAL_POS))
+#define IS_CTC_TRM_VAL(x)                       ((x) <= (CTC_CR1_TRMVAL >> CTC_CR1_TRMVAL_POS))
 
 #define IS_CTC_TOLERANCE_BIAS(x)                ((x) <= CTC_DEFAULT_TOLERANCE_BIAS)
 
@@ -168,86 +168,89 @@
  */
 en_result_t CTC_Init(const stc_ctc_init_t *pstcInit)
 {
-    uint32_t u32ReloadVal = 0u;
-    uint32_t u32OffsetVal = 0u;
-    uint32_t u32RefclkDiv = 0u;
-    uint32_t u32Multiplier = 0u;
-    uint64_t u64InterRefclk = 0u;
+    float f32OffsetVal = 0.0f;
+    uint32_t u32ReloadVal = 0ul;
+    uint32_t u32OffsetVal = 0ul;
+    uint32_t u32RefclkDiv = 0ul;
+    uint32_t u32Multiplier = 0ul;
+    uint64_t u64InterRefclk = 0ul;
+    en_result_t enRet = ErrorNotReady;
 
     /* Check CTC status */
-    if (READ_BIT(M0P_CTC->STR, CTC_FLAG_BUSY))
+    if (!(READ_REG32_BIT(M0P_CTC->STR, CTC_FLAG_BUSY)))
     {
-        return ErrorNotReady;
+        enRet = ErrorInvalidParameter;
+
+        /* Check parameters */
+        if ((NULL != pstcInit) && (IS_CTC_FREF(pstcInit->u32Fref)))
+        {
+            /* Check parameters */
+            DDL_ASSERT(IS_CTC_FHRC(pstcInit->u32Fhrc));
+            DDL_ASSERT(IS_CTC_FREF(pstcInit->u32Fref));
+            DDL_ASSERT(IS_CTC_TRM_VAL(pstcInit->u32TrmVal));
+            DDL_ASSERT(IS_CTC_REFCLK_SEL(pstcInit->u32RefClkSel));
+            DDL_ASSERT(IS_CTC_TOLERANCE_BIAS(pstcInit->f32ToleranceBias));
+            DDL_ASSERT(IS_CTC_REFCLK_PRESCALER_DIV(pstcInit->u32RefclkPrescaler));
+
+            if (pstcInit->u32RefclkPrescaler < CTC_REFCLK_PRESCALER_DIV128)
+            {
+                u32RefclkDiv = (8ul << (2ul * pstcInit->u32RefclkPrescaler));
+            }
+            else
+            {
+                u32RefclkDiv = (32ul << pstcInit->u32RefclkPrescaler);
+            }
+            u64InterRefclk = ((uint64_t)(pstcInit->u32Fhrc)) * ((uint64_t)(u32RefclkDiv));
+            u32Multiplier = (uint32_t)(u64InterRefclk / pstcInit->u32Fref);
+
+            /* Calculate offset value formula: OFSVAL = (Fhrc / (Fref * Fref_divsion)) * TA */
+            f32OffsetVal = ((float)u32Multiplier) * (pstcInit->f32ToleranceBias);
+            u32OffsetVal = (uint32_t)(f32OffsetVal);
+
+            /* Calculate reload value formula: RLDVAL = (Fhrc / (Fref * Fref_divsion)) + OFSVAL */
+            u32ReloadVal = u32Multiplier + u32OffsetVal;
+
+            if ((IS_CTC_OFFSET_VAL(u32OffsetVal)) && (IS_CTC_RELOAD_VAL(u32ReloadVal)))
+            {
+                /* Set CR1 */
+                WRITE_REG32(M0P_CTC->CR1,                                      \
+                            (pstcInit->u32RefclkPrescaler |                    \
+                             pstcInit->u32RefClkSel       |                    \
+                             (pstcInit->u32TrmVal << CTC_CR1_TRMVAL_POS)));
+
+                /* Set CR2 */
+                WRITE_REG32(M0P_CTC->CR2, ((u32ReloadVal << CTC_CR2_RLDVAL_POS) | u32OffsetVal));
+                enRet = Ok;
+            }
+        }
     }
 
-    /* Check parameters */
-    if ((NULL == pstcInit) || 
-        (!IS_CTC_FREF(pstcInit->u32Fref)))
-    {
-        return ErrorInvalidParameter;
-    }
-
-    /* Check parameters */
-    DDL_ASSERT(IS_CTC_FHRC(pstcInit->u32Fhrc));
-    DDL_ASSERT(IS_CTC_FREF(pstcInit->u32Fref));
-    DDL_ASSERT(IS_CTC_TRM_VAL(pstcInit->u32TrmVal));
-    DDL_ASSERT(IS_CTC_REFCLK_SEL(pstcInit->u32RefClkSel));
-    DDL_ASSERT(IS_CTC_TOLERANCE_BIAS(pstcInit->f32ToleranceBias));
-    DDL_ASSERT(IS_CTC_REFCLK_PRESCALER_DIV(pstcInit->u32RefclkPrescaler));
-
-    if (pstcInit->u32RefclkPrescaler < CTC_REFCLK_PRESCALER_DIV128)
-    {
-        u32RefclkDiv = (8 << (2 * pstcInit->u32RefclkPrescaler));
-    }
-    else
-    {
-        u32RefclkDiv = (32u << pstcInit->u32RefclkPrescaler);
-    }
-    u64InterRefclk = ((uint64_t)(pstcInit->u32Fhrc)) * ((uint64_t)(u32RefclkDiv));
-    u32Multiplier = u64InterRefclk / pstcInit->u32Fref;
-
-    /* Calculate offset value formula: OFSVAL = (Fhrc / (Fref * Fref_divsion)) * TA */
-    u32OffsetVal = (uint32_t)(u32Multiplier * pstcInit->f32ToleranceBias);
-
-    /* Calculate reload value formula: RLDVAL = (Fhrc / (Fref * Fref_divsion)) + OFSVAL */
-    u32ReloadVal = u32Multiplier + u32OffsetVal;
-
-    if ((!IS_CTC_OFFSET_VAL(u32OffsetVal)) || (!IS_CTC_RELOAD_VAL(u32ReloadVal)))
-    {
-        return ErrorInvalidParameter;
-    }
-
-    /* Set CR1 */
-    WRITE_REG(M0P_CTC->CR1,                                                    \
-              (pstcInit->u32RefclkPrescaler | pstcInit->u32RefClkSel |         \
-              (pstcInit->u32TrmVal << CTC_CR1_TRIMVAL_POS)));
-
-    /* Set CR2 */
-    WRITE_REG(M0P_CTC->CR2, ((u32ReloadVal << CTC_CR2_RLDVAL_POS) | u32OffsetVal));
-
-    return Ok;
+    return enRet;
 }
 
 /**
  * @brief  Set the fields of structure stc_uart_init_t to default values.
  * @param  [out] pstcInit               Pointer to a @ref stc_ctc_init_t structure (CTC function configuration data structure).
- * @retval None
+ * @retval An en_result_t enumeration value:
+ *           - Ok: Initialize success
+ *           - ErrorInvalidParameter: pstcInit is NULL pointer
  */
 en_result_t CTC_StructInit(stc_ctc_init_t *pstcInit)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check parameters */
-    if (NULL == pstcInit)
+    if (NULL != pstcInit)
     {
-        return ErrorInvalidParameter;
+        pstcInit->u32Fhrc = 0ul;
+        pstcInit->u32Fref = 0ul;
+        pstcInit->u32RefClkSel = CTC_REFCLK_CTCREF;
+        pstcInit->f32ToleranceBias = CTC_DEFAULT_TOLERANCE_BIAS;
+        pstcInit->u32RefclkPrescaler = CTC_REFCLK_PRESCALER_DIV8;
+        enRet = Ok;
     }
 
-    pstcInit->u32Fhrc = 0ul;
-    pstcInit->u32Fref = 0ul;
-    pstcInit->u32RefClkSel = CTC_REFCLK_CTCREF;
-    pstcInit->f32ToleranceBias = CTC_DEFAULT_TOLERANCE_BIAS;
-    pstcInit->u32RefclkPrescaler = CTC_REFCLK_PRESCALER_DIV8;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -255,20 +258,22 @@ en_result_t CTC_StructInit(stc_ctc_init_t *pstcInit)
  * @param  None
  * @retval An en_result_t enumeration value:
  *           - Ok: De-Initialize success
+ *           - ErrorNotReady: CTC state is busy
  */
 en_result_t CTC_DeInit(void)
 {
+    en_result_t enRet = ErrorNotReady;
+
     /* Check CTC status */
-    if (READ_BIT(M0P_CTC->STR, CTC_FLAG_BUSY))
+    if (!(READ_REG32_BIT(M0P_CTC->STR, CTC_FLAG_BUSY)))
     {
-        return ErrorNotReady;
+        /* Configures the registers to reset value. */
+        WRITE_REG32(M0P_CTC->CR1, 0x80000000ul);
+        WRITE_REG32(M0P_CTC->CR2, 0x00000000ul);
+        enRet = Ok;
     }
 
-    /* Configures the registers to reset value. */
-    WRITE_REG(M0P_CTC->CR1, 0x80000000);
-    WRITE_REG(M0P_CTC->CR2, 0x00000000);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -290,7 +295,7 @@ void CTC_SetRefClkPrescaler(uint32_t u32Prescaler)
     /* Check parameters */
     DDL_ASSERT(IS_CTC_REFCLK_PRESCALER_DIV(u32Prescaler));
 
-    MODIFY_REG(M0P_CTC->CR1, CTC_CR1_REFPSC, u32Prescaler);
+    MODIFY_REG32(M0P_CTC->CR1, CTC_CR1_REFPSC, u32Prescaler);
 }
 
 /**
@@ -308,7 +313,7 @@ void CTC_SetRefClkPrescaler(uint32_t u32Prescaler)
  */
 uint32_t CTC_GetRefClkPrescaler(void)
 {
-    return READ_BIT(M0P_CTC->CR1, CTC_CR1_REFPSC);
+    return READ_REG32_BIT(M0P_CTC->CR1, CTC_CR1_REFPSC);
 }
 
 /**
@@ -325,7 +330,7 @@ void CTC_SetRefClkSource(uint32_t u32RefClk)
     /* Check parameters */
     DDL_ASSERT(IS_CTC_REFCLK_SEL(u32RefClk));
 
-    MODIFY_REG(M0P_CTC->CR1, CTC_CR1_REFCKS, u32RefClk);
+    MODIFY_REG32(M0P_CTC->CR1, CTC_CR1_REFCKS, u32RefClk);
 }
 
 /**
@@ -338,7 +343,7 @@ void CTC_SetRefClkSource(uint32_t u32RefClk)
  */
 uint32_t CTC_GetRefClkSource(void)
 {
-    return READ_BIT(M0P_CTC->CR1, CTC_CR1_REFCKS);
+    return READ_REG32_BIT(M0P_CTC->CR1, CTC_CR1_REFCKS);
 }
 
 /**
@@ -355,7 +360,7 @@ uint32_t CTC_GetRefClkSource(void)
  */
 en_flag_status_t CTC_GetFlag(uint32_t u32Flag)
 {
-    return ((u32Flag == READ_BIT(M0P_CTC->STR, u32Flag)) ? Set : Reset);
+    return ((u32Flag == READ_REG32_BIT(M0P_CTC->STR, u32Flag)) ? Set : Reset);
 }
 
 /**
@@ -369,7 +374,7 @@ void CTC_SetTrmVal(uint8_t u8TrmVal)
     /* Check parameters */
     DDL_ASSERT(IS_CTC_TRM_VAL(u8TrmVal));
 
-    MODIFY_REG(M0P_CTC->CR1, CTC_CR1_TRIMVAL, (((uint32_t)u8TrmVal) << CTC_CR1_TRIMVAL_POS));
+    MODIFY_REG32(M0P_CTC->CR1, CTC_CR1_TRMVAL, (((uint32_t)u8TrmVal) << CTC_CR1_TRMVAL_POS));
 }
 
 /**
@@ -379,7 +384,7 @@ void CTC_SetTrmVal(uint8_t u8TrmVal)
  */
 uint8_t CTC_GetTrmVal(void)
 {
-    return ((uint8_t)(READ_REG(M0P_CTC->CR1) >> CTC_CR1_TRIMVAL_POS));
+    return ((uint8_t)(READ_REG32(M0P_CTC->CR1) >> CTC_CR1_TRMVAL_POS));
 }
 
 /**
@@ -390,7 +395,7 @@ uint8_t CTC_GetTrmVal(void)
  */
 void CTC_SetReloadVal(uint16_t u16ReloadVal)
 {
-    MODIFY_REG(M0P_CTC->CR2, CTC_CR2_RLDVAL, (((uint32_t)u16ReloadVal) << CTC_CR2_RLDVAL_POS));
+    MODIFY_REG32(M0P_CTC->CR2, CTC_CR2_RLDVAL, (((uint32_t)u16ReloadVal) << CTC_CR2_RLDVAL_POS));
 }
 
 /**
@@ -400,7 +405,7 @@ void CTC_SetReloadVal(uint16_t u16ReloadVal)
  */
 uint16_t CTC_GetReloadVal(void)
 {
-    return ((uint16_t)(READ_REG(M0P_CTC->CR2) >> CTC_CR2_RLDVAL_POS));
+    return ((uint16_t)(READ_REG32(M0P_CTC->CR2) >> CTC_CR2_RLDVAL_POS));
 }
 
 /**
@@ -411,7 +416,7 @@ uint16_t CTC_GetReloadVal(void)
  */
 void CTC_SetOffsetVal(uint8_t u8OffsetVal)
 {
-    MODIFY_REG(M0P_CTC->CR2, CTC_CR2_OFSVAL, (((uint32_t)u8OffsetVal) << CTC_CR2_OFSVAL_POS));
+    MODIFY_REG32(M0P_CTC->CR2, CTC_CR2_OFSVAL, (((uint32_t)u8OffsetVal) << CTC_CR2_OFSVAL_POS));
 }
 
 /**
@@ -421,7 +426,7 @@ void CTC_SetOffsetVal(uint8_t u8OffsetVal)
  */
 uint8_t CTC_GetOffsetVal(void)
 {
-    return ((uint8_t)(READ_REG(M0P_CTC->CR2) >> CTC_CR2_OFSVAL_POS));
+    return ((uint8_t)(READ_REG32(M0P_CTC->CR2) >> CTC_CR2_OFSVAL_POS));
 }
 
 /**

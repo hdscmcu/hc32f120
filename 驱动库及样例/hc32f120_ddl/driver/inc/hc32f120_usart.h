@@ -222,13 +222,13 @@ typedef struct
  *           - 0xXXXXXXXX  : Flag mask in the USART_SR register
  * @{
  */
-#define USART_FLAG_PE                           USART_SR_PE     /*!< Parity error flag */
-#define USART_FLAG_FE                           USART_SR_FE     /*!< Framing error flag */
-#define USART_FLAG_ORE                          USART_SR_ORE    /*!< Overrun error flag */
-#define USART_FLAG_RXNE                         USART_SR_RXNE   /*!< Receive data register not empty flag */
-#define USART_FLAG_TC                           USART_SR_TC     /*!< Transmission complete flag */
-#define USART_FLAG_TXE                          USART_SR_TXE    /*!< Transmit data register empty flag */
-#define USART_FLAG_MPB                          USART_SR_MPB    /*!< Receive processor ID flag */
+#define USART_FLAG_PE                           (USART_SR_PE)   /*!< Parity error flag */
+#define USART_FLAG_FE                           (USART_SR_FE)   /*!< Framing error flag */
+#define USART_FLAG_ORE                          (USART_SR_ORE)  /*!< Overrun error flag */
+#define USART_FLAG_RXNE                         (USART_SR_RXNE) /*!< Receive data register not empty flag */
+#define USART_FLAG_TC                           (USART_SR_TC)   /*!< Transmission complete flag */
+#define USART_FLAG_TXE                          (USART_SR_TXE)  /*!< Transmit data register empty flag */
+#define USART_FLAG_MPB                          (USART_SR_MPB)  /*!< Receive processor ID flag */
 /**
  * @}
  */
@@ -237,8 +237,8 @@ typedef struct
  * @defgroup USART_Transmission_Type USART Transmission Type
  * @{
  */
-#define USART_TRANSMISSION_ID                   USART_DR_MPID
-#define USART_TRANSMISSION_DATA                 ((uint32_t)0x00000000)
+#define USART_TRANSMISSION_ID                   (USART_DR_MPID)
+#define USART_TRANSMISSION_DATA                 ((uint32_t)0x00000000ul)
 /**
  * @}
  */
@@ -247,9 +247,9 @@ typedef struct
  * @defgroup USART_Clear_Flag USART Clear Flag
  * @{
  */
-#define USART_CLEAR_FLAG_PE                     USART_CR1_CPE   /*!< Clear Parity error flag */
-#define USART_CLEAR_FLAG_FE                     USART_CR1_CFE   /*!< Clear Framing error flag */
-#define USART_CLEAR_FLAG_ORE                    USART_CR1_CORE  /*!< Clear Overrun error flag */
+#define USART_CLEAR_FLAG_PE                     (USART_CR1_CPE)   /*!< Clear Parity error flag */
+#define USART_CLEAR_FLAG_FE                     (USART_CR1_CFE)   /*!< Clear Framing error flag */
+#define USART_CLEAR_FLAG_ORE                    (USART_CR1_CORE)  /*!< Clear Overrun error flag */
 /**
  * @}
  */
@@ -258,9 +258,9 @@ typedef struct
  * @defgroup USART_Interrupt_definition USART Interrupts Definition
  * @{
  */
-#define USART_IT_RI                             USART_CR1_RIE   /*!< Receive data register not empty && Receive error interrupt */
-#define USART_IT_TC                             USART_CR1_TCIE  /*!< Transmission complete interrupt */
-#define USART_IT_TXE                            USART_CR1_TXEIE /*!< Transmit data register empty interrupt */
+#define USART_IT_RI                             (USART_CR1_RIE)   /*!< Receive data register not empty && Receive error interrupt */
+#define USART_IT_TC                             (USART_CR1_TCIE)  /*!< Transmission complete interrupt */
+#define USART_IT_TXE                            (USART_CR1_TXEIE) /*!< Transmit data register empty interrupt */
 /**
  * @}
  */
@@ -269,11 +269,11 @@ typedef struct
  * @defgroup USART_Transmit_Receive_Function USART Transmit/Receive Function
  * @{
  */
-#define USART_RX                                USART_CR1_RE    /*!< USART RX function */
-#define USART_TX                                USART_CR1_TE    /*!< USART TX function */
-#define USART_INT_RX                            USART_CR1_RIE   /*!< USART RX interrupt function */
-#define USART_INT_TC                            USART_CR1_TCIE  /*!< USART transmission complete interrupt */
-#define USART_INT_TXE                           USART_CR1_TXEIE /*!< Transmit data register empty interrupt */
+#define USART_RX                                (USART_CR1_RE)    /*!< USART RX function */
+#define USART_TX                                (USART_CR1_TE)    /*!< USART TX function */
+#define USART_INT_RX                            (USART_CR1_RIE)   /*!< USART RX interrupt function */
+#define USART_INT_TC                            (USART_CR1_TCIE)  /*!< USART transmission complete interrupt */
+#define USART_INT_TXE                           (USART_CR1_TXEIE) /*!< Transmit data register empty interrupt */
 /**
  * @}
  */
@@ -282,8 +282,8 @@ typedef struct
  * @defgroup USART_Silence_Mode_State USART Silence Mode State
  * @{
  */
-#define USART_UART_SILENCE_MODE                 USART_CR1_SLME          /*!< UART silence mode */
-#define USART_UART_NORMAL_MODE                  ((uint32_t)0x00000000)  /*!< UART normal mode */
+#define USART_UART_SILENCE_MODE                 (USART_CR1_SLME)          /*!< UART silence mode */
+#define USART_UART_NORMAL_MODE                  ((uint32_t)0x00000000ul)  /*!< UART normal mode */
 /**
  * @}
  */
@@ -292,8 +292,8 @@ typedef struct
  * @defgroup USART_Parity_Control USART Parity Control
  * @{
  */
-#define USART_PARITY_NONE                       ((uint32_t)0x00000000)          /*!< Parity control disabled */
-#define USART_PARITY_EVEN                       USART_CR1_PCE                   /*!< Parity control enabled and Even Parity is selected */
+#define USART_PARITY_NONE                       ((uint32_t)0x00000000ul)        /*!< Parity control disabled */
+#define USART_PARITY_EVEN                       (USART_CR1_PCE)                 /*!< Parity control enabled and Even Parity is selected */
 #define USART_PARITY_ODD                        (USART_CR1_PCE | USART_CR1_PS)  /*!< Parity control enabled and Odd Parity is selected */
 /**
  * @}
@@ -303,8 +303,8 @@ typedef struct
  * @defgroup USART_Data_Width_Bits Data Width Bits
  * @{
  */
-#define USART_DATA_WIDTH_BITS_9                 USART_CR1_M             /*!< 9 bits word length : Start bit, 9 data bits, n stop bits */
-#define USART_DATA_WIDTH_BITS_8                 ((uint32_t)0x00000000)  /*!< 8 bits word length : Start bit, 8 data bits, n stop bits */
+#define USART_DATA_WIDTH_BITS_9                 (USART_CR1_M)           /*!< 9 bits word length : Start bit, 9 data bits, n stop bits */
+#define USART_DATA_WIDTH_BITS_8                 ((uint32_t)0x00000000ul)/*!< 8 bits word length : Start bit, 8 data bits, n stop bits */
 /**
  * @}
  */
@@ -313,8 +313,8 @@ typedef struct
  * @defgroup USART_Oversampling_Bits USART Oversampling Bits
  * @{
  */
-#define USART_OVERSAMPLING_BITS_8                USART_CR1_OVER8        /*!< Oversampling by 8 bits */
-#define USART_OVERSAMPLING_BITS_16               ((uint32_t)0x00000000) /*!< Oversampling by 16 bits */
+#define USART_OVERSAMPLING_BITS_8                (USART_CR1_OVER8)        /*!< Oversampling by 8 bits */
+#define USART_OVERSAMPLING_BITS_16               ((uint32_t)0x00000000ul) /*!< Oversampling by 16 bits */
 /**
  * @}
  */
@@ -323,8 +323,8 @@ typedef struct
  * @defgroup USART_Mode_Selection USART Mode Selection
  * @{
  */
-#define USART_MODE_UART                          ((uint32_t)0x00000000) /*!< UART mode */
-#define USART_MODE_CLKSYNC                       USART_CR1_MS           /*!< Clock synchronization */
+#define USART_MODE_UART                          ((uint32_t)0x00000000ul) /*!< UART mode */
+#define USART_MODE_CLKSYNC                       (USART_CR1_MS)           /*!< Clock synchronization */
 /**
  * @}
  */
@@ -333,8 +333,8 @@ typedef struct
  * @defgroup USART_Significant_Bit USART Significant Bit
  * @{
  */
-#define USART_MSB                               USART_CR1_ML            /*!< MSB(Most Significant Bit) */
-#define USART_LSB                               ((uint32_t)0x00000000)  /*!< LSB(Least Significant Bit) */
+#define USART_MSB                               (USART_CR1_ML)            /*!< MSB(Most Significant Bit) */
+#define USART_LSB                               ((uint32_t)0x00000000ul)  /*!< LSB(Least Significant Bit) */
 /**
  * @}
  */
@@ -343,8 +343,8 @@ typedef struct
  * @defgroup USART_Noise_Filter_State USART Noise Filter State
  * @{
  */
-#define USART_NOISE_FILTER_ENABLE               USART_CR1_NFE           /*!< Enable noise filter */
-#define USART_NOISE_FILTER_DISABLE              ((uint32_t)0x00000000)  /*!< Disable noise filter */
+#define USART_NOISE_FILTER_ENABLE               (USART_CR1_NFE)           /*!< Enable noise filter */
+#define USART_NOISE_FILTER_DISABLE              ((uint32_t)0x00000000ul)  /*!< Disable noise filter */
 /**
  * @}
  */
@@ -353,8 +353,8 @@ typedef struct
  * @defgroup USART_Start_Bit_Detect_Polarity USART Start Bit Detect Polarity
  * @{
  */
-#define USART_SB_DETECT_FALLING                 USART_CR1_SBS           /*!< Detect RX pin falling edge */
-#define USART_SB_DETECT_LOW                     ((uint32_t)0x00000000)  /*!< Detect RX pin low level */
+#define USART_SB_DETECT_FALLING                 (USART_CR1_SBS)           /*!< Detect RX pin falling edge */
+#define USART_SB_DETECT_LOW                     ((uint32_t)0x00000000ul)  /*!< Detect RX pin low level */
 /**
  * @}
  */
@@ -363,8 +363,8 @@ typedef struct
  * @defgroup USART_Multiple_Processor_State USART Multiple Processor State
  * @{
  */
-#define USART_MULTIPLE_PROCESSOR_ENABLE         USART_CR2_MPE           /*!< Enable multiple processor function */
-#define USART_MULTIPLE_PROCESSOR_DISABLE        ((uint32_t)0x00000000)  /*!< Disable multiple processor function */
+#define USART_MULTIPLE_PROCESSOR_ENABLE         (USART_CR2_MPE)           /*!< Enable multiple processor function */
+#define USART_MULTIPLE_PROCESSOR_DISABLE        ((uint32_t)0x00000000ul)  /*!< Disable multiple processor function */
 /**
  * @}
  */
@@ -373,9 +373,9 @@ typedef struct
  * @defgroup USART_Clock_Mode USART Clock Mode Selection
  * @{
  */
-#define USART_EXTCLK                            USART_CR2_CLKC_1        /*!< Select external clock source. */
-#define USART_INTCLK_OUTPUT                     USART_CR2_CLKC_0        /*!< Select internal clock source and output clock. */
-#define USART_INTCLK_NONE_OUTPUT                ((uint32_t)0x00000000)  /*!< Select internal clock source and don't output clock */
+#define USART_EXTCLK                            (USART_CR2_CLKC_1)        /*!< Select external clock source. */
+#define USART_INTCLK_OUTPUT                     (USART_CR2_CLKC_0)        /*!< Select internal clock source and output clock. */
+#define USART_INTCLK_NONE_OUTPUT                ((uint32_t)0x00000000ul)  /*!< Select internal clock source and don't output clock */
 /**
  * @}
  */
@@ -384,8 +384,8 @@ typedef struct
  * @defgroup USART_Stop_Bits USART Stop Bits
  * @{
  */
-#define USART_STOP_BITS_2                       USART_CR2_STOP          /*!< 2 stop bit */
-#define USART_STOP_BITS_1                       ((uint32_t)0x00000000)  /*!< 1 stop bit */
+#define USART_STOP_BITS_2                       (USART_CR2_STOP)          /*!< 2 stop bit */
+#define USART_STOP_BITS_1                       ((uint32_t)0x00000000ul)  /*!< 1 stop bit */
 /**
  * @}
  */
@@ -394,8 +394,8 @@ typedef struct
  * @defgroup USART_LIN_Mode_State USART LIN Mode State
  * @{
  */
-#define USART_LIN_MODE_ENABLE                   USART_CR2_LINEN         /*!< Enable LIN mode */
-#define USART_LIN_MODE_DISABLE                  ((uint32_t)0x00000000)  /*!< Disable LIN mode */
+#define USART_LIN_MODE_ENABLE                   (USART_CR2_LINEN)         /*!< Enable LIN mode */
+#define USART_LIN_MODE_DISABLE                  ((uint32_t)0x00000000ul)  /*!< Disable LIN mode */
 /**
  * @}
  */
@@ -404,8 +404,8 @@ typedef struct
  * @defgroup USART_HALFDUPLEX_FULLDUPLEX_SEL USART Half-duplex/Full-duplex Selection
  * @{
  */
-#define USART_HALFDUPLEX_MODE                   USART_CR3_HDSEL         /*!< USART half-duplex mode */
-#define USART_FULLDUPLEX_MODE                   ((uint32_t)0x00000000)  /*!< USART full-duplex mode */
+#define USART_HALFDUPLEX_MODE                   (USART_CR3_HDSEL)         /*!< USART half-duplex mode */
+#define USART_FULLDUPLEX_MODE                   ((uint32_t)0x00000000ul)  /*!< USART full-duplex mode */
 /**
  * @}
  */
@@ -414,8 +414,8 @@ typedef struct
  * @defgroup USART_HWFLOWCTRL USART Hardware Flow Control CTS/RTS
  * @{
  */
-#define USART_HWFLOWCTRL_CTS                    USART_CR3_CTSE          /*!< UART hardware flow control CTS mode */
-#define USART_HWFLOWCTRL_RTS                    ((uint32_t)0x00000000)  /*!< UART hardware flow control RTS mode */
+#define USART_HWFLOWCTRL_CTS                    (USART_CR3_CTSE)          /*!< UART hardware flow control CTS mode */
+#define USART_HWFLOWCTRL_RTS                    ((uint32_t)0x00000000ul)  /*!< UART hardware flow control RTS mode */
 /**
  * @}
  */
@@ -424,10 +424,10 @@ typedef struct
  * @defgroup USART_Clock_Prescaler_Division USART Clock Prescaler Division
  * @{
  */
-#define USART_CLK_PRESCALER_DIV1                ((uint32_t)0x00000000)  /*!< PCLK */
-#define USART_CLK_PRESCALER_DIV4                USART_PR_PSC_0          /*!< PCLK/4 */
-#define USART_CLK_PRESCALER_DIV16               USART_PR_PSC_1          /*!< PCLK/16 */
-#define USART_CLK_PRESCALER_DIV64               USART_PR_PSC            /*!< PCLK/64 */
+#define USART_CLK_PRESCALER_DIV1                ((uint32_t)0x00000000ul)  /*!< PCLK */
+#define USART_CLK_PRESCALER_DIV4                (USART_PR_PSC_0)          /*!< PCLK/4 */
+#define USART_CLK_PRESCALER_DIV16               (USART_PR_PSC_1)          /*!< PCLK/16 */
+#define USART_CLK_PRESCALER_DIV64               (USART_PR_PSC)            /*!< PCLK/64 */
 /**
  * @}
  */
@@ -460,7 +460,7 @@ typedef struct
  */
 __STATIC_INLINE void USART_EnableNoiseFilter(M0P_USART_TypeDef *USARTx)
 {
-    SET_BIT(USARTx->CR1, USART_CR1_NFE);
+    SET_REG32_BIT(USARTx->CR1, USART_CR1_NFE);
 }
 
 /**
@@ -473,9 +473,9 @@ __STATIC_INLINE void USART_EnableNoiseFilter(M0P_USART_TypeDef *USARTx)
  *           @arg M0P_USART4:           USART unit 4 instance register base
  * @retval None
  */
-__STATIC_INLINE void TIMERB_DisableNoiseFilter(M0P_USART_TypeDef *USARTx)
+__STATIC_INLINE void USART_DisableNoiseFilter(M0P_USART_TypeDef *USARTx)
 {
-    CLEAR_BIT(USARTx->CR1, USART_CR1_NFE);
+    CLEAR_REG32_BIT(USARTx->CR1, USART_CR1_NFE);
 }
 
 /**
@@ -490,7 +490,7 @@ __STATIC_INLINE void TIMERB_DisableNoiseFilter(M0P_USART_TypeDef *USARTx)
  */
 __STATIC_INLINE void USART_EnableMultProcessor(M0P_USART_TypeDef *USARTx)
 {
-    SET_BIT(USARTx->CR2, USART_CR2_MPE);
+    SET_REG32_BIT(USARTx->CR2, USART_CR2_MPE);
 }
 
 /**
@@ -505,7 +505,7 @@ __STATIC_INLINE void USART_EnableMultProcessor(M0P_USART_TypeDef *USARTx)
  */
 __STATIC_INLINE void USART_DisableMultProcessor(M0P_USART_TypeDef *USARTx)
 {
-    CLEAR_BIT(USARTx->CR2, USART_CR2_MPE);
+    CLEAR_REG32_BIT(USARTx->CR2, USART_CR2_MPE);
 }
 
 /**
@@ -520,7 +520,7 @@ __STATIC_INLINE void USART_DisableMultProcessor(M0P_USART_TypeDef *USARTx)
  */
 __STATIC_INLINE void USART_EnableLIN(M0P_USART_TypeDef *USARTx)
 {
-    SET_BIT(USARTx->CR1, USART_CR2_LINEN);
+    SET_REG32_BIT(USARTx->CR1, USART_CR2_LINEN);
 }
 
 /**
@@ -535,7 +535,7 @@ __STATIC_INLINE void USART_EnableLIN(M0P_USART_TypeDef *USARTx)
  */
 __STATIC_INLINE void USART_DisableLIN(M0P_USART_TypeDef *USARTx)
 {
-    CLEAR_BIT(USARTx->CR2, USART_CR2_LINEN);
+    CLEAR_REG32_BIT(USARTx->CR2, USART_CR2_LINEN);
 }
 
 /**
@@ -550,7 +550,7 @@ __STATIC_INLINE void USART_DisableLIN(M0P_USART_TypeDef *USARTx)
  */
 __STATIC_INLINE uint16_t USART_RecData(M0P_USART_TypeDef *USARTx)
 {
-    return (uint16_t)(READ_REG(USARTx->DR) >> USART_DR_RDR_POS);
+    return (uint16_t)(READ_REG32(USARTx->DR) >> USART_DR_RDR_POS);
 }
 
 /**
@@ -567,7 +567,7 @@ __STATIC_INLINE uint16_t USART_RecData(M0P_USART_TypeDef *USARTx)
 __STATIC_INLINE void USART_SendData(M0P_USART_TypeDef *USARTx,
                                             uint16_t u16Data)
 {
-    WRITE_REG(USARTx->DR,  (u16Data & (uint16_t)0x01FF));
+    WRITE_REG32(USARTx->DR,  ((uint32_t)u16Data & 0x01FFul));
 }
 
 /**
@@ -584,7 +584,7 @@ __STATIC_INLINE void USART_SendData(M0P_USART_TypeDef *USARTx,
 __STATIC_INLINE void USART_SendId(M0P_USART_TypeDef *USARTx,
                                         uint16_t u16ID)
 {
-    WRITE_REG(USARTx->DR, (USART_DR_MPID | (u16ID & (uint16_t)0x01FF)));
+    WRITE_REG32(USARTx->DR, (USART_DR_MPID | ((uint32_t)u16ID & 0x01FFul)));
 }
 
 en_result_t USART_UartInit(M0P_USART_TypeDef *USARTx,
@@ -640,7 +640,7 @@ en_result_t USART_SetDuplexMode(M0P_USART_TypeDef *USARTx,
                                 uint32_t u32Mode);
 uint32_t USART_GetDuplexMode(M0P_USART_TypeDef *USARTx);
 en_result_t USART_SetHwFlowCtrl(M0P_USART_TypeDef *USARTx,
-                            uint32_t u32CtsRtsSel);
+                                uint32_t u32HwFlowCtrl);
 uint32_t USART_GetHwFlowCtrl(M0P_USART_TypeDef *USARTx);
 en_result_t USART_SetClkPrescaler(M0P_USART_TypeDef *USARTx,
                                     uint32_t u32PrescalerDiv);

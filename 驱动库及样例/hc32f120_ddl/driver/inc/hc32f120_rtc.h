@@ -161,7 +161,7 @@ typedef struct
  * @defgroup RTC_Period_Interrupt RTC Period Interrupt
  * @{
  */
-#define RTC_PERIOD_INT_INVALID          ((uint8_t)0x00)
+#define RTC_PERIOD_INT_INVALID          ((uint8_t)0x00u)
 #define RTC_PERIOD_INT_HALF_SECOND      ((uint8_t)RTC_CR1_PRDS_0)
 #define RTC_PERIOD_INT_ONE_SECOND       ((uint8_t)RTC_CR1_PRDS_1)
 #define RTC_PERIOD_INT_ONE_MINUTE       ((uint8_t)(RTC_CR1_PRDS_0 | RTC_CR1_PRDS_1))
@@ -176,7 +176,7 @@ typedef struct
  * @defgroup RTC_Hour_Format RTC Hour Format
  * @{
  */
-#define RTC_HOUR_FORMAT_12              ((uint8_t)0x00)
+#define RTC_HOUR_FORMAT_12              ((uint8_t)0x00u)
 #define RTC_HOUR_FORMAT_24              ((uint8_t)RTC_CR1_AMPM)
 /**
  * @}
@@ -186,7 +186,7 @@ typedef struct
  * @defgroup RTC_Work_Mode RTC Work Mode
  * @{
  */
-#define RTC_WORK_MODE_COUNT             ((uint8_t)0x00)
+#define RTC_WORK_MODE_COUNT             ((uint8_t)0x00u)
 #define RTC_WORK_MODE_WRITE_OR_READ     ((uint8_t)RTC_CR2_WAIT)
 /**
  * @}
@@ -196,7 +196,7 @@ typedef struct
  * @defgroup RTC_Clock_Source RTC Clock Source
  * @{
  */
-#define RTC_CLOCK_SOURCE_XTAL32         ((uint8_t)0x00)
+#define RTC_CLOCK_SOURCE_XTAL32         ((uint8_t)0x00u)
 #define RTC_CLOCK_SOURCE_LRC            ((uint8_t)RTC_CR3_RCKSEL)
 /**
  * @}
@@ -206,8 +206,8 @@ typedef struct
  * @defgroup RTC_Data_Format RTC Data Format
  * @{
  */
-#define RTC_DATA_FORMAT_DEC             ((uint8_t)0x00)
-#define RTC_DATA_FORMAT_BCD             ((uint8_t)0x01)
+#define RTC_DATA_FORMAT_DEC             ((uint8_t)0x00u)
+#define RTC_DATA_FORMAT_BCD             ((uint8_t)0x01u)
 
 /**
  * @}
@@ -217,7 +217,7 @@ typedef struct
  * @defgroup RTC_Hour12_AM_PM RTC Hour12 AM/PM
  * @{
  */
-#define RTC_HOUR12_AM                   ((uint8_t)0x00)
+#define RTC_HOUR12_AM                   ((uint8_t)0x00u)
 #define RTC_HOUR12_PM                   ((uint8_t)RTC_HOUR_HOURD_1)
 /**
  * @}
@@ -227,18 +227,18 @@ typedef struct
  * @defgroup RTC_Date RTC Date
  * @{
  */
-#define RTC_MONTH_JANUARY               ((uint8_t)0x01)
-#define RTC_MONTH_FEBRUARY              ((uint8_t)0x02)
-#define RTC_MONTH_MARCH                 ((uint8_t)0x03)
-#define RTC_MONTH_APRIL                 ((uint8_t)0x04)
-#define RTC_MONTH_MAY                   ((uint8_t)0x05)
-#define RTC_MONTH_JUNE                  ((uint8_t)0x06)
-#define RTC_MONTH_JULY                  ((uint8_t)0x07)
-#define RTC_MONTH_AUGUST                ((uint8_t)0x08)
-#define RTC_MONTH_SEPTEMBER             ((uint8_t)0x09)
-#define RTC_MONTH_OCTOBER               ((uint8_t)0x0A)
-#define RTC_MONTH_NOVEMBER              ((uint8_t)0x0B)
-#define RTC_MONTH_DECEMBER              ((uint8_t)0x0C)
+#define RTC_MONTH_JANUARY               ((uint8_t)0x01u)
+#define RTC_MONTH_FEBRUARY              ((uint8_t)0x02u)
+#define RTC_MONTH_MARCH                 ((uint8_t)0x03u)
+#define RTC_MONTH_APRIL                 ((uint8_t)0x04u)
+#define RTC_MONTH_MAY                   ((uint8_t)0x05u)
+#define RTC_MONTH_JUNE                  ((uint8_t)0x06u)
+#define RTC_MONTH_JULY                  ((uint8_t)0x07u)
+#define RTC_MONTH_AUGUST                ((uint8_t)0x08u)
+#define RTC_MONTH_SEPTEMBER             ((uint8_t)0x09u)
+#define RTC_MONTH_OCTOBER               ((uint8_t)0x0Au)
+#define RTC_MONTH_NOVEMBER              ((uint8_t)0x0Bu)
+#define RTC_MONTH_DECEMBER              ((uint8_t)0x0Cu)
 /**
  * @}
  */
@@ -247,13 +247,13 @@ typedef struct
  * @defgroup RTC_Weekday RTC Weekday
  * @{
  */
-#define RTC_WEEKDAY_SUNDAY              ((uint8_t)0x00)
-#define RTC_WEEKDAY_MONDAY              ((uint8_t)0x01)
-#define RTC_WEEKDAY_TUESDAY             ((uint8_t)0x02)
-#define RTC_WEEKDAY_WEDNESDAY           ((uint8_t)0x03)
-#define RTC_WEEKDAY_THURSDAY            ((uint8_t)0x04)
-#define RTC_WEEKDAY_FRIDAY              ((uint8_t)0x05)
-#define RTC_WEEKDAY_SATURDAY            ((uint8_t)0x06)
+#define RTC_WEEKDAY_SUNDAY              ((uint8_t)0x00u)
+#define RTC_WEEKDAY_MONDAY              ((uint8_t)0x01u)
+#define RTC_WEEKDAY_TUESDAY             ((uint8_t)0x02u)
+#define RTC_WEEKDAY_WEDNESDAY           ((uint8_t)0x03u)
+#define RTC_WEEKDAY_THURSDAY            ((uint8_t)0x04u)
+#define RTC_WEEKDAY_FRIDAY              ((uint8_t)0x05u)
+#define RTC_WEEKDAY_SATURDAY            ((uint8_t)0x06u)
 /**
  * @}
  */
@@ -354,15 +354,15 @@ en_result_t RTC_LowPowerCheck(void);
 void RTC_SetClkCompenValue(uint16_t u16CompenVal);
 
 /* Date and time functions */
-en_result_t RTC_SetDate(uint8_t u8Format, const stc_rtc_date_t *pstcRtcDate);
+en_result_t RTC_SetDate(uint8_t u8Format, stc_rtc_date_t *pstcRtcDate);
 en_result_t RTC_DateStructInit(stc_rtc_date_t *pstcRtcDate);
 en_result_t RTC_GetDate(uint8_t u8Format, stc_rtc_date_t *pstcRtcDate);
-en_result_t RTC_SetTime(uint8_t u8Format, const stc_rtc_time_t *pstcRtcTime);
+en_result_t RTC_SetTime(uint8_t u8Format, stc_rtc_time_t *pstcRtcTime);
 en_result_t RTC_TimeStructInit(stc_rtc_time_t *pstcRtcTime);
 en_result_t RTC_GetTime(uint8_t u8Format, stc_rtc_time_t *pstcRtcTime);
 
 /* Alarm configuration functions */
-en_result_t RTC_SetAlarm(uint8_t u8Format, const stc_rtc_alarm_t *pstcRtcAlarm);
+en_result_t RTC_SetAlarm(uint8_t u8Format, stc_rtc_alarm_t *pstcRtcAlarm);
 en_result_t RTC_AlarmStructInit(stc_rtc_alarm_t *pstcRtcAlarm);
 en_result_t RTC_GetAlarm(uint8_t u8Format, stc_rtc_alarm_t *pstcRtcAlarm);
 void RTC_AlarmCmd(en_functional_state_t enNewSta);

@@ -163,8 +163,8 @@
  * @defgroup SPI_Local_Functions SPI Local Functions
  * @{
  */
-static en_result_t SPI_TxRx(void *pvTxBuf, void *pvRxBuf, uint32_t u32Length);
-static en_result_t SPI_Tx(void *pvTxBuf, uint32_t u32Length);
+static en_result_t SPI_TxRx(const void *pvTxBuf, void *pvRxBuf, uint32_t u32Length);
+static en_result_t SPI_Tx(const void *pvTxBuf, uint32_t u32Length);
 
 /**
  * @}
@@ -203,61 +203,59 @@ static uint32_t m_u32Timeout   = 0u;
  */
 en_result_t SPI_Init(const stc_spi_init_t *pstcInit)
 {
+    en_result_t enRet = ErrorInvalidParameter;
     uint32_t u32Div;
     /* Some delay is required between continuous data transmission.
        The index is pstcInit->u32BitRateDiv >> SPI_CFG2_MBR_POS. */
     uint16_t au16FdxDelay[8u] = {0u, 0u, 0u, 0u, 0u, 6u, 20u, 70u};
     uint16_t au16TxDelay[8u]  = {0u, 0u, 6u, 18u, 40u, 90u, 178u, 380u};
 
-    if (pstcInit == NULL)
+    if (pstcInit != NULL)
     {
-        return ErrorInvalidParameter;
+        DDL_ASSERT(IS_SPI_WIRE_MODE(pstcInit->u32WireMode));
+        DDL_ASSERT(IS_SPI_TRANS_MODE(pstcInit->u32TransMode));
+        DDL_ASSERT(IS_SPI_MASTER_SLAVE(pstcInit->u32MasterSlave));
+        DDL_ASSERT(IS_SPI_SPLPBK(pstcInit->u32Splpbk));
+        DDL_ASSERT(IS_SPI_MODFE_CMD(pstcInit->u32Modfe));
+        DDL_ASSERT(IS_SPI_PATE_CMD(pstcInit->u32Pate));
+        DDL_ASSERT(IS_SPI_PARITY_CHECK(pstcInit->u32Parity));
+        DDL_ASSERT(IS_SPI_NSS_ACTIVE_LEVEL(pstcInit->u32NssActiveLevel));
+        DDL_ASSERT(IS_SPI_SPI_MODE(pstcInit->u32SpiMode));
+        DDL_ASSERT(IS_SPI_BIT_RATE_DIV(pstcInit->u32BaudRatePrescaler));
+        DDL_ASSERT(IS_SPI_DATA_SIZE(pstcInit->u32DataSize));
+        DDL_ASSERT(IS_SPI_FIRST_BIT(pstcInit->u32FirstBit));
+
+        u32Div = pstcInit->u32BaudRatePrescaler >> SPI_CFG2_MBR_POS;
+
+        if (pstcInit->u32TransMode == SPI_FULL_DUPLEX)
+        {
+            m_u32DelayToTx = au16FdxDelay[u32Div];
+        }
+        else
+        {
+            m_u32DelayToTx = au16TxDelay[u32Div];
+        }
+
+        m_u32Timeout  = (2ul << u32Div) * 8u;
+
+        M0P_SPI->CR1  = pstcInit->u32WireMode          |   \
+                        pstcInit->u32TransMode         |   \
+                        pstcInit->u32MasterSlave       |   \
+                        pstcInit->u32Splpbk            |   \
+                        pstcInit->u32Modfe             |   \
+                        pstcInit->u32Pate              |   \
+                        pstcInit->u32Parity;
+
+        M0P_SPI->CFG1 = pstcInit->u32NssActiveLevel;
+
+        M0P_SPI->CFG2 = pstcInit->u32SpiMode           |   \
+                        pstcInit->u32BaudRatePrescaler |   \
+                        pstcInit->u32DataSize          |   \
+                        pstcInit->u32FirstBit;
+        enRet = Ok;
     }
 
-    DDL_ASSERT(IS_SPI_WIRE_MODE(pstcInit->u32WireMode));
-    DDL_ASSERT(IS_SPI_TRANS_MODE(pstcInit->u32TransMode));
-    DDL_ASSERT(IS_SPI_MASTER_SLAVE(pstcInit->u32MasterSlave));
-    DDL_ASSERT(IS_SPI_SPLPBK(pstcInit->u32Splpbk));
-    DDL_ASSERT(IS_SPI_MODFE_CMD(pstcInit->u32Modfe));
-    DDL_ASSERT(IS_SPI_PATE_CMD(pstcInit->u32Pate));
-    DDL_ASSERT(IS_SPI_PARITY_CHECK(pstcInit->u32Parity));
-    DDL_ASSERT(IS_SPI_NSS_ACTIVE_LEVEL(pstcInit->u32NssActiveLevel));
-    DDL_ASSERT(IS_SPI_SPI_MODE(pstcInit->u32SpiMode));
-    DDL_ASSERT(IS_SPI_BIT_RATE_DIV(pstcInit->u32BaudRatePrescaler));
-    DDL_ASSERT(IS_SPI_DATA_SIZE(pstcInit->u32DataSize));
-    DDL_ASSERT(IS_SPI_FIRST_BIT(pstcInit->u32FirstBit));
-
-    u32Div = pstcInit->u32BaudRatePrescaler >> SPI_CFG2_MBR_POS;
-
-    if (pstcInit->u32TransMode == SPI_FULL_DUPLEX)
-    {
-        m_u32DelayToTx = au16FdxDelay[u32Div];
-    }
-    else
-    {
-        m_u32DelayToTx = au16TxDelay[u32Div];
-    }
-
-    m_u32Timeout = (2ul << u32Div) * 8u;
-
-    SPI_DeInit();
-
-    M0P_SPI->CR1  |= pstcInit->u32WireMode          |   \
-                     pstcInit->u32TransMode         |   \
-                     pstcInit->u32MasterSlave       |   \
-                     pstcInit->u32Splpbk            |   \
-                     pstcInit->u32Modfe             |   \
-                     pstcInit->u32Pate              |   \
-                     pstcInit->u32Parity;
-
-    M0P_SPI->CFG1 |= pstcInit->u32NssActiveLevel;
-
-    M0P_SPI->CFG2 |= pstcInit->u32SpiMode           |   \
-                     pstcInit->u32BaudRatePrescaler |   \
-                     pstcInit->u32DataSize          |   \
-                     pstcInit->u32FirstBit;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -285,25 +283,27 @@ void SPI_DeInit(void)
  */
 en_result_t SPI_StructInit(stc_spi_init_t *pstcInit)
 {
-    if (pstcInit == NULL)
+    en_result_t enRet = ErrorInvalidParameter;
+
+    if (pstcInit != NULL)
     {
-        return ErrorInvalidParameter;
+        pstcInit->u32WireMode          = SPI_WIRE_4;
+        pstcInit->u32TransMode         = SPI_FULL_DUPLEX;
+        pstcInit->u32MasterSlave       = SPI_MASTER;
+        pstcInit->u32Splpbk            = SPI_SPLPBK_INVALID;
+        pstcInit->u32Modfe             = SPI_MODFE_DISABLE;
+        pstcInit->u32Pate              = SPI_PATE_DISABLE;
+        pstcInit->u32Parity            = SPI_PARITY_INVALID;
+        pstcInit->u32NssActiveLevel    = SPI_NSS_ACTIVE_LOW;
+        pstcInit->u32SpiMode           = SPI_MODE_0;
+        pstcInit->u32BaudRatePrescaler = SPI_BR_DIV_8;
+        pstcInit->u32DataSize          = SPI_DATA_SIZE_8BIT;
+        pstcInit->u32FirstBit          = SPI_FIRST_MSB;
+
+        enRet = Ok;
     }
 
-    pstcInit->u32WireMode          = SPI_WIRE_4;
-    pstcInit->u32TransMode         = SPI_FULL_DUPLEX;
-    pstcInit->u32MasterSlave       = SPI_MASTER;
-    pstcInit->u32Splpbk            = SPI_SPLPBK_INVALID;
-    pstcInit->u32Modfe             = SPI_MODFE_DISABLE;
-    pstcInit->u32Pate              = SPI_PATE_DISABLE;
-    pstcInit->u32Parity            = SPI_PARITY_INVALID;
-    pstcInit->u32NssActiveLevel    = SPI_NSS_ACTIVE_LOW;
-    pstcInit->u32SpiMode           = SPI_MODE_0;
-    pstcInit->u32BaudRatePrescaler = SPI_BR_DIV_8;
-    pstcInit->u32DataSize          = SPI_DATA_SIZE_8BIT;
-    pstcInit->u32FirstBit          = SPI_FIRST_MSB;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -322,6 +322,8 @@ en_result_t SPI_StructInit(stc_spi_init_t *pstcInit)
  */
 void SPI_IntCmd(uint32_t u32IntType, en_functional_state_t enNewState)
 {
+    DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
+
     u32IntType &= SPI_INT_ALL;
 
     if (enNewState == Enable)
@@ -345,26 +347,24 @@ void SPI_IntCmd(uint32_t u32IntType, en_functional_state_t enNewState)
  * @note   -No NSS pin active and inactive operation in 3-wire mode. Add operations of NSS pin depending on your application.
  *         -This function supports full duplex mode and send only mode.
  */
-en_result_t SPI_Transmit(void *pvTxBuf, uint32_t u32TxLength)
+en_result_t SPI_Transmit(const void *pvTxBuf, uint32_t u32TxLength)
 {
     uint32_t u32Flags;
-    en_result_t enRet;
+    en_result_t enRet = ErrorInvalidParameter;
 
-    if ((pvTxBuf == NULL) || (u32TxLength == 0u))
+    if ((pvTxBuf != NULL) && (u32TxLength != 0u))
     {
-        return ErrorInvalidParameter;
-    }
-
-    u32Flags = M0P_SPI->CR1 & SPI_SEND_ONLY;
-    if (u32Flags == SPI_FULL_DUPLEX)
-    {
-        /* Transmit data in full duplex mode. */
-        enRet = SPI_TxRx(pvTxBuf, NULL, u32TxLength);
-    }
-    else
-    {
-        /* Transmit data in send only mode. */
-        enRet = SPI_Tx(pvTxBuf, u32TxLength);
+        u32Flags = M0P_SPI->CR1 & SPI_SEND_ONLY;
+        if (u32Flags == SPI_FULL_DUPLEX)
+        {
+            /* Transmit data in full duplex mode. */
+            enRet = SPI_TxRx(pvTxBuf, NULL, u32TxLength);
+        }
+        else
+        {
+            /* Transmit data in send only mode. */
+            enRet = SPI_Tx(pvTxBuf, u32TxLength);
+        }
     }
 
     return enRet;
@@ -383,15 +383,15 @@ en_result_t SPI_Transmit(void *pvTxBuf, uint32_t u32TxLength)
  */
 en_result_t SPI_Receive(void *pvRxBuf, uint32_t u32RxLength)
 {
-    if ((pvRxBuf == NULL) || (u32RxLength == 0u))
-    {
-        return ErrorInvalidParameter;
-    }
-    else
+    en_result_t enRet = ErrorInvalidParameter;
+
+    if ((pvRxBuf != NULL) && (u32RxLength != 0u))
     {
         /* Receives data in full duplex master mode. */
-        return SPI_TxRx(NULL, pvRxBuf, u32RxLength);
+        enRet = SPI_TxRx(NULL, pvRxBuf, u32RxLength);
     }
+
+    return enRet;
 }
 
 /**
@@ -408,17 +408,17 @@ en_result_t SPI_Receive(void *pvRxBuf, uint32_t u32RxLength)
  *   @arg  ErrorInvalidParameter:   pvRxBuf == NULL or pvRxBuf == NULL or u32Length == 0u
  * @note   SPI receives data while sending data. Only works in full duplex master mode.
  */
-en_result_t SPI_TransmitReceive(void *pvTxBuf, void *pvRxBuf, uint32_t u32Length)
+en_result_t SPI_TransmitReceive(const void *pvTxBuf, void *pvRxBuf, uint32_t u32Length)
 {
-    if ((pvTxBuf == NULL) ||(pvRxBuf == NULL) || (u32Length == 0u))
-    {
-        return ErrorInvalidParameter;
-    }
-    else
+    en_result_t enRet = ErrorInvalidParameter;
+
+    if ((pvTxBuf != NULL) && (pvRxBuf != NULL) && (u32Length != 0u))
     {
         /* Transmit and receive data in full duplex master mode. */
-        return SPI_TxRx(pvTxBuf, pvRxBuf, u32Length);
+        enRet = SPI_TxRx(pvTxBuf, pvRxBuf, u32Length);
     }
+
+    return enRet;
 }
 
 /**
@@ -438,7 +438,7 @@ en_result_t SPI_TransmitReceive(void *pvTxBuf, void *pvRxBuf, uint32_t u32Length
  *   @arg  Ok:                      No errors occurred
  *   @arg  ErrorTimeout:            SPI transmit and receive timeout.
  */
-static en_result_t SPI_TxRx(void *pvTxBuf, void *pvRxBuf, uint32_t u32Length)
+static en_result_t SPI_TxRx(const void *pvTxBuf, void *pvRxBuf, uint32_t u32Length)
 {
     uint32_t u32Flags;
     uint32_t u32BitSize;
@@ -456,11 +456,11 @@ static en_result_t SPI_TxRx(void *pvTxBuf, void *pvRxBuf, uint32_t u32Length)
         {
             if (u32BitSize)
             {
-                M0P_SPI->DR = ((uint16_t *)pvTxBuf)[u32Count];
+                M0P_SPI->DR = ((const uint16_t *)pvTxBuf)[u32Count];
             }
             else
             {
-                M0P_SPI->DR = ((uint8_t *)pvTxBuf)[u32Count];
+                M0P_SPI->DR = ((const uint8_t *)pvTxBuf)[u32Count];
             }
         }
         else
@@ -495,7 +495,10 @@ static en_result_t SPI_TxRx(void *pvTxBuf, void *pvRxBuf, uint32_t u32Length)
 
         if (u32Delay)
         {
-            while (--u32Delay);
+            while (--u32Delay)
+            {
+                ;
+            }
             u32Delay = m_u32DelayToTx;
         }
 
@@ -512,7 +515,7 @@ static en_result_t SPI_TxRx(void *pvTxBuf, void *pvRxBuf, uint32_t u32Length)
  * @retval An en_result_t enumeration value:
  *   @arg  Ok:                      No errors occurred
  */
-static en_result_t SPI_Tx(void *pvTxBuf, uint32_t u32Length)
+static en_result_t SPI_Tx(const void *pvTxBuf, uint32_t u32Length)
 {
     uint32_t u32Count = 0u;
     uint32_t u32Delay = m_u32DelayToTx;
@@ -524,16 +527,19 @@ static en_result_t SPI_Tx(void *pvTxBuf, uint32_t u32Length)
     {
         if (u32BitSize)
         {
-            M0P_SPI->DR = ((uint16_t *)pvTxBuf)[u32Count];
+            M0P_SPI->DR = ((const uint16_t *)pvTxBuf)[u32Count];
         }
         else
         {
-            M0P_SPI->DR = ((uint8_t *)pvTxBuf)[u32Count];
+            M0P_SPI->DR = ((const uint8_t *)pvTxBuf)[u32Count];
         }
 
         if (u32Delay)
         {
-            while (--u32Delay);
+            while (--u32Delay)
+            {
+                ;
+            }
             u32Delay = m_u32DelayToTx;
         }
 

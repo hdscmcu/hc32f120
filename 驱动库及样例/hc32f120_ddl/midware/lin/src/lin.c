@@ -93,16 +93,16 @@
 #define LIN_SYNC_CAPTURE_BITS                   (8u)
 
 /* LIN Timerb period value definition */
-#define LIN_TIMERB_UNIT_PERIOD_VALUE            0xFFFF
+#define LIN_TIMERB_UNIT_PERIOD_VALUE            (0xFFFFu)
 
 /**
  * @defgroup LIN_Delay LIN Delay
  * @{
  */
-#define LIN_INTER_FRAME_DELAY                   (10u) // Pause (Frame->Frame)   (ca. 10ms)
-#define LIN_FRAME_RESPONSE_DELAY                (2u)  // Pause (Header->Data)   (ca.  2ms)
-#define LIN_BREAKFIELD_DELAY                    (4u)  // Pause (Breakfield)     (ca.  4ms)
-#define LIN_DATA_BYTE_DELAY                     (1u)  // Pause (Data->Data)     (ca.  1ms)
+#define LIN_INTER_FRAME_DELAY                   (10ul) // Pause (Frame->Frame)   (ca. 10ms)
+#define LIN_FRAME_RESPONSE_DELAY                (2ul)  // Pause (Header->Data)   (ca.  2ms)
+#define LIN_BREAKFIELD_DELAY                    (4ul)  // Pause (Breakfield)     (ca.  4ms)
+#define LIN_DATA_BYTE_DELAY                     (1ul)  // Pause (Data->Data)     (ca.  1ms)
 /**
  * @}
  */
@@ -128,7 +128,7 @@ static void UsartDisableRxTX(stc_lin_hanlde_t *pstcLinHandle);
 static void UsartEnableTX(stc_lin_hanlde_t *pstcLinHandle);
 static void UartRxIrqCallback(void);
 static void UartErrIrqCallback(void);
-static uint32_t TimerbGetClk(M0P_TMRB_TypeDef *TMRBx);
+static uint32_t TimerbGetClk(const M0P_TMRB_TypeDef *TMRBx);
 static void TimerbLinUnitCmpIrqCallback(void);
 
 /*******************************************************************************
@@ -139,7 +139,7 @@ static stc_lin_hanlde_t *m_pstcLinHandle = NULL;
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
  ******************************************************************************/
-/** 
+/**
  * @defgroup LIN_Global_Functions LIN Global Functions
  * @{
  */
@@ -155,56 +155,57 @@ en_result_t LIN_MASTER_Init(stc_lin_hanlde_t *pstcLinHandle)
 {
     stc_exint_config_t stcExIntInit;
     stc_irq_regi_config_t stcIrqRegiConf;
+    en_result_t enRet = ErrorInvalidParameter;
 
-    if (NULL == pstcLinHandle)
+    if (NULL != pstcLinHandle)
     {
-        return ErrorInvalidParameter;
+        m_pstcLinHandle = pstcLinHandle;
+
+        /* Configure USART RX/TX pin. */
+        GPIO_SetFunc(pstcLinHandle->stcPinCfg.u8RxPort, pstcLinHandle->stcPinCfg.u8RxPin, GPIO_FUNC_3_USART);
+        GPIO_SetFunc(pstcLinHandle->stcPinCfg.u8TxPort, pstcLinHandle->stcPinCfg.u8TxPin, GPIO_FUNC_3_USART);
+
+        /* Enable peripheral clock */
+        CLK_FcgPeriphClockCmd(CLK_FCG_UART1, Enable);
+
+        /* Initialize LIN */
+        USART_LinInit(M0P_USART1, &pstcLinHandle->stcLinInit);
+
+        /* Register RX IRQ handler && configure NVIC. */
+        stcIrqRegiConf.enIRQn = pstcLinHandle->stcIrqnCfg.UsartRxIRQn;
+        stcIrqRegiConf.enIntSrc = INT_USART_1_RI;
+        stcIrqRegiConf.pfnCallback = &UartRxIrqCallback;
+        INTC_IrqRegistration(&stcIrqRegiConf);
+        NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
+        NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
+        NVIC_EnableIRQ(stcIrqRegiConf.enIRQn);
+
+        /* Register error IRQ handler && configure NVIC. */
+        stcIrqRegiConf.enIRQn = pstcLinHandle->stcIrqnCfg.UsartErrIRQn;
+        stcIrqRegiConf.enIntSrc = INT_USART_1_EI;
+        stcIrqRegiConf.pfnCallback = &UartErrIrqCallback;
+        INTC_IrqRegistration(&stcIrqRegiConf);
+        NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
+        NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
+        NVIC_EnableIRQ(stcIrqRegiConf.enIRQn);
+
+        /* EXINT Channel 1 configure */
+        EXINT_StructInit(&stcExIntInit);
+        stcExIntInit.u16ExIntCh = EXINT_CH01;
+        stcExIntInit.u8ExIntFE = EXINT_FILTER_ON;
+        stcExIntInit.u8ExIntFClk = EXINT_FCLK_HCLK_DIV8;
+        stcExIntInit.u8ExIntLvl = EXINT_TRIGGER_RISING;
+        EXINT_Init(&stcExIntInit);
+
+        if (LinStateSleep == pstcLinHandle->enLinState)
+        {
+            LIN_Sleep(pstcLinHandle);
+        }
+
+        enRet = Ok;
     }
 
-    m_pstcLinHandle = pstcLinHandle;
-
-    /* Configure USART RX/TX pin. */
-    GPIO_SetFunc(pstcLinHandle->stcPinCfg.u8RxPort, pstcLinHandle->stcPinCfg.u8RxPin, GPIO_FUNC_USART);
-    GPIO_SetFunc(pstcLinHandle->stcPinCfg.u8TxPort, pstcLinHandle->stcPinCfg.u8TxPin, GPIO_FUNC_USART);
-
-    /* Enable peripheral clock */
-    CLK_FcgPeriphClockCmd(CLK_FCG_UART1, Enable);
-
-    /* Initialize LIN */
-    USART_LinInit(M0P_USART1, &pstcLinHandle->stcLinInit);
-
-    /* Register RX IRQ handler && configure NVIC. */
-    stcIrqRegiConf.enIRQn = pstcLinHandle->stcIrqnCfg.UsartRxIRQn;
-    stcIrqRegiConf.enIntSrc = INT_USART_1_RI;
-    stcIrqRegiConf.pfnCallback = UartRxIrqCallback;
-    INTC_IrqRegistration(&stcIrqRegiConf);
-    NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
-    NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
-    NVIC_EnableIRQ(stcIrqRegiConf.enIRQn);
-
-    /* Register error IRQ handler && configure NVIC. */
-    stcIrqRegiConf.enIRQn = pstcLinHandle->stcIrqnCfg.UsartErrIRQn;
-    stcIrqRegiConf.enIntSrc = INT_USART_1_EI;
-    stcIrqRegiConf.pfnCallback = UartErrIrqCallback;
-    INTC_IrqRegistration(&stcIrqRegiConf);
-    NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
-    NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
-    NVIC_EnableIRQ(stcIrqRegiConf.enIRQn);
-
-    /* EXINT Channel 1 configure */
-    EXINT_StructInit(&stcExIntInit);
-    stcExIntInit.u16ExIntCh = EXINT_CH01;
-    stcExIntInit.u8ExIntFE = EXINT_FILTER_ON;
-    stcExIntInit.u8ExIntFClk = EXINT_FCLK_HCLK_DIV8;
-    stcExIntInit.u8ExIntLvl = EXINT_TRIGGER_RISING;
-    EXINT_Init(&stcExIntInit);
-
-    if (LinStateSleep == pstcLinHandle->enLinState)
-    {
-        LIN_Sleep(pstcLinHandle);
-    }
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -219,30 +220,29 @@ en_result_t LIN_MASTER_SendFrame(stc_lin_hanlde_t *pstcLinHandle,
                                         stc_lin_frame_t *pstcFrame)
 {
     uint8_t u8Checksum;
-    en_result_t enRet;
+    en_result_t enRet = Ok;
 
     enRet = LIN_MASTER_SendFrameHeader(pstcLinHandle, pstcFrame);
-    if (Ok != enRet)
+    if (Ok == enRet)
     {
-        return enRet;
+        DDL_Delay1ms(LIN_FRAME_RESPONSE_DELAY);
+
+        /* Send data */
+        for (pstcFrame->u8XferCnt = 0u; pstcFrame->u8XferCnt < pstcFrame->u8Length ; pstcFrame->u8XferCnt++)
+        {
+            LIN_SendChar(M0P_USART1, pstcFrame->au8Data[pstcFrame->u8XferCnt]);
+            DDL_Delay1ms(LIN_DATA_BYTE_DELAY);
+        }
+
+        /* Calculate Checksum */
+        u8Checksum = LIN_CalcChecksum(pstcFrame->u8PID, pstcFrame->au8Data, pstcFrame->u8Length);
+
+        LIN_SendChar(M0P_USART1, u8Checksum);
+        DDL_Delay1ms(LIN_INTER_FRAME_DELAY);
+
     }
 
-    DDL_Delay1ms(LIN_FRAME_RESPONSE_DELAY);
-
-    /* Send data */
-    for (pstcFrame->u8XferCnt = 0; pstcFrame->u8XferCnt < pstcFrame->u8Length ; pstcFrame->u8XferCnt++)
-    {
-        LIN_SendChar(M0P_USART1, pstcFrame->au8Data[pstcFrame->u8XferCnt]);
-        DDL_Delay1ms(LIN_DATA_BYTE_DELAY);
-    }
-
-    /* Calculate Checksum */
-    u8Checksum = LIN_CalcChecksum(pstcFrame->u8PID, pstcFrame->au8Data, pstcFrame->u8Length);
-
-    LIN_SendChar(M0P_USART1, u8Checksum);
-    DDL_Delay1ms(LIN_INTER_FRAME_DELAY);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -261,58 +261,56 @@ en_result_t LIN_MASTER_RecFrame(stc_lin_hanlde_t *pstcLinHandle,
     uint8_t i;
     uint8_t u8Checksum;
     __IO uint32_t u32Cyc;
-    en_result_t enRet;
+    en_result_t enRet = ErrorInvalidParameter;
 
-    if (pstcFrame == NULL)
+    if (pstcFrame != NULL)
     {
-        return ErrorInvalidParameter;
-    }
-
-    enRet = LIN_MASTER_SendFrameHeader(pstcLinHandle, pstcFrame);
-    if (Ok != enRet)
-    {
-        return enRet;
-    }
-
-    pstcFrame->u8XferCnt = 0;
-    pstcFrame->u8Checksum = 0;
-    pstcFrame->u8Error = 0;
-    for (i = 0; i < 8; i++)
-    {
-        pstcFrame->au8Data[i]=0;
-    }
-
-    /* Enable receive data */
-    UsartDisableRxTX(pstcLinHandle);
-    USART_FuncCmd(M0P_USART1, USART_RX | USART_INT_RX, Enable);
-
-    u32Cyc = (i32Timeout < 0) ? 0u : i32Timeout * (SystemCoreClock / 10000);  /* i32Timeout * 1ms */
-
-    /* Wait checksum */
-    while ((i32Timeout < 0) || u32Cyc)
-    {
-        u32Cyc--;
-        if (LinFrameStateChecksum == pstcFrame->u8State)
+        enRet = LIN_MASTER_SendFrameHeader(pstcLinHandle, pstcFrame);
+        if (Ok == enRet)
         {
-            break;
+            pstcFrame->u8XferCnt = 0u;
+            pstcFrame->u8Checksum = 0u;
+            pstcFrame->u8Error = 0u;
+            for (i = 0u; i < 8u; i++)
+            {
+                pstcFrame->au8Data[i] = 0u;
+            }
+
+            /* Enable receive data */
+            UsartDisableRxTX(pstcLinHandle);
+            USART_FuncCmd(M0P_USART1, USART_RX | USART_INT_RX, Enable);
+
+            u32Cyc = (i32Timeout < 0) ? 0ul : (uint32_t)i32Timeout * (SystemCoreClock / 10000ul);  /* i32Timeout * 1ms */
+
+            /* Wait checksum */
+            while (u32Cyc || (i32Timeout < 0))
+            {
+                u32Cyc--;
+                if (LinFrameStateChecksum == pstcFrame->u8State)
+                {
+                    break;
+                }
+            }
+
+            if ((0ul == u32Cyc) && (i32Timeout >= 0))
+            {
+                enRet = ErrorTimeout;
+            }
+            else
+            {
+                u8Checksum = LIN_CalcChecksum(pstcFrame->u8PID, pstcFrame->au8Data, pstcFrame->u8Length);
+
+                if (u8Checksum != pstcFrame->u8Checksum)
+                {
+                    enRet = Error;
+                }
+
+                DDL_Delay1ms(LIN_INTER_FRAME_DELAY);
+            }
         }
     }
 
-    if ((i32Timeout >= 0) && (0 == u32Cyc))
-    {
-        return ErrorTimeout;
-    }
-
-    u8Checksum = LIN_CalcChecksum(pstcFrame->u8PID, pstcFrame->au8Data, pstcFrame->u8Length);
-
-    if (u8Checksum != pstcFrame->u8Checksum)
-    {
-        return Error;
-    }
-
-    DDL_Delay1ms(LIN_INTER_FRAME_DELAY);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -324,6 +322,7 @@ en_result_t LIN_MASTER_RecFrame(stc_lin_hanlde_t *pstcLinHandle,
  */
 en_result_t LIN_SLAVE_Init(stc_lin_hanlde_t *pstcLinHandle)
 {
+    en_result_t enRet = ErrorInvalidParameter;
     stc_exint_config_t stcExIntInit;
 
     stc_irq_regi_config_t stcIrqRegiConf;
@@ -340,71 +339,71 @@ en_result_t LIN_SLAVE_Init(stc_lin_hanlde_t *pstcLinHandle)
         .u16CaptureCondition = TIMERB_IC_RISING,
     };
 
-    if (NULL == pstcLinHandle)
+    if (NULL != pstcLinHandle)
     {
-        return ErrorInvalidParameter;
+        m_pstcLinHandle = pstcLinHandle;
+
+        /* Configure USART RX/TX pin. */
+        GPIO_SetFunc(pstcLinHandle->stcPinCfg.u8RxPort, pstcLinHandle->stcPinCfg.u8RxPin, GPIO_FUNC_3_USART);
+        GPIO_SetFunc(pstcLinHandle->stcPinCfg.u8TxPort, pstcLinHandle->stcPinCfg.u8TxPin, GPIO_FUNC_3_USART);
+
+        /* Enable peripheral clock */
+        CLK_FcgPeriphClockCmd((CLK_FCG_UART1 | CLK_FCG_TIMB4), Enable);
+
+        /* Initialize LIN function */
+        USART_LinInit(M0P_USART1, &pstcLinHandle->stcLinInit);
+
+        /* Register RX IRQ handler && configure NVIC. */
+        stcIrqRegiConf.enIRQn = pstcLinHandle->stcIrqnCfg.UsartRxIRQn;
+        stcIrqRegiConf.enIntSrc = INT_USART_1_RI;
+        stcIrqRegiConf.pfnCallback = &UartRxIrqCallback;
+        INTC_IrqRegistration(&stcIrqRegiConf);
+        NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
+        NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
+        NVIC_EnableIRQ(stcIrqRegiConf.enIRQn);
+
+        /* Register error IRQ handler && configure NVIC. */
+        stcIrqRegiConf.enIRQn = pstcLinHandle->stcIrqnCfg.UsartErrIRQn;
+        stcIrqRegiConf.enIntSrc = INT_USART_1_EI;
+        stcIrqRegiConf.pfnCallback = &UartErrIrqCallback;
+        INTC_IrqRegistration(&stcIrqRegiConf);
+        NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
+        NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
+        NVIC_EnableIRQ(stcIrqRegiConf.enIRQn);
+
+        /* Initialize TIMERB unit. */
+        TIMERB_Init(M0P_TMRB4, &stcTimerbInit);
+
+        /* Initialize TIMERB unit input capture function . */
+        TIMERB_IC_Init(M0P_TMRB4, &stcTimerbIcInit);
+        TIMERB_IntCmd(M0P_TMRB4, TIMERB_IT_CMP, Enable);
+
+        /* Register IRQ handler && configure NVIC. */
+        stcIrqRegiConf.enIRQn = pstcLinHandle->stcIrqnCfg.TimerbCmpIRQn;
+        stcIrqRegiConf.enIntSrc = INT_TMRB_4_CMP;
+        stcIrqRegiConf.pfnCallback = &TimerbLinUnitCmpIrqCallback;
+        INTC_IrqRegistration(&stcIrqRegiConf);
+        NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
+        NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
+        NVIC_EnableIRQ(stcIrqRegiConf.enIRQn);
+
+        /* EXINT Channel 1 configure */
+        EXINT_StructInit(&stcExIntInit);
+        stcExIntInit.u16ExIntCh = EXINT_CH01;
+        stcExIntInit.u8ExIntFE = EXINT_FILTER_ON;
+        stcExIntInit.u8ExIntFClk = EXINT_FCLK_HCLK_DIV8;
+        stcExIntInit.u8ExIntLvl = EXINT_TRIGGER_RISING;
+        EXINT_Init(&stcExIntInit);
+
+        if (LinStateSleep == pstcLinHandle->enLinState)
+        {
+            LIN_Sleep(pstcLinHandle);
+        }
+
+        enRet = Ok;
     }
 
-    m_pstcLinHandle = pstcLinHandle;
-
-    /* Configure USART RX/TX pin. */
-    GPIO_SetFunc(pstcLinHandle->stcPinCfg.u8RxPort, pstcLinHandle->stcPinCfg.u8RxPin, GPIO_FUNC_USART);
-    GPIO_SetFunc(pstcLinHandle->stcPinCfg.u8TxPort, pstcLinHandle->stcPinCfg.u8TxPin, GPIO_FUNC_USART);
-
-    /* Enable peripheral clock */
-    CLK_FcgPeriphClockCmd((CLK_FCG_UART1 | CLK_FCG_TIMB4), Enable);
-
-    /* Initialize LIN function */
-    USART_LinInit(M0P_USART1, &pstcLinHandle->stcLinInit);
-
-    /* Register RX IRQ handler && configure NVIC. */
-    stcIrqRegiConf.enIRQn = pstcLinHandle->stcIrqnCfg.UsartRxIRQn;
-    stcIrqRegiConf.enIntSrc = INT_USART_1_RI;
-    stcIrqRegiConf.pfnCallback = UartRxIrqCallback;
-    INTC_IrqRegistration(&stcIrqRegiConf);
-    NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
-    NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
-    NVIC_EnableIRQ(stcIrqRegiConf.enIRQn);
-
-    /* Register error IRQ handler && configure NVIC. */
-    stcIrqRegiConf.enIRQn = pstcLinHandle->stcIrqnCfg.UsartErrIRQn;
-    stcIrqRegiConf.enIntSrc = INT_USART_1_EI;
-    stcIrqRegiConf.pfnCallback = UartErrIrqCallback;
-    INTC_IrqRegistration(&stcIrqRegiConf);
-    NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
-    NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
-    NVIC_EnableIRQ(stcIrqRegiConf.enIRQn);
-
-    /* Initialize TIMERB unit. */
-    TIMERB_Init(M0P_TMRB4, &stcTimerbInit);
-
-    /* Initialize TIMERB unit input capture function . */
-    TIMERB_IC_Init(M0P_TMRB4, &stcTimerbIcInit);
-    TIMERB_IntCmd(M0P_TMRB4, TIMERB_IT_CMP, Enable);
-
-    /* Register IRQ handler && configure NVIC. */
-    stcIrqRegiConf.enIRQn = pstcLinHandle->stcIrqnCfg.TimerbCmpIRQn;
-    stcIrqRegiConf.enIntSrc = INT_TMRB_4_CMP;
-    stcIrqRegiConf.pfnCallback = TimerbLinUnitCmpIrqCallback;
-    INTC_IrqRegistration(&stcIrqRegiConf);
-    NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
-    NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
-    NVIC_EnableIRQ(stcIrqRegiConf.enIRQn);
-
-    /* EXINT Channel 1 configure */
-    EXINT_StructInit(&stcExIntInit);
-    stcExIntInit.u16ExIntCh = EXINT_CH01;
-    stcExIntInit.u8ExIntFE = EXINT_FILTER_ON;
-    stcExIntInit.u8ExIntFClk = EXINT_FCLK_HCLK_DIV8;
-    stcExIntInit.u8ExIntLvl = EXINT_TRIGGER_RISING;
-    EXINT_Init(&stcExIntInit);
-
-    if (LinStateSleep == pstcLinHandle->enLinState)
-    {
-        LIN_Sleep(pstcLinHandle);
-    }
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -420,43 +419,43 @@ en_result_t LIN_SLAVE_RecFrameHeader(stc_lin_hanlde_t *pstcLinHandle,
                                         stc_lin_frame_t *pstcFrame,
                                         int32_t i32Timeout)
 {
-    en_result_t enRet = Ok;
-    __IO uint32_t u32Cyc = (i32Timeout < 0) ? 0u : i32Timeout * (SystemCoreClock / 10000);  /* i32Timeout * 1ms */
+    en_result_t enRet = ErrorInvalidParameter;
+    __IO uint32_t u32Cyc = (i32Timeout < 0) ? 0u : ((uint32_t)i32Timeout) * (SystemCoreClock / 10000ul);  /* i32Timeout * 1ms */
 
-    if ((pstcFrame == NULL) ||
-        (pstcLinHandle == NULL))
+    if ((pstcFrame != NULL) &&
+        (pstcLinHandle != NULL))
     {
-        return ErrorInvalidParameter;
-    }
+        pstcFrame->u8PID = 0u;
+        pstcFrame->u8Error = 0u;
+        pstcFrame->u8Length = 0u;
+        pstcFrame->u8XferCnt = 0u;
+        pstcFrame->u8Checksum = 0u;
+        pstcFrame->u8State = LinFrameStateIdle;
 
-    pstcFrame->u8PID = 0;
-    pstcFrame->u8Error = 0;
-    pstcFrame->u8Length = 0;
-    pstcFrame->u8XferCnt = 0;
-    pstcFrame->u8Checksum = 0;
-    pstcFrame->u8State = LinFrameStateIdle;
+        pstcLinHandle->pstcFrame = pstcFrame;
 
-    pstcLinHandle->pstcFrame = pstcFrame;
+        /* Data state */
+        UsartDisableRxTX(pstcLinHandle);
 
-    /* Data state */
-    UsartDisableRxTX(pstcLinHandle);
+        TIMERB_SetCounter(M0P_TMRB4, 0u);
+        TIMERB_SetHwTriggerCondition(M0P_TMRB4, TIMERB_HWSTART_TIMB_T_PWM1_FALLING | TIMERB_HWSTOP_TIMB_T_PWM1_RISING | TIMERB_HWCLEAR_TIMB_T_PWM1_FALLING);
+        TIMERB_IC_SetCaptureCondition(M0P_TMRB4, TIMERB_IC_RISING);
 
-    TIMERB_SetCounter(M0P_TMRB4, 0);
-    TIMERB_SetHwTriggerCondition(M0P_TMRB4, TIMERB_HWSTART_TIMB_T_PWM1_FALLING | TIMERB_HWSTOP_TIMB_T_PWM1_RISING | TIMERB_HWCLEAR_TIMB_T_PWM1_FALLING);
-    TIMERB_IC_SetCaptureCondition(M0P_TMRB4, TIMERB_IC_RISING);
-
-    while ((i32Timeout < 0) || u32Cyc)
-    {
-        u32Cyc--;
-        if (pstcFrame->u8State >= LinFrameStatePID)
+        while (u32Cyc || (i32Timeout < 0))
         {
-            break;
+            u32Cyc--;
+            if (pstcFrame->u8State >= LinFrameStatePID)
+            {
+                break;
+            }
         }
-    }
 
-    if ((i32Timeout >= 0) && (0 == u32Cyc))
-    {
-        enRet = ErrorTimeout;
+        if ((0ul == u32Cyc) && (i32Timeout >= 0))
+        {
+            enRet = ErrorTimeout;
+        }
+
+        enRet = Ok;
     }
 
     return enRet;
@@ -472,46 +471,47 @@ en_result_t LIN_SLAVE_RecFrameHeader(stc_lin_hanlde_t *pstcLinHandle,
  *           - ErrorInvalidParameter: pstcLinHandle == NULL or pstcFrame == NULL
  * @note   Firstly call LIN_SLAVE_RecFrameHeader(), and then call this function.
  */
-en_result_t LIN_SLAVE_RecFrameResponse(stc_lin_hanlde_t *pstcLinHandle,
+en_result_t LIN_SLAVE_RecFrameResponse(const stc_lin_hanlde_t *pstcLinHandle,
                                         stc_lin_frame_t *pstcFrame,
                                         int32_t i32Timeout)
 {
-    uint8_t u8Checksum = 0;
-    en_result_t enRet = Ok;
-    __IO uint32_t u32Cyc = (i32Timeout < 0) ? 0u : i32Timeout * (SystemCoreClock / 10000);  /* i32Timeout * 1ms */
+    uint8_t u8Checksum = 0u;
+    en_result_t enRet = ErrorInvalidParameter;
+    __IO uint32_t u32Cyc = (i32Timeout < 0) ? 0u : ((uint32_t)i32Timeout) * (SystemCoreClock / 10000ul);  /* i32Timeout * 1ms */
 
-    if ((pstcFrame == NULL) ||
-        (pstcLinHandle == NULL) ||
-        (pstcFrame->u8State != LinFrameStatePID))
+    if ((pstcFrame != NULL) &&
+        (pstcLinHandle != NULL))
     {
-        return ErrorInvalidParameter;
-    }
-
-    while ((i32Timeout < 0) || u32Cyc)
-    {
-        u32Cyc--;
-
-        if (LinFrameStateChecksum == pstcFrame->u8State)
+        if (pstcFrame->u8State == LinFrameStatePID)
         {
-            u8Checksum = LIN_CalcChecksum(pstcFrame->u8PID, pstcFrame->au8Data, pstcFrame->u8Length);
-            if (u8Checksum == pstcFrame->u8Checksum)
+            while (u32Cyc || (i32Timeout < 0))
             {
+                u32Cyc--;
 
-                pstcFrame->u8State = LinFrameStateIdle;
+                if (LinFrameStateChecksum == pstcFrame->u8State)
+                {
+                    u8Checksum = LIN_CalcChecksum(pstcFrame->u8PID, pstcFrame->au8Data, pstcFrame->u8Length);
+                    if (u8Checksum == pstcFrame->u8Checksum)
+                    {
+                        pstcFrame->u8State = LinFrameStateIdle;
+                    }
+                    else
+                    {
+                        enRet = Error;
+                        pstcFrame->u8Error = LinErrChecksum;
+                    }
+
+                    break;
+                }
             }
-            else
+
+            if ((0ul == u32Cyc) && (i32Timeout >= 0))
             {
-                enRet = Error;
-                pstcFrame->u8Error = LinErrChecksum;
+                enRet = ErrorTimeout;
             }
 
-            break;
+            enRet = Ok;
         }
-    }
-
-    if ((i32Timeout >= 0) && (0 == u32Cyc))
-    {
-        enRet = ErrorTimeout;
     }
 
     return enRet;
@@ -530,36 +530,39 @@ en_result_t LIN_SLAVE_SendFrameResponse(stc_lin_hanlde_t *pstcLinHandle,
                                         stc_lin_frame_t *pstcFrame)
 {
     uint8_t u8Checksum;
+    en_result_t enRet = ErrorInvalidParameter;
 
-    if ((pstcFrame == NULL) ||
+    if (!((pstcFrame == NULL) ||
         (pstcLinHandle == NULL) ||
-        (pstcLinHandle->pstcFrame->u8PID == 0xFF) ||
-        (pstcLinHandle->pstcFrame->u8PID == 0x00) ||
-        (pstcLinHandle->pstcFrame->u8State != LinFrameStatePID))
+        (pstcLinHandle->pstcFrame == NULL) ||
+        (pstcLinHandle->pstcFrame->u8PID == 0xFFu) ||
+        (pstcLinHandle->pstcFrame->u8PID == 0x00u)))
     {
-        return ErrorInvalidParameter;
+        if (pstcLinHandle->pstcFrame->u8State == LinFrameStatePID)
+        {
+            pstcLinHandle->pstcFrame = pstcFrame;
+
+            UsartDisableRxTX(pstcLinHandle);
+            UsartEnableTX(pstcLinHandle);
+
+            DDL_Delay1ms(LIN_FRAME_RESPONSE_DELAY);
+
+            /* Send data */
+            for (pstcFrame->u8XferCnt = 0u; pstcFrame->u8XferCnt < pstcFrame->u8Length ; pstcFrame->u8XferCnt++)
+            {
+                LIN_SendChar(M0P_USART1, pstcFrame->au8Data[pstcFrame->u8XferCnt]);
+                DDL_Delay1ms(LIN_DATA_BYTE_DELAY);
+            }
+
+            /* Calculate Checksum */
+            u8Checksum = LIN_CalcChecksum(pstcFrame->u8PID, pstcFrame->au8Data, pstcFrame->u8Length);
+
+            LIN_SendChar(M0P_USART1, u8Checksum);
+            enRet = Ok;
+        }
     }
 
-    pstcLinHandle->pstcFrame = pstcFrame;
-
-    UsartDisableRxTX(pstcLinHandle);
-    UsartEnableTX(pstcLinHandle);
-
-    DDL_Delay1ms(LIN_FRAME_RESPONSE_DELAY);
-
-    /* Send data */
-    for (pstcFrame->u8XferCnt = 0; pstcFrame->u8XferCnt < pstcFrame->u8Length ; pstcFrame->u8XferCnt++)
-    {
-        LIN_SendChar(M0P_USART1, pstcFrame->au8Data[pstcFrame->u8XferCnt]);
-        DDL_Delay1ms(LIN_DATA_BYTE_DELAY);
-    }
-
-    /* Calculate Checksum */
-    u8Checksum = LIN_CalcChecksum(pstcFrame->u8PID, pstcFrame->au8Data, pstcFrame->u8Length);
-
-    LIN_SendChar(M0P_USART1, u8Checksum);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -573,14 +576,15 @@ en_result_t LIN_SLAVE_SendFrameResponse(stc_lin_hanlde_t *pstcLinHandle,
 en_result_t LIN_SetState(stc_lin_hanlde_t *pstcLinHandle,
                             en_lin_state_t enState)
 {
-    if (pstcLinHandle == NULL)
+    en_result_t enRet = ErrorInvalidParameter;
+
+    if (pstcLinHandle != NULL)
     {
-        return ErrorInvalidParameter;
+        pstcLinHandle->enLinState = enState;
+        enRet = Ok;
     }
 
-    pstcLinHandle->enLinState = enState;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -590,7 +594,7 @@ en_result_t LIN_SetState(stc_lin_hanlde_t *pstcLinHandle,
  *           - Ok: Initialize success
  *           - ErrorInvalidParameter: pstcLinHandle == NULL
  */
-en_lin_state_t LIN_GetState(stc_lin_hanlde_t *pstcLinHandle)
+en_lin_state_t LIN_GetState(const stc_lin_hanlde_t *pstcLinHandle)
 {
     DDL_ASSERT(pstcLinHandle != NULL);
 
@@ -606,22 +610,24 @@ en_lin_state_t LIN_GetState(stc_lin_hanlde_t *pstcLinHandle)
  */
 en_result_t LIN_Sleep(stc_lin_hanlde_t *pstcLinHandle)
 {
-    if (pstcLinHandle == NULL)
+    en_result_t enRet = ErrorInvalidParameter;
+
+    if (pstcLinHandle != NULL)
     {
-        return ErrorInvalidParameter;
+        pstcLinHandle->enLinState = LinStateSleep;
+
+        /* Clear flag */
+        EXINT_ClrExIntSrc(EXINT_CH01);
+
+        /* Configure NVIC */
+        NVIC_ClearPendingIRQ(EXINT01_IRQn);
+        NVIC_SetPriority(EXINT01_IRQn, DDL_IRQ_PRIORITY_03);
+        NVIC_EnableIRQ(EXINT01_IRQn);
+
+        enRet = Ok;
     }
 
-    pstcLinHandle->enLinState = LinStateSleep;
-
-    /* Clear flag */
-    EXINT_ClrSrc(EXINT_CH01);
-
-    /* Configure NVIC */
-    NVIC_ClearPendingIRQ(EXINT01_IRQn);
-    NVIC_SetPriority(EXINT01_IRQn, DDL_IRQ_PRIORITY_03);
-    NVIC_EnableIRQ(EXINT01_IRQn);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -633,52 +639,57 @@ en_result_t LIN_Sleep(stc_lin_hanlde_t *pstcLinHandle)
  */
 en_result_t LIN_SendWakeupSignal(stc_lin_hanlde_t *pstcLinHandle)
 {
-    if (pstcLinHandle == NULL)
+    en_result_t enRet = ErrorInvalidParameter;
+
+    if (pstcLinHandle != NULL)
     {
-        return ErrorInvalidParameter;
+        UsartEnableTX(pstcLinHandle);
+
+        USART_SendData(M0P_USART1, LIN_WAKEUP_DATA);
+
+        while (!USART_GetFlag(M0P_USART1, USART_FLAG_TC))
+        {
+            ;
+        }
+
+        enRet = Ok;
     }
 
-    UsartEnableTX(pstcLinHandle);
-
-    USART_SendData(M0P_USART1, LIN_WAKEUP_DATA);
-
-    while (!USART_GetFlag(M0P_USART1, USART_FLAG_TC));
-
-    return Ok;
+    return enRet;
 }
 
 /**
  * @brief  Calculate PID && data field checksum.
  * @param  [in] u8PID                   PID number
- * @param  [in] pu8Data                 Pointer to data
+ * @param  [in] au8Data                 Data buffer
  * @param  [in] u8Len                   Data length
  * @retval Checksum
  */
-uint8_t LIN_CalcChecksum(uint8_t u8PID, uint8_t *pu8Data, uint8_t u8Len)
+uint8_t LIN_CalcChecksum(uint8_t u8PID, const uint8_t au8Data[], uint8_t u8Len)
 {
     uint8_t i;
-    uint16_t u16Checksum = 0;
+    uint16_t u16Checksum = 0u;
 
-    if ((u8PID != 0x3C) || (u8PID != 0x3D))  /* 0x3C 0x3D Classic Checksum */
+    if ((u8PID - 0x3Cu) || (u8PID - 0x3Du))  /* 0x3C 0x3D Classic Checksum */
     {
-        u16Checksum = 0 ;
-    } 
+        u16Checksum = 0u;
+    }
     else /* Enhanced Checksum */
     {
-        u16Checksum  = u8PID ;
+        u16Checksum  = (uint16_t)u8PID ;
     }
 
-    for (i = 0; i < u8Len; i++) 
+    for (i = 0u; i < u8Len; i++)
     {
-        u16Checksum += *(pu8Data++);
+        u16Checksum += au8Data[i];
 
-        if (u16Checksum > 0xFF)      /* Carry bit */
+        if (u16Checksum > 0xFFu)      /* Carry bit */
         {
-            u16Checksum -= 0xFF;
+            u16Checksum -= 0xFFu;
         }
     }
 
-    return (~u16Checksum);  /* reversed */
+    return (uint8_t)((uint16_t)(~u16Checksum));  /* reversed */
 }
 
 /**
@@ -690,18 +701,24 @@ uint8_t LIN_CalcChecksum(uint8_t u8PID, uint8_t *pu8Data, uint8_t u8Len)
  */
 static en_result_t LIN_SendBreak(stc_lin_hanlde_t *pstcLinHandle)
 {
-    uint32_t u32Baudrate;
+    uint32_t u32Baudrate = 0ul;
 
-    while (!USART_GetFlag(M0P_USART1, USART_FLAG_TC));
+    while (!USART_GetFlag(M0P_USART1, USART_FLAG_TC))
+    {
+        ;
+    }
 
-    u32Baudrate = pstcLinHandle->stcLinInit.u32Baudrate * 9 / 13;
+    u32Baudrate = pstcLinHandle->stcLinInit.u32Baudrate * 9ul / 13ul;
 
     UsartDisableRxTX(pstcLinHandle);
     USART_SetBaudrate(M0P_USART1, u32Baudrate, NULL);
     UsartEnableTX(pstcLinHandle);
 
     USART_SendData(M0P_USART1, LIN_BREAK_DATA);
-    while (!USART_GetFlag(M0P_USART1, USART_FLAG_TC));
+    while (!USART_GetFlag(M0P_USART1, USART_FLAG_TC))
+    {
+        ;
+    }
 
     UsartDisableRxTX(pstcLinHandle);
     USART_SetBaudrate(M0P_USART1, pstcLinHandle->stcLinInit.u32Baudrate, NULL);
@@ -719,9 +736,12 @@ static en_result_t LIN_SendBreak(stc_lin_hanlde_t *pstcLinHandle)
  */
 static en_result_t LIN_SendChar(M0P_USART_TypeDef *USARTx, uint8_t u8Char)
 {
-    USART_SendData(USARTx, u8Char);
+    USART_SendData(USARTx, (uint16_t)u8Char);
 
-    while (!USART_GetFlag(USARTx, USART_FLAG_TC));
+    while (!USART_GetFlag(USARTx, USART_FLAG_TC))
+    {
+        ;
+    }
 
     return Ok;
 }
@@ -757,43 +777,46 @@ static en_result_t LIN_MASTER_SendFrameHeader(stc_lin_hanlde_t *pstcLinHandle,
                                             stc_lin_frame_t *pstcFrame)
 {
     uint8_t u8PID;
+    en_result_t enRet = ErrorInvalidParameter;
 
-    if ((pstcFrame == NULL)  ||
-        (pstcLinHandle == NULL) ||
-        (pstcFrame->u8PID == 0xFF) ||
-        (pstcFrame->u8PID == 0x00))
+    if ((pstcFrame != NULL)  &&
+        (pstcLinHandle != NULL) &&
+        (pstcFrame->u8PID != 0xFFu) &&
+        (pstcFrame->u8PID != 0x00u))
     {
-        return ErrorInvalidParameter;
+        pstcLinHandle->pstcFrame = pstcFrame;
+
+        /* Idle state */
+        if (USART_GetFlag(M0P_USART1, USART_FLAG_PE | USART_FLAG_FE | USART_FLAG_ORE))
+        {
+            enRet = Error;
+        }
+        else
+        {
+            UsartEnableTX(pstcLinHandle);
+
+            /* Send break field */
+            LIN_SendBreak(pstcLinHandle);
+            pstcFrame->u8State = LinFrameStateBreak;
+            DDL_Delay1ms(LIN_BREAKFIELD_DELAY);
+
+            /* Send sync field */
+            LIN_SendChar(M0P_USART1, LIN_SYNC_DATA);
+            pstcFrame->u8State = LinFrameStateSync;
+            DDL_Delay1ms(LIN_DATA_BYTE_DELAY);
+
+            /* Calculate PID */
+            u8PID = LIN_CalcParity(pstcFrame->u8PID);
+
+            /* Send PID */
+            LIN_SendChar(M0P_USART1, u8PID);
+            pstcFrame->u8State = LinFrameStatePID;
+
+            enRet = Ok;
+        }
     }
 
-    pstcLinHandle->pstcFrame = pstcFrame;
-
-    /* Idle state */
-    if (USART_GetFlag(M0P_USART1, USART_FLAG_PE | USART_FLAG_FE | USART_FLAG_ORE))
-    {
-        return ErrorInvalidMode;
-    }
-
-    UsartEnableTX(pstcLinHandle);
-
-    /* Send break field */
-    LIN_SendBreak(pstcLinHandle);
-    pstcFrame->u8State = LinFrameStateBreak;
-    DDL_Delay1ms(LIN_BREAKFIELD_DELAY);
-
-    /* Send sync field */
-    LIN_SendChar(M0P_USART1, LIN_SYNC_DATA);
-    pstcFrame->u8State = LinFrameStateSync;
-    DDL_Delay1ms(LIN_DATA_BYTE_DELAY);
-
-    /* Calculate PID */
-    u8PID = LIN_CalcParity(pstcFrame->u8PID);
-
-    /* Send PID */
-    LIN_SendChar(M0P_USART1, u8PID);
-    pstcFrame->u8State = LinFrameStatePID;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -803,19 +826,19 @@ static en_result_t LIN_MASTER_SendFrameHeader(stc_lin_hanlde_t *pstcLinHandle,
  */
 static uint8_t LIN_SLAVE_GetFrameDataLenbyPID(uint8_t u8PID)
 {
-    uint8_t u8DataLen = 0;
+    uint8_t u8DataLen = 0u;
 
-    switch (u8PID & 0x30)
+    switch (u8PID & 0x30u)
     {
-        case 0x00:
-        case 0x10:
-            u8DataLen = 2;
+        case 0x00u:
+        case 0x10u:
+            u8DataLen = 2u;
             break;
-        case 0x20:
-            u8DataLen = 4;
+        case 0x20u:
+            u8DataLen = 4u;
             break;
-        case 0x30:
-            u8DataLen = 8;
+        case 0x30u:
+            u8DataLen = 8u;
             break;
         default:
             break;
@@ -849,7 +872,7 @@ static void UsartEnableTX(stc_lin_hanlde_t *pstcLinHandle)
 {
     USART_FuncCmd(M0P_USART1, USART_TX, Enable);
 
-    GPIO_SetFunc(pstcLinHandle->stcPinCfg.u8TxPort, pstcLinHandle->stcPinCfg.u8TxPin, GPIO_FUNC_USART);
+    GPIO_SetFunc(pstcLinHandle->stcPinCfg.u8TxPort, pstcLinHandle->stcPinCfg.u8TxPin, GPIO_FUNC_3_USART);
 }
 
 /**
@@ -859,43 +882,39 @@ static void UsartEnableTX(stc_lin_hanlde_t *pstcLinHandle)
  */
 static void UartRxIrqCallback(void)
 {
-    uint8_t u8Data = USART_RecData(M0P_USART1);
+    uint8_t u8Data = (uint8_t)USART_RecData(M0P_USART1);
 
-    if (LinFrameStateSync == m_pstcLinHandle->pstcFrame->u8State)
+    switch (m_pstcLinHandle->pstcFrame->u8State)
     {
-        if (u8Data == LIN_CalcParity(u8Data & 0x3F))
-        {
-            m_pstcLinHandle->pstcFrame->u8PID = u8Data;
-            m_pstcLinHandle->pstcFrame->u8Length = LIN_SLAVE_GetFrameDataLenbyPID(u8Data);
-            m_pstcLinHandle->pstcFrame->u8State = LinFrameStatePID;
-        }
-        else
-        {
-            m_pstcLinHandle->pstcFrame->u8Error = LinErrPID;
-        }
+        case LinFrameStateSync:
+            if (u8Data == LIN_CalcParity(u8Data & 0x3Fu))
+            {
+                m_pstcLinHandle->pstcFrame->u8PID = u8Data;
+                m_pstcLinHandle->pstcFrame->u8Length = LIN_SLAVE_GetFrameDataLenbyPID(u8Data);
+                m_pstcLinHandle->pstcFrame->u8State = LinFrameStatePID;
+            }
+            else
+            {
+                m_pstcLinHandle->pstcFrame->u8Error = LinErrPID;
+            }
+            break;
+        case LinFrameStatePID:
+            if (m_pstcLinHandle->pstcFrame->u8XferCnt < m_pstcLinHandle->pstcFrame->u8Length)
+            {
+                m_pstcLinHandle->pstcFrame->au8Data[m_pstcLinHandle->pstcFrame->u8XferCnt++] = u8Data;
+            }
 
-        return;
-    }
-
-    if (LinFrameStatePID == m_pstcLinHandle->pstcFrame->u8State)
-    {
-        if (m_pstcLinHandle->pstcFrame->u8XferCnt < m_pstcLinHandle->pstcFrame->u8Length)
-        {
-            m_pstcLinHandle->pstcFrame->au8Data[m_pstcLinHandle->pstcFrame->u8XferCnt++] = u8Data;
-        }
-
-        if (m_pstcLinHandle->pstcFrame->u8XferCnt == m_pstcLinHandle->pstcFrame->u8Length)
-        {
-            m_pstcLinHandle->pstcFrame->u8State = LinFrameStateData;
-        }
-
-        return;
-    }
-
-    if (LinFrameStateData == m_pstcLinHandle->pstcFrame->u8State)
-    {
-        m_pstcLinHandle->pstcFrame->u8Checksum = u8Data;
-        m_pstcLinHandle->pstcFrame->u8State = LinFrameStateChecksum;
+            if (m_pstcLinHandle->pstcFrame->u8XferCnt == m_pstcLinHandle->pstcFrame->u8Length)
+            {
+                m_pstcLinHandle->pstcFrame->u8State = LinFrameStateData;
+            }
+            break;
+        case LinFrameStateData:
+            m_pstcLinHandle->pstcFrame->u8Checksum = u8Data;
+            m_pstcLinHandle->pstcFrame->u8State = LinFrameStateChecksum;
+            break;
+        default:
+            break;
     }
 }
 
@@ -914,13 +933,13 @@ static void UartErrIrqCallback(void)
  * @param  [in] TMRBx                   TIMERB instance
  * @retval None
  */
-static uint32_t TimerbGetClk(M0P_TMRB_TypeDef *TMRBx)
+static uint32_t TimerbGetClk(const M0P_TMRB_TypeDef *TMRBx)
 {
-    uint32_t u32ClkDiv;
+    uint32_t u16ClkDiv = 0u;
 
-    u32ClkDiv = TIMERB_GetClkDiv(M0P_TMRB4);
+    u16ClkDiv = TIMERB_GetClkDiv(M0P_TMRB4);
 
-    return (SystemCoreClock << u32ClkDiv);
+    return (SystemCoreClock >> (u16ClkDiv >> TMRB_BCSTR_CKDIV_POS));
 }
 
 /**
@@ -930,25 +949,25 @@ static uint32_t TimerbGetClk(M0P_TMRB_TypeDef *TMRBx)
  */
 static void TimerbLinUnitCmpIrqCallback(void)
 {
-    uint16_t u16Bit;
+    uint16_t u16Bit = 0u;
 
-    static uint16_t u16CmpVal;
-    static __IO uint32_t m_u32Clk;
-    static __IO uint32_t m_u32Baudrate;
-    static __IO uint32_t m_u32SyncCaptureCnt;
-    static uint32_t m_u32SyncCaptureVal;
+    static uint16_t u16CmpVal = 0u;
+    static __IO uint32_t m_u32Clk = 0ul;
+    static __IO uint32_t m_u32Baudrate = 0ul;
+    static __IO uint32_t m_u32SyncCaptureCnt = 0ul;
+    static uint32_t m_u32SyncCaptureVal = 0ul;
 
     u16CmpVal = TIMERB_GetCompare(M0P_TMRB4);
 
     if (LinFrameStateIdle == m_pstcLinHandle->pstcFrame->u8State)
     {
-        m_u32SyncCaptureCnt = 0;
-        m_u32SyncCaptureVal = 0;
+        m_u32SyncCaptureCnt = 0ul;
+        m_u32SyncCaptureVal = 0ul;
         m_u32Clk = TimerbGetClk(M0P_TMRB4);
-        u16Bit= (m_pstcLinHandle->stcLinInit.u32Baudrate * u16CmpVal * 10) / m_u32Clk;
-        if (u16Bit > 110)
+        u16Bit= (uint16_t)((m_pstcLinHandle->stcLinInit.u32Baudrate * u16CmpVal * 10ul) / m_u32Clk);
+        if (u16Bit > 110u)
         {
-            TIMERB_SetCounter(M0P_TMRB4, 0);
+            TIMERB_SetCounter(M0P_TMRB4, 0u);
             TIMERB_SetHwStopCondition(M0P_TMRB4, TIMERB_HWSTOP_INVALID);
             TIMERB_IC_SetCaptureCondition(M0P_TMRB4, TIMERB_IC_FALLING);
             m_pstcLinHandle->pstcFrame->u8State = LinFrameStateBreak;
@@ -975,6 +994,10 @@ static void TimerbLinUnitCmpIrqCallback(void)
             m_pstcLinHandle->pstcFrame->u8State = LinFrameStateSync;
         }
     }
+    else
+    {
+        /* Do nothing */
+    }
 
     TIMERB_ClearFlag(M0P_TMRB4, TIMERB_FLAG_CMP);
 }
@@ -992,7 +1015,7 @@ void EXINT01_Handler(void)
         m_pstcLinHandle->enLinState = LinStateWakeup;
     }
 
-    EXINT_ClrSrc(EXINT_CH01);
+    EXINT_ClrExIntSrc(EXINT_CH01);
 }
 
 /**

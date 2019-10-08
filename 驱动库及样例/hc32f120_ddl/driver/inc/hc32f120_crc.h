@@ -99,8 +99,8 @@ extern "C"
  *        - CRC32 initial value is 0xFFFFFFFF
  * @{
  */
-#define CRC_CRC16           0x0ul
-#define CRC_CRC32           CRC_CR_CR
+#define CRC_CRC16           (0x0ul)
+#define CRC_CRC32           (CRC_CR_CR)
 /**
  * @}
  */
@@ -109,7 +109,7 @@ extern "C"
  * @defgroup CRC_Flag_Bit_Mask CRC Flag Bit Mask
  * @{
  */
-#define CRC_FLAG_MASK       CRC_CR_FLAG
+#define CRC_FLAG_MASK       (CRC_CR_FLAG)
 /**
  * @}
  */
@@ -118,9 +118,9 @@ extern "C"
  * @defgroup CRC_Bit_Width CRC Bit Width
  * @{
  */
-#define CRC_BW_8            ((uint8_t)8)
-#define CRC_BW_16           ((uint8_t)16)
-#define CRC_BW_32           ((uint8_t)32)
+#define CRC_BW_8            ((uint8_t)8u)
+#define CRC_BW_16           ((uint8_t)16u)
+#define CRC_BW_32           ((uint8_t)32u)
 /**
  * @}
  */
@@ -136,18 +136,20 @@ extern "C"
 /*******************************************************************************
   Global function prototypes (definition in C source)
  ******************************************************************************/
-/** 
+/**
  * @addtogroup CRC_Global_Functions
  * @{
  */
 uint32_t CRC_Calculate(uint32_t u32CrcProtocol,
                        const void *pvData,
+                       uint32_t u32InitVal,
                        uint32_t u32Length,
                        uint8_t u8BitWidth);
 
 en_flag_status_t CRC_Check(uint32_t u32CrcProtocol,
                            uint32_t u32CheckSum,
                            const void *pvData,
+                           uint32_t u32InitVal,
                            uint32_t u32Length,
                            uint8_t u8BitWidth);
 /**

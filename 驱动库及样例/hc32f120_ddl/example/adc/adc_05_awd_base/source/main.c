@@ -72,56 +72,48 @@
 /*******************************************************************************
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
-/* Enable ADC peripheral. */
-#define ENABLE_ADC()                CLK_FcgPeriphClockCmd(CLK_FCG_ADC, Enable)
-
-/* Disable ADC peripheral. */
-#define DISABLE_ADC()               CLK_FcgPeriphClockCmd(CLK_FCG_ADC, Disable)
-
-/* Enable AOS. */
-#define ENABLE_AOS()                CLK_FcgPeriphClockCmd(CLK_FCG_AOS, Enable)
-
-/* Disable ADC. */
-#define DISABLE_AOS()               CLK_FcgPeriphClockCmd(CLK_FCG_AOS, Disable)
-
 /* ADC channels definition for this example. */
-#define AWD0_PIN                    ADC_ANI11
-#define AWD1_PIN                    ADC_ANI2
+#define AWD0_PIN                    (ADC_ANI11)
+#define AWD1_PIN                    (ADC_ANI2)
 #define AWD0_CH                     ((uint16_t)(1ul << AWD0_PIN))
 #define AWD1_CH                     ((uint16_t)(1ul << AWD1_PIN))
 
 /* The channels of AWD0 and AWD1 can be configured in the same sequence.
    AWD0 and AWD1 can also be configured with the same channel. */
-#define ADC_SA_NORMAL_CHANNEL       ADC_CH0
-#define ADC_SA_AWD_CHANNEL          AWD0_CH
+#define ADC_SA_NORMAL_CHANNEL       (ADC_CH0)
+#define ADC_SA_NORMAL_CHANNEL_COUNT (1u)
+#define ADC_SA_AWD_CHANNEL          (AWD0_CH)
+#define ADC_SA_AWD_CHANNEL_COUNT    (1u)
 #define ADC_SA_CHANNEL              (ADC_SA_NORMAL_CHANNEL | ADC_SA_AWD_CHANNEL)
-#define ADC_SA_CHANNEL_COUNT        (2u)
+#define ADC_SA_CHANNEL_COUNT        (ADC_SA_NORMAL_CHANNEL_COUNT + ADC_SA_AWD_CHANNEL_COUNT)
 
 #define ADC_SB_NORMAL_CHANNEL       (ADC_CH4 | ADC_CH5)
-#define ADC_SB_AWD_CHANNEL          AWD1_CH
+#define ADC_SB_NORMAL_CHANNEL_COUNT (2u)
+#define ADC_SB_AWD_CHANNEL          (AWD1_CH)
+#define ADC_SB_AWD_CHANNEL_COUNT    (1u)
 #define ADC_SB_CHANNEL              (ADC_SB_NORMAL_CHANNEL | ADC_SB_AWD_CHANNEL)
-#define ADC_SB_CHANNEL_COUNT        (3u)
+#define ADC_SB_CHANNEL_COUNT        (ADC_SB_NORMAL_CHANNEL_COUNT + ADC_SB_AWD_CHANNEL_COUNT)
 
 /* AWD definition for this example. */
-#define USE_AWD0                    1u
-#define ADW0_MD                     ADC_AWD_CMP_IN_RANGE
+#define USE_AWD0                    (1u)
+#define ADW0_MD                     (ADC_AWD_CMP_IN_RANGE)
 #define AWD0_DR0_LOWER              ((uint16_t)1000)
 #define AWD0_DR1_UPPER              ((uint16_t)4000)
 
-#define USE_AWD1                    1u
-#define ADW1_MD                     ADC_AWD_CMP_OUT_RANGE
+#define USE_AWD1                    (1u)
+#define ADW1_MD                     (ADC_AWD_CMP_OUT_RANGE)
 #define AWD1_DR0_LOWER              ((uint16_t)3000)
 #define AWD1_DR1_UPPER              ((uint16_t)4000)
 
 #if (USE_AWD0 && USE_AWD1)
-#define AWD_COMBINATION_MODE        ADC_AWD_COMB_OR
+#define AWD_COMBINATION_MODE        (ADC_AWD_COMB_OR)
 #endif // #if (USE_AWD0 && USE_AWD1)
 
 /* ADC channel sampling time. */
 #define ADC_SAMPLE_TIME             ((uint8_t)10)
 
 /* ADC resolution definition. */
-#define ADC_RESOLUTION              ADC_RESOLUTION_12B
+#define ADC_RESOLUTION              (ADC_RESOLUTION_12B)
 
 /* ADC accuracy. */
 #define ADC_ACCURACY                (1ul << 12u)
@@ -182,9 +174,9 @@ int32_t main(void)
         {
             /* The following usage 1 and 2 are valid. */
             /* 1. Get the data of all channels of sequence A. */
-            ADC_GetSeqData(ADC_SEQ_A, (uint16_t *)&m_au16AdcSaVal[0u]);
+            ADC_GetChannelData(ADC_SA_CHANNEL, (uint16_t *)&m_au16AdcSaVal[0u], ADC_SA_CHANNEL_COUNT);
             /* 2. Get the data of normal channels of sequence A. */
-            // ADC_GetChannelData(ADC_SA_NORMAL_CHANNEL, (uint16_t *)&m_au16AdcSaVal[0u]);
+            // ADC_GetChannelData(ADC_SA_NORMAL_CHANNEL, (uint16_t *)&m_au16AdcSaVal[0u], ADC_SA_NORMAL_CHANNEL_COUNT);
 
             ADC_ClrEocFlag(ADC_FLAG_EOCA);
             // TODO: Use the ADC data.
@@ -196,9 +188,9 @@ int32_t main(void)
         {
             /* The following usage 1 and 2 are valid. */
             /* 1. Get the data of all channels of sequence B. */
-            ADC_GetSeqData(ADC_SEQ_B, (uint16_t *)&m_au16AdcSbVal[0u]);
+            ADC_GetChannelData(ADC_SB_CHANNEL, (uint16_t *)&m_au16AdcSbVal[0u], ADC_SB_CHANNEL_COUNT);
             /* 2. Get the data of normal channels of sequence B. */
-            // ADC_GetChannelData(ADC_SB_NORMAL_CHANNEL, (uint16_t *)&m_au16AdcSbVal[0u]);
+            // ADC_GetChannelData(ADC_SB_NORMAL_CHANNEL, (uint16_t *)&m_au16AdcSbVal[0u], ADC_SB_NORMAL_CHANNEL_COUNT);
 
             ADC_ClrEocFlag(ADC_FLAG_EOCB);
             // TODO: Use the ADC data.
@@ -272,7 +264,7 @@ static void AdcInitConfig(void)
     stcInit.u8SampTime      = ADC_SAMPLE_TIME;
 
     /* 1. Enable ADC peripheral. */
-    ENABLE_ADC();
+    CLK_FcgPeriphClockCmd(CLK_FCG_ADC, Enable);
 
     /* 2. Initializes ADC. */
     ADC_Init(&stcInit);
@@ -345,7 +337,7 @@ static void AdcTriggerConfig(void)
     stcTrgCfg.u16TrgSrc = ADC_TRGSRC_EX_PIN;
 
     /* 1. Configures the function of pin ADTRGA's. */
-    GPIO_SetFunc(GPIO_PORT_1, GPIO_PIN_0, GPIO_FUNC_ADTRG);
+    GPIO_SetFunc(GPIO_PORT_1, GPIO_PIN_0, GPIO_FUNC_1_ADTRG);
     /* 2. Configrues the trigger source of sequence A. */
     ADC_ConfigTriggerSrc(u8Seq, &stcTrgCfg);
     /* 3. Enable the trigger source. */
@@ -358,7 +350,7 @@ static void AdcTriggerConfig(void)
     stcTrgCfg.u16TrgSrc = ADC_TRGSRC_IN_EVT0;
     stcTrgCfg.u32Event0 = EVT_ADC_EOCA;
     /* 1. Enable AOS */
-    ENABLE_AOS();
+    CLK_FcgPeriphClockCmd(CLK_FCG_AOS, Enable);
     /* 2. Configrues the trigger source of sequence B. */
     ADC_ConfigTriggerSrc(u8Seq, &stcTrgCfg);
     /* 3. Enable the trigger source. */
@@ -397,8 +389,9 @@ static void AdcSetChannelPinAnalogMode(uint16_t u16Channel)
  */
 static void AdcSetPinAnalogMode(uint8_t u8PinNbr)
 {
-    uint8_t u8Port;
-    uint8_t u8Pin;
+    uint8_t u8Port = GPIO_PORT_2;
+    uint8_t u8Pin  = GPIO_PIN_0;
+    uint8_t u8Flag = 1u;
 
     switch (u8PinNbr)
     {
@@ -463,10 +456,14 @@ static void AdcSetPinAnalogMode(uint8_t u8PinNbr)
         break;
 
     default:
-        return;
+        u8Flag = 0u;
+        break;
     }
 
-    GPIO_SetFunc(u8Port, u8Pin, GPIO_FUNC_ANIN);
+    if (u8Flag != 0u)
+    {
+        GPIO_SetFunc(u8Port, u8Pin, GPIO_FUNC_1_ANIN);
+    }
 }
 
 /**

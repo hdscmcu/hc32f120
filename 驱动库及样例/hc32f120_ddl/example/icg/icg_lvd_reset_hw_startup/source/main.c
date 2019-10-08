@@ -73,12 +73,12 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* LED_R Port/Pin definition */
-#define LED_R_PORT                      GPIO_PORT_2
-#define LED_R_PIN                       GPIO_PIN_5
+#define LED_R_PORT                      (GPIO_PORT_2)
+#define LED_R_PIN                       (GPIO_PIN_5)
 
-#define LED_R_ON()                      GPIO_ResetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_OFF()                     GPIO_SetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_TOGGLE()                  GPIO_TogglePins(LED_R_PORT, LED_R_PIN)
+#define LED_R_ON()                      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_OFF()                     (GPIO_SetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_TOGGLE()                  (GPIO_TogglePins(LED_R_PORT, LED_R_PIN))
 
 /* Reset source definition */
 #define RESET_SOURCE_LVD                (0u)
@@ -152,7 +152,7 @@ int32_t main(void)
         if (RESET_SOURCE_OTHER == u8ResetSource)
         {
             LED_R_TOGGLE();
-            DDL_Delay1ms(1000);
+            DDL_Delay1ms(1000u);
         }
     }
 }

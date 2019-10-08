@@ -94,12 +94,30 @@
  * @defgroup TIMERB_Hardware_Trigger_Condition_Mask TIMERB Hardware Trigger Condition Mask
  * @{
  */
-#define TMRB_CCONR_HICP                     (TMRB_CCONR_HICP2 | TMRB_CCONR_HICP1 | TMRB_CCONR_HICP0)
-#define TMRB_HCONR_HSTA                     (TMRB_HCONR_HSTA2 | TMRB_HCONR_HSTA1 | TMRB_HCONR_HSTA0)
-#define TMRB_HCONR_HSTP                     (TMRB_HCONR_HSTP2 | TMRB_HCONR_HSTP1 | TMRB_HCONR_HSTP0)
-#define TMRB_HCONR_HCLE                     (TMRB_HCONR_HCLE4 | TMRB_HCONR_HCLE3 | TMRB_HCONR_HCLE2 | TMRB_HCONR_HCLE1 | TMRB_HCONR_HCLE0)
-#define TMRB_HCUPR_HCUP                     (TMRB_HCUPR_HCUP12 | TMRB_HCUPR_HCUP11 | TMRB_HCUPR_HCUP10 | TMRB_HCUPR_HCUP9 | TMRB_HCUPR_HCUP8)
-#define TMRB_HCDOR_HCDO                     (TMRB_HCDOR_HCDO12 | TMRB_HCDOR_HCDO11 | TMRB_HCDOR_HCDO10 | TMRB_HCDOR_HCDO9 | TMRB_HCDOR_HCDO8)
+#define TMRB_CCONR_HICP                     (TMRB_CCONR_HICP2 |                \
+                                             TMRB_CCONR_HICP1 |                \
+                                             TMRB_CCONR_HICP0)
+#define TMRB_HCONR_HSTA                     (TMRB_HCONR_HSTA2 |                \
+                                             TMRB_HCONR_HSTA1 |                \
+                                             TMRB_HCONR_HSTA0)
+#define TMRB_HCONR_HSTP                     (TMRB_HCONR_HSTP2 |                \
+                                             TMRB_HCONR_HSTP1 |                \
+                                             TMRB_HCONR_HSTP0)
+#define TMRB_HCONR_HCLE                     (TMRB_HCONR_HCLE4 |                \
+                                             TMRB_HCONR_HCLE3 |                \
+                                             TMRB_HCONR_HCLE2 |                \
+                                             TMRB_HCONR_HCLE1 |                \
+                                             TMRB_HCONR_HCLE0)
+#define TMRB_HCUPR_HCUP                     (TMRB_HCUPR_HCUP12 |               \
+                                             TMRB_HCUPR_HCUP11 |               \
+                                             TMRB_HCUPR_HCUP10 |               \
+                                             TMRB_HCUPR_HCUP9  |               \
+                                             TMRB_HCUPR_HCUP8)
+#define TMRB_HCDOR_HCDO                     (TMRB_HCDOR_HCDO12 |               \
+                                             TMRB_HCDOR_HCDO11 |               \
+                                             TMRB_HCDOR_HCDO10 |               \
+                                             TMRB_HCDOR_HCDO9  |               \
+                                             TMRB_HCDOR_HCDO8)
 /**
  * @}
  */
@@ -204,17 +222,17 @@
 (   (TIMERB_OC_PORT_OUTPUT_ENABLE == (x))       ||                             \
     (TIMERB_OC_PORT_OUTPUT_DISABLE == (x)))
 
-#define IS_TIMERB_IC_CAPTURE_CONDITION(x)   ((!((x) & (~TMRB_CCONR_HICP))) || ((x) == TIMERB_IC_INVALID))
+#define IS_TIMERB_IC_CAPTURE_CONDITION(x)   ((!((x) & ((uint16_t)(~TMRB_CCONR_HICP)))) || ((x) == TIMERB_IC_INVALID))
 
-#define IS_TIMERB_IC_HSTART_CONDITION(x)    ((!((x) & (~TMRB_HCONR_HSTA))) || ((x) == TIMERB_HWSTART_INVALID))
+#define IS_TIMERB_IC_HSTART_CONDITION(x)    ((!((x) & ((uint16_t)(~TMRB_HCONR_HSTA)))) || ((x) == TIMERB_HWSTART_INVALID))
 
-#define IS_TIMERB_IC_HSTOP_CONDITION(x)     ((!((x) & (~TMRB_HCONR_HSTP))) || ((x) == TIMERB_HWSTOP_INVALID))
+#define IS_TIMERB_IC_HSTOP_CONDITION(x)     ((!((x) & ((uint16_t)(~TMRB_HCONR_HSTP)))) || ((x) == TIMERB_HWSTOP_INVALID))
 
-#define IS_TIMERB_IC_HCLEAR_CONDITION(x)    ((!((x) & (~TMRB_HCONR_HCLE))) || ((x) == TIMERB_HWCLEAR_INVALID))
+#define IS_TIMERB_IC_HCLEAR_CONDITION(x)    ((!((x) & ((uint16_t)(~TMRB_HCONR_HCLE)))) || ((x) == TIMERB_HWCLEAR_INVALID))
 
-#define IS_TIMERB_IC_HCUP_CONDITION(x)      ((!((x) & (~TMRB_HCUPR_HCUP))) || ((x) == TIMERB_HWUP_INVALID))
+#define IS_TIMERB_IC_HCUP_CONDITION(x)      ((!((x) & ((uint16_t)(~TMRB_HCUPR_HCUP)))) || ((x) == TIMERB_HWUP_INVALID))
 
-#define IS_TIMERB_IC_HCDOWN_CONDITION(x)    ((!((x) & (~TMRB_HCDOR_HCDO))) || ((x) == TIMERB_HWDOWN_INVALID))
+#define IS_TIMERB_IC_HCDOWN_CONDITION(x)    ((!((x) & ((uint16_t)(~TMRB_HCDOR_HCDO)))) || ((x) == TIMERB_HWDOWN_INVALID))
 /**
  * @}
  */
@@ -263,38 +281,39 @@
 en_result_t TIMERB_Init(M0P_TMRB_TypeDef *TMRBx,
                             const stc_timerb_init_t *pstcInit)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check TMRBx instance and pstcInit */
-    if ((!IS_TIMERB_INSTANCE(TMRBx)) || (NULL == pstcInit))
+    if ((IS_TIMERB_INSTANCE(TMRBx)) && (NULL != pstcInit))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(0u != pstcInit->u16PeriodVal);
+        DDL_ASSERT(IS_TIMERB_CNT_MODE(pstcInit->u16CntMode));
+        DDL_ASSERT(IS_TIMERB_CLOCK_DIV(pstcInit->u16ClkDiv));
+        DDL_ASSERT(IS_TIMERB_CNT_DIRECTION(pstcInit->u16CntDir));
+        DDL_ASSERT(IS_TIMERB_OVERFLOW_STATE(pstcInit->u16OverflowAction));
+        DDL_ASSERT(IS_TIMERB_SYNC_START_STATE(pstcInit->u16SynStartState));
+
+        WRITE_REG16(TMRBx->CNTER, 0u);
+        WRITE_REG16(TMRBx->PERAR, pstcInit->u16PeriodVal);
+        MODIFY_REG16(TMRBx->BCSTR,                                             \
+                     (TMRB_BCSTR_DIR   | TMRB_BCSTR_MODE  |                    \
+                      TMRB_BCSTR_SYNST | TMRB_BCSTR_CKDIV | TMRB_BCSTR_OVSTP), \
+                     (pstcInit->u16CntDir        | pstcInit->u16CntMode |      \
+                      pstcInit->u16SynStartState | pstcInit->u16ClkDiv  |      \
+                      pstcInit->u16OverflowAction));
+
+        /* Set hardware trigger event */
+        WRITE_REG16(TMRBx->HCONR,                                              \
+                    (pstcInit->u16HwStartCondition |                           \
+                     pstcInit->u16HwStopCondition  |                           \
+                     pstcInit->u16HwClearCondition));
+        WRITE_REG16(TMRBx->HCUPR, pstcInit->u16HwUpCondition);
+        WRITE_REG16(TMRBx->HCDOR, pstcInit->u16HwDownCondition);
+        enRet = Ok;
     }
 
-    /* Check parameters */
-    DDL_ASSERT(0u != pstcInit->u16PeriodVal);
-    DDL_ASSERT(IS_TIMERB_CNT_MODE(pstcInit->u16CntMode));
-    DDL_ASSERT(IS_TIMERB_CLOCK_DIV(pstcInit->u16ClkDiv));
-    DDL_ASSERT(IS_TIMERB_CNT_DIRECTION(pstcInit->u16CntDir));
-    DDL_ASSERT(IS_TIMERB_OVERFLOW_STATE(pstcInit->u16OverflowAction));
-    DDL_ASSERT(IS_TIMERB_SYNC_START_STATE(pstcInit->u16SynStartState));
-
-    WRITE_REG(TMRBx->CNTER, 0u);
-    WRITE_REG(TMRBx->PERAR, pstcInit->u16PeriodVal);
-    MODIFY_REG(TMRBx->BCSTR,                                                   \
-               (TMRB_BCSTR_DIR   | TMRB_BCSTR_MODE  |                          \
-                TMRB_BCSTR_SYNST | TMRB_BCSTR_CKDIV | TMRB_BCSTR_OVSTP),       \
-               (pstcInit->u16CntDir        | pstcInit->u16CntMode |            \
-                pstcInit->u16SynStartState | pstcInit->u16ClkDiv  |            \
-                pstcInit->u16OverflowAction));
-
-    /* Set hardware trigger event */
-    WRITE_REG(TMRBx->HCONR,                                                    \
-              (pstcInit->u16HwStartCondition |                                 \
-               pstcInit->u16HwStopCondition  |                                 \
-               pstcInit->u16HwClearCondition));
-    WRITE_REG(TMRBx->HCUPR, pstcInit->u16HwUpCondition);
-    WRITE_REG(TMRBx->HCDOR, pstcInit->u16HwDownCondition);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -306,25 +325,26 @@ en_result_t TIMERB_Init(M0P_TMRB_TypeDef *TMRBx,
  */
 en_result_t TIMERB_StructInit(stc_timerb_init_t *pstcInit)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check parameters */
-    if (NULL == pstcInit)
+    if (NULL != pstcInit)
     {
-        return ErrorInvalidParameter;
+        pstcInit->u16PeriodVal = 0xFFFFu;
+        pstcInit->u16CntDir = TIMERB_CNT_UP;
+        pstcInit->u16CntMode = TIMERB_SAWTOOTH_WAVE;
+        pstcInit->u16SynStartState = TIMERB_SYNC_START_DISABLE;
+        pstcInit->u16ClkDiv = TIMERB_CLKDIV_DIV1;
+        pstcInit->u16OverflowAction = TIMERB_OVERFLOW_COUNT;
+        pstcInit->u16HwStartCondition = TIMERB_HWSTART_INVALID;
+        pstcInit->u16HwStopCondition = TIMERB_HWSTOP_INVALID;
+        pstcInit->u16HwClearCondition = TIMERB_HWCLEAR_INVALID;
+        pstcInit->u16HwUpCondition = TIMERB_HWUP_INVALID;
+        pstcInit->u16HwDownCondition = TIMERB_HWDOWN_INVALID;
+        enRet = Ok;
     }
 
-    pstcInit->u16PeriodVal = 0xFFFFu;
-    pstcInit->u16CntDir = TIMERB_CNT_UP;
-    pstcInit->u16CntMode = TIMERB_SAWTOOTH_WAVE;
-    pstcInit->u16SynStartState = TIMERB_SYNC_START_DISABLE;
-    pstcInit->u16ClkDiv = TIMERB_CLKDIV_DIV1;
-    pstcInit->u16OverflowAction = TIMERB_OVERFLOW_COUNT;
-    pstcInit->u16HwStartCondition = TIMERB_HWSTART_INVALID;
-    pstcInit->u16HwStopCondition = TIMERB_HWSTOP_INVALID;
-    pstcInit->u16HwClearCondition = TIMERB_HWCLEAR_INVALID;
-    pstcInit->u16HwUpCondition = TIMERB_HWUP_INVALID;
-    pstcInit->u16HwDownCondition = TIMERB_HWDOWN_INVALID;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -345,18 +365,19 @@ en_result_t TIMERB_StructInit(stc_timerb_init_t *pstcInit)
  */
 en_result_t TIMERB_DeInit(M0P_TMRB_TypeDef *TMRBx)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check TMRBx instance */
-    if (!IS_TIMERB_INSTANCE(TMRBx))
+    if (IS_TIMERB_INSTANCE(TMRBx))
     {
-        return ErrorInvalidParameter;
+        /* Configures the registers to reset value. */
+        WRITE_REG16(TMRBx->CNTER, 0x0000u);
+        WRITE_REG16(TMRBx->PERAR, 0xFFFFu);
+        WRITE_REG16(TMRBx->BCSTR, 0x0002u);
+        enRet = Ok;
     }
 
-    /* Configures the registers to reset value. */
-    WRITE_REG(TMRBx->CNTER, 0x0000);
-    WRITE_REG(TMRBx->PERAR, 0xFFFF);
-    WRITE_REG(TMRBx->BCSTR, 0x0002);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -383,7 +404,7 @@ void TIMERB_SetCntDirection(M0P_TMRB_TypeDef *TMRBx, uint16_t u16Direction)
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
     DDL_ASSERT(IS_TIMERB_CNT_DIRECTION(u16Direction));
 
-    MODIFY_REG(TMRBx->BCSTR, TMRB_BCSTR_DIR, u16Direction);
+    MODIFY_REG16(TMRBx->BCSTR, TMRB_BCSTR_DIR, u16Direction);
 }
 
 /**
@@ -407,7 +428,7 @@ uint16_t TIMERB_GetCntDirection(M0P_TMRB_TypeDef *TMRBx)
     /* Check parameters */
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
 
-    return READ_BIT(TMRBx->BCSTR, TMRB_BCSTR_DIR);
+    return READ_REG16_BIT(TMRBx->BCSTR, TMRB_BCSTR_DIR);
 }
 
 /**
@@ -434,7 +455,7 @@ void TIMERB_SetCntMode(M0P_TMRB_TypeDef *TMRBx, uint16_t u16Mode)
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
     DDL_ASSERT(IS_TIMERB_CNT_MODE(u16Mode));
 
-    MODIFY_REG(TMRBx->BCSTR, TMRB_BCSTR_MODE, u16Mode);
+    MODIFY_REG16(TMRBx->BCSTR, TMRB_BCSTR_MODE, u16Mode);
 }
 
 /**
@@ -458,7 +479,7 @@ uint16_t TIMERB_GetCntMode(M0P_TMRB_TypeDef *TMRBx)
     /* Check parameters */
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
 
-    return READ_BIT(TMRBx->BCSTR, TMRB_BCSTR_MODE);
+    return READ_REG16_BIT(TMRBx->BCSTR, TMRB_BCSTR_MODE);
 }
 
 /**
@@ -494,7 +515,7 @@ void TIMERB_SetClkDiv(M0P_TMRB_TypeDef *TMRBx, uint16_t u16Div)
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
     DDL_ASSERT(IS_TIMERB_CLOCK_DIV(u16Div));
 
-    MODIFY_REG(TMRBx->BCSTR, TMRB_BCSTR_CKDIV, u16Div);
+    MODIFY_REG16(TMRBx->BCSTR, TMRB_BCSTR_CKDIV, u16Div);
 }
 
 /**
@@ -527,7 +548,7 @@ uint16_t TIMERB_GetClkDiv(M0P_TMRB_TypeDef *TMRBx)
     /* Check parameters */
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
 
-    return READ_BIT(TMRBx->BCSTR, TMRB_BCSTR_CKDIV);
+    return READ_REG16_BIT(TMRBx->BCSTR, TMRB_BCSTR_CKDIV);
 }
 
 /**
@@ -563,10 +584,11 @@ en_flag_status_t TIMERB_GetFlag(M0P_TMRB_TypeDef *TMRBx, uint16_t u16Flag)
     {
         case TIMERB_FLAG_OVF:
         case TIMERB_FLAG_UDF:
-            enFlag = (READ_BIT(TMRBx->BCSTR, u16Flag)) ? Set : Reset;
+            enFlag = (READ_REG16_BIT(TMRBx->BCSTR, u16Flag)) ? Set : Reset;
             break;
         case TIMERB_FLAG_CMP:
-            enFlag = (READ_BIT(TMRBx->STFLR, u16Flag)) ? Set : Reset;
+            enFlag = (READ_REG16_BIT(TMRBx->STFLR, u16Flag)) ? Set : Reset;
+            break;
         default:
             break;
     }
@@ -603,10 +625,11 @@ void TIMERB_ClearFlag(M0P_TMRB_TypeDef *TMRBx, uint16_t u16Flag)
     {
         case TIMERB_FLAG_OVF:
         case TIMERB_FLAG_UDF:
-            CLEAR_BIT(TMRBx->BCSTR, u16Flag);
+            CLEAR_REG16_BIT(TMRBx->BCSTR, u16Flag);
             break;
         case TIMERB_FLAG_CMP:
-            CLEAR_BIT(TMRBx->STFLR, u16Flag);
+            CLEAR_REG16_BIT(TMRBx->STFLR, u16Flag);
+            break;
         default:
             break;
     }
@@ -648,22 +671,23 @@ void TIMERB_IntCmd(M0P_TMRB_TypeDef *TMRBx,
         case TIMERB_IT_UDF:
             if (Enable == enNewSta)
             {
-                SET_BIT(TMRBx->BCSTR, u16IntSource);
+                SET_REG16_BIT(TMRBx->BCSTR, u16IntSource);
             }
             else
             {
-                CLEAR_BIT(TMRBx->BCSTR, u16IntSource);
+                CLEAR_REG16_BIT(TMRBx->BCSTR, u16IntSource);
             }
             break;
         case TIMERB_IT_CMP:
             if (Enable == enNewSta)
             {
-                SET_BIT(TMRBx->ICONR, u16IntSource);
+                SET_REG16_BIT(TMRBx->ICONR, u16IntSource);
             }
             else
             {
-                CLEAR_BIT(TMRBx->ICONR, u16IntSource);
+                CLEAR_REG16_BIT(TMRBx->ICONR, u16IntSource);
             }
+            break;
         default:
             break;
     }
@@ -693,7 +717,7 @@ void TIMERB_SetMode(M0P_TMRB_TypeDef *TMRBx, uint16_t u16Mode)
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
     DDL_ASSERT(IS_TIMERB_FUNC_MODE(u16Mode));
 
-    MODIFY_REG(TMRBx->CCONR, TMRB_CCONR_CAPMDA, u16Mode);
+    MODIFY_REG16(TMRBx->CCONR, TMRB_CCONR_CAPMDA, u16Mode);
 }
 
 /**
@@ -717,7 +741,7 @@ uint16_t TIMERB_GetMode(M0P_TMRB_TypeDef *TMRBx)
     /* Check parameters */
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
 
-    return READ_BIT(TMRBx->CCONR, TMRB_CCONR_CAPMDA);
+    return READ_REG16_BIT(TMRBx->CCONR, TMRB_CCONR_CAPMDA);
 }
 
 /**
@@ -745,7 +769,7 @@ void TIMERB_SetHwTriggerCondition(M0P_TMRB_TypeDef *TMRBx,
     /* Check parameters */
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
 
-    WRITE_REG(TMRBx->HCONR, u16Condition);
+    WRITE_REG16(TMRBx->HCONR, u16Condition);
 }
 
 /**
@@ -777,7 +801,7 @@ void TIMERB_SetHwStartCondition(M0P_TMRB_TypeDef *TMRBx,
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
     DDL_ASSERT(IS_TIMERB_IC_HSTART_CONDITION(u16Condition));
 
-    MODIFY_REG(TMRBx->HCONR, TMRB_HCONR_HSTA, u16Condition);
+    MODIFY_REG16(TMRBx->HCONR, TMRB_HCONR_HSTA, u16Condition);
 }
 
 /**
@@ -805,7 +829,7 @@ uint16_t TIMERB_GetHwStartCondition(M0P_TMRB_TypeDef *TMRBx)
     /* Check parameters */
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
 
-    return READ_BIT(TMRBx->HCONR, TMRB_HCONR_HSTA);
+    return READ_REG16_BIT(TMRBx->HCONR, TMRB_HCONR_HSTA);
 }
 
 /**
@@ -835,7 +859,7 @@ void TIMERB_SetHwStopCondition(M0P_TMRB_TypeDef *TMRBx,
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
     DDL_ASSERT(IS_TIMERB_IC_HSTOP_CONDITION(u16Condition));
 
-    MODIFY_REG(TMRBx->HCONR, TMRB_HCONR_HSTP, u16Condition);
+    MODIFY_REG16(TMRBx->HCONR, TMRB_HCONR_HSTP, u16Condition);
 }
 
 /**
@@ -861,7 +885,7 @@ uint16_t TIMERB_GetHwStopCondition(M0P_TMRB_TypeDef *TMRBx)
     /* Check parameters */
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
 
-    return READ_BIT(TMRBx->HCONR, TMRB_HCONR_HSTP);
+    return READ_REG16_BIT(TMRBx->HCONR, TMRB_HCONR_HSTP);
 }
 
 /**
@@ -893,7 +917,7 @@ void TIMERB_SetHwClearCondition(M0P_TMRB_TypeDef *TMRBx,
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
     DDL_ASSERT(IS_TIMERB_IC_HCLEAR_CONDITION(u16Condition));
 
-    MODIFY_REG(TMRBx->HCONR, TMRB_HCONR_HCLE, u16Condition);
+    MODIFY_REG16(TMRBx->HCONR, TMRB_HCONR_HCLE, u16Condition);
 }
 
 /**
@@ -921,7 +945,7 @@ uint16_t TIMERB_GetHwClearCondition(M0P_TMRB_TypeDef *TMRBx)
     /* Check parameters */
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
 
-    return READ_BIT(TMRBx->HCONR, TMRB_HCONR_HCLE);
+    return READ_REG16_BIT(TMRBx->HCONR, TMRB_HCONR_HCLE);
 }
 
 /**
@@ -953,7 +977,7 @@ void TIMERB_SetHwUpCondition(M0P_TMRB_TypeDef *TMRBx,
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
     DDL_ASSERT(IS_TIMERB_IC_HCUP_CONDITION(u16Condition));
 
-    MODIFY_REG(TMRBx->HCUPR, TMRB_HCUPR_HCUP, u16Condition);
+    MODIFY_REG16(TMRBx->HCUPR, TMRB_HCUPR_HCUP, u16Condition);
 }
 
 /**
@@ -981,7 +1005,7 @@ uint16_t TIMERB_GetHwUpCondition(M0P_TMRB_TypeDef *TMRBx)
     /* Check parameters */
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
 
-    return READ_BIT(TMRBx->HCUPR, TMRB_HCUPR_HCUP);
+    return READ_REG16_BIT(TMRBx->HCUPR, TMRB_HCUPR_HCUP);
 }
 
 /**
@@ -1013,7 +1037,7 @@ void TIMERB_SetHwDownCondition(M0P_TMRB_TypeDef *TMRBx,
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
     DDL_ASSERT(IS_TIMERB_IC_HCUP_CONDITION(u16Condition));
 
-    MODIFY_REG(TMRBx->HCDOR, TMRB_HCDOR_HCDO, u16Condition);
+    MODIFY_REG16(TMRBx->HCDOR, TMRB_HCDOR_HCDO, u16Condition);
 }
 
 /**
@@ -1041,7 +1065,7 @@ uint16_t TIMERB_GetHwDownCondition(M0P_TMRB_TypeDef *TMRBx)
     /* Check parameters */
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
 
-    return READ_BIT(TMRBx->HCDOR, TMRB_HCDOR_HCDO);
+    return READ_REG16_BIT(TMRBx->HCDOR, TMRB_HCDOR_HCDO);
 }
 
 /**
@@ -1064,24 +1088,25 @@ uint16_t TIMERB_GetHwDownCondition(M0P_TMRB_TypeDef *TMRBx)
 en_result_t TIMERB_IC_Init(M0P_TMRB_TypeDef *TMRBx,
                                 const stc_timerb_ic_init_t *pstcIcInit)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check TMRBx instance and pstcIcInit */
-    if ((!IS_TIMERB_INSTANCE(TMRBx)) || (NULL == pstcIcInit))
+    if ((IS_TIMERB_INSTANCE(TMRBx)) && (NULL != pstcIcInit))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_TIMERB_IC_CAPTURE_CONDITION(pstcIcInit->u16CaptureCondition));
+        DDL_ASSERT(IS_TIMERB_IC_NOISE_FILTER_CLKDIV(pstcIcInit->u16NoiseFilterClkDiv));
+
+        MODIFY_REG16(TMRBx->CCONR,                                               \
+                     (TMRB_CCONR_CAPMDA   | TMRB_CCONR_HICP |                    \
+                      TMRB_CCONR_NOFIENCP | TMRB_CCONR_NOFICKCP),                \
+                     (TIMERB_INPUT_CAPTURE            |                          \
+                      pstcIcInit->u16CaptureCondition |                          \
+                      pstcIcInit->u16NoiseFilterClkDiv));
+        enRet = Ok;
     }
 
-    /* Check parameters */
-    DDL_ASSERT(IS_TIMERB_IC_CAPTURE_CONDITION(pstcIcInit->u16CaptureCondition));
-    DDL_ASSERT(IS_TIMERB_IC_NOISE_FILTER_CLKDIV(pstcIcInit->u16NoiseFilterClkDiv));
-
-    MODIFY_REG(TMRBx->CCONR,                                                   \
-               (TMRB_CCONR_CAPMDA   | TMRB_CCONR_HICP |                        \
-                TMRB_CCONR_NOFIENCP | TMRB_CCONR_NOFICKCP),                    \
-               (TIMERB_INPUT_CAPTURE            |                              \
-                pstcIcInit->u16CaptureCondition |                              \
-                pstcIcInit->u16NoiseFilterClkDiv));
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -1091,16 +1116,17 @@ en_result_t TIMERB_IC_Init(M0P_TMRB_TypeDef *TMRBx,
  */
 en_result_t TIMERB_IC_StructInit(stc_timerb_ic_init_t *pstcIcInit)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check parameters */
-    if (NULL == pstcIcInit)
+    if (NULL != pstcIcInit)
     {
-        return ErrorInvalidParameter;
+        pstcIcInit->u16NoiseFilterClkDiv = TIMERB_IC_NOFICLKDIV_NONE;
+        pstcIcInit->u16CaptureCondition = TIMERB_IC_INVALID;
+        enRet = Ok;
     }
 
-    pstcIcInit->u16NoiseFilterClkDiv = TIMERB_IC_NOFICLKDIV_NONE;
-    pstcIcInit->u16CaptureCondition = TIMERB_IC_INVALID;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -1121,20 +1147,21 @@ en_result_t TIMERB_IC_StructInit(stc_timerb_ic_init_t *pstcIcInit)
  */
 en_result_t TIMERB_IC_DeInit(M0P_TMRB_TypeDef *TMRBx)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check TMRBx instance */
-    if (!IS_TIMERB_INSTANCE(TMRBx))
+    if (IS_TIMERB_INSTANCE(TMRBx))
     {
-        return ErrorInvalidParameter;
+        /* Configures the registers to reset value. */
+        WRITE_REG16(TMRBx->PERAR, 0xFFFFu);
+        WRITE_REG16(TMRBx->CCONR, 0x0001u);
+        WRITE_REG16(TMRBx->HCONR, 0x0000u);
+        WRITE_REG16(TMRBx->HCUPR, 0x0000u);
+        WRITE_REG16(TMRBx->HCDOR, 0x0000u);
+        enRet = Ok;
     }
 
-    /* Configures the registers to reset value. */
-    WRITE_REG(TMRBx->PERAR, 0xFFFF);
-    WRITE_REG(TMRBx->CCONR, 0x0001);
-    WRITE_REG(TMRBx->HCONR, 0x0000);
-    WRITE_REG(TMRBx->HCUPR, 0x0000);
-    WRITE_REG(TMRBx->HCDOR, 0x0000);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -1164,7 +1191,7 @@ void TIMERB_IC_SetCaptureCondition(M0P_TMRB_TypeDef *TMRBx,
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
     DDL_ASSERT(IS_TIMERB_IC_CAPTURE_CONDITION(u16Condition));
 
-    MODIFY_REG(TMRBx->CCONR, TMRB_CCONR_HICP, u16Condition);
+    MODIFY_REG16(TMRBx->CCONR, TMRB_CCONR_HICP, u16Condition);
 }
 
 /**
@@ -1190,7 +1217,7 @@ uint16_t TIMERB_IC_GetCaptureCondition(M0P_TMRB_TypeDef *TMRBx)
     /* Check parameters */
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
 
-    return READ_BIT(TMRBx->CCONR, TMRB_CCONR_HICP);
+    return READ_REG16_BIT(TMRBx->CCONR, TMRB_CCONR_HICP);
 }
 
 /**
@@ -1220,7 +1247,7 @@ void TIMERB_IC_SetFilterClkDiv(M0P_TMRB_TypeDef *TMRBx, uint16_t u16Div)
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
     DDL_ASSERT(IS_TIMERB_IC_NOISE_FILTER_CLKDIV(u16Div));
 
-    MODIFY_REG(TMRBx->CCONR, (TMRB_CCONR_NOFIENCP | TMRB_CCONR_NOFICKCP), u16Div);
+    MODIFY_REG16(TMRBx->CCONR, (TMRB_CCONR_NOFIENCP | TMRB_CCONR_NOFICKCP), u16Div);
 }
 
 /**
@@ -1247,7 +1274,7 @@ uint16_t TIMERB_IC_GetFilterClkDiv(M0P_TMRB_TypeDef *TMRBx)
     /* Check parameters */
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
 
-    return READ_BIT(TMRBx->CCONR, (TMRB_CCONR_NOFIENCP | TMRB_CCONR_NOFICKCP));
+    return READ_REG16_BIT(TMRBx->CCONR, (TMRB_CCONR_NOFIENCP | TMRB_CCONR_NOFICKCP));
 }
 
 /**
@@ -1270,28 +1297,29 @@ uint16_t TIMERB_IC_GetFilterClkDiv(M0P_TMRB_TypeDef *TMRBx)
 en_result_t TIMERB_OC_Init(M0P_TMRB_TypeDef *TMRBx,
                                 const stc_timerb_oc_init_t *pstcOcInit)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check TMRBx instance and pstcOcInit */
-    if ((!IS_TIMERB_INSTANCE(TMRBx)) || (NULL == pstcOcInit))
+    if ((IS_TIMERB_INSTANCE(TMRBx)) && (NULL != pstcOcInit))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_TIMERB_OC_PORT_OUTPUT_STATE(pstcOcInit->u16PortOutputState));
+        DDL_ASSERT(IS_TIMERB_OC_START_CNT_OUTPUT_POLARITY(pstcOcInit->u16StartCntOutput));
+        DDL_ASSERT(IS_TIMERB_OC_STOP_CNT_OUTPUT_POLARITY(pstcOcInit->u16StopCntOutput));
+        DDL_ASSERT(IS_TIMERB_OC_CMPMATCH_OUTPUT_POLARITY(pstcOcInit->u16CompareMatchOutput));
+        DDL_ASSERT(IS_TIMERB_OC_PERIODMATCH_OUTPUT_POLARITY(pstcOcInit->u16PeriodMatchOutput));
+
+        WRITE_REG16(TMRBx->CMPAR, pstcOcInit->u16CompareVal);
+        WRITE_REG16(TMRBx->PCONR,                                              \
+                    (pstcOcInit->u16StartCntOutput     |                       \
+                     pstcOcInit->u16StopCntOutput      |                       \
+                     pstcOcInit->u16CompareMatchOutput |                       \
+                     pstcOcInit->u16PeriodMatchOutput  |                       \
+                     pstcOcInit->u16PortOutputState));
+        enRet = Ok;
     }
 
-    /* Check parameters */
-    DDL_ASSERT(IS_TIMERB_OC_PORT_OUTPUT_STATE(pstcOcInit->u16PortOutputState));
-    DDL_ASSERT(IS_TIMERB_OC_START_CNT_OUTPUT_POLARITY(pstcOcInit->u16StartCntOutput));
-    DDL_ASSERT(IS_TIMERB_OC_STOP_CNT_OUTPUT_POLARITY(pstcOcInit->u16StopCntOutput));
-    DDL_ASSERT(IS_TIMERB_OC_CMPMATCH_OUTPUT_POLARITY(pstcOcInit->u16CompareMatchOutput));
-    DDL_ASSERT(IS_TIMERB_OC_PERIODMATCH_OUTPUT_POLARITY(pstcOcInit->u16PeriodMatchOutput));
-
-    WRITE_REG(TMRBx->CMPAR, pstcOcInit->u16CompareVal);
-    WRITE_REG(TMRBx->PCONR,                                                    \
-              (pstcOcInit->u16StartCntOutput     |                             \
-               pstcOcInit->u16StopCntOutput      |                             \
-               pstcOcInit->u16CompareMatchOutput |                             \
-               pstcOcInit->u16PeriodMatchOutput  |                             \
-               pstcOcInit->u16PortOutputState));
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -1301,20 +1329,21 @@ en_result_t TIMERB_OC_Init(M0P_TMRB_TypeDef *TMRBx,
  */
 en_result_t TIMERB_OC_StructInit(stc_timerb_oc_init_t *pstcOcInit)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check parameters */
-    if (NULL == pstcOcInit)
+    if (NULL != pstcOcInit)
     {
-        return ErrorInvalidParameter;
+        pstcOcInit->u16CompareVal = 0xFFFFu;
+        pstcOcInit->u16PortOutputState = TIMERB_OC_PORT_OUTPUT_DISABLE;
+        pstcOcInit->u16StartCntOutput = TIMERB_OC_STARTCNT_OUTPUT_LOW;
+        pstcOcInit->u16StopCntOutput = TIMERB_OC_STOPCNT_OUTPUT_LOW;
+        pstcOcInit->u16CompareMatchOutput = TIMERB_OC_CMPMATCH_OUTPUT_LOW;
+        pstcOcInit->u16PeriodMatchOutput = TIMERB_OC_PERIODMATCH_OUTPUT_LOW;
+        enRet = Ok;
     }
 
-    pstcOcInit->u16CompareVal = 0xFFFFu;
-    pstcOcInit->u16PortOutputState = TIMERB_OC_PORT_OUTPUT_DISABLE;
-    pstcOcInit->u16StartCntOutput = TIMERB_OC_STARTCNT_OUTPUT_LOW;
-    pstcOcInit->u16StopCntOutput = TIMERB_OC_STOPCNT_OUTPUT_LOW;
-    pstcOcInit->u16CompareMatchOutput = TIMERB_OC_CMPMATCH_OUTPUT_LOW;
-    pstcOcInit->u16PeriodMatchOutput = TIMERB_OC_PERIODMATCH_OUTPUT_LOW;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -1335,19 +1364,20 @@ en_result_t TIMERB_OC_StructInit(stc_timerb_oc_init_t *pstcOcInit)
  */
 en_result_t TIMERB_OC_DeInit(M0P_TMRB_TypeDef *TMRBx)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check TMRBx instance */
-    if (!IS_TIMERB_INSTANCE(TMRBx))
+    if (IS_TIMERB_INSTANCE(TMRBx))
     {
-        return ErrorInvalidParameter;
+        /* Configures the registers to reset value. */
+        WRITE_REG16(TMRBx->PCONR, 0x0000u);
+        WRITE_REG16(TMRBx->PERAR, 0xFFFFu);
+        WRITE_REG16(TMRBx->CMPAR, 0xFFFFu);
+        WRITE_REG16(TMRBx->BCSTR, 0x0000u);
+        enRet = Ok;
     }
 
-    /* Configures the registers to reset value. */
-    WRITE_REG(TMRBx->PCONR, 0x0000);
-    WRITE_REG(TMRBx->PERAR, 0xFFFF);
-    WRITE_REG(TMRBx->CMPAR, 0xFFFF);
-    WRITE_REG(TMRBx->BCSTR, 0x0000);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -1376,7 +1406,7 @@ void TIMERB_OC_SetStartCntOutputPolarity(M0P_TMRB_TypeDef *TMRBx,
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
     DDL_ASSERT(IS_TIMERB_OC_START_CNT_OUTPUT_POLARITY(u16Polarity));
 
-    MODIFY_REG(TMRBx->PCONR, TMRB_PCONR_STAC, u16Polarity);
+    MODIFY_REG16(TMRBx->PCONR, TMRB_PCONR_STAC, u16Polarity);
 }
 
 /**
@@ -1401,7 +1431,7 @@ uint16_t TIMERB_OC_GetStartCntOutputPolarity(M0P_TMRB_TypeDef *TMRBx)
     /* Check parameters */
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
 
-    return READ_BIT(TMRBx->PCONR, TMRB_PCONR_STAC);
+    return READ_REG16_BIT(TMRBx->PCONR, TMRB_PCONR_STAC);
 }
 
 /**
@@ -1430,7 +1460,7 @@ void TIMERB_OC_SetStopCntOutputPolarity(M0P_TMRB_TypeDef *TMRBx,
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
     DDL_ASSERT(IS_TIMERB_OC_STOP_CNT_OUTPUT_POLARITY(u16Polarity));
 
-    MODIFY_REG(TMRBx->PCONR, TMRB_PCONR_STPC, u16Polarity);
+    MODIFY_REG16(TMRBx->PCONR, TMRB_PCONR_STPC, u16Polarity);
 }
 
 /**
@@ -1455,7 +1485,7 @@ uint16_t TIMERB_OC_GetStopCntOutputPolarity(M0P_TMRB_TypeDef *TMRBx)
     /* Check parameters */
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
 
-    return READ_BIT(TMRBx->PCONR, TMRB_PCONR_STPC);
+    return READ_REG16_BIT(TMRBx->PCONR, TMRB_PCONR_STPC);
 }
 
 /**
@@ -1485,7 +1515,7 @@ void TIMERB_OC_SetCmpMatchOutputPolarity(M0P_TMRB_TypeDef *TMRBx,
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
     DDL_ASSERT(IS_TIMERB_OC_CMPMATCH_OUTPUT_POLARITY(u16Polarity));
 
-    MODIFY_REG(TMRBx->PCONR, TMRB_PCONR_CMPC, u16Polarity);
+    MODIFY_REG16(TMRBx->PCONR, TMRB_PCONR_CMPC, u16Polarity);
 }
 
 /**
@@ -1511,7 +1541,7 @@ uint16_t TIMERB_OC_GetCmpMatchOutputPolarity(M0P_TMRB_TypeDef *TMRBx)
     /* Check parameters */
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
 
-    return READ_BIT(TMRBx->PCONR, TMRB_PCONR_CMPC);
+    return READ_REG16_BIT(TMRBx->PCONR, TMRB_PCONR_CMPC);
 }
 
 /**
@@ -1541,7 +1571,7 @@ void TIMERB_OC_SetPeriodMatchOutputPolarity(M0P_TMRB_TypeDef *TMRBx,
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
     DDL_ASSERT(IS_TIMERB_OC_PERIODMATCH_OUTPUT_POLARITY(u16Polarity));
 
-    MODIFY_REG(TMRBx->PCONR, TMRB_PCONR_PERC, u16Polarity);
+    MODIFY_REG16(TMRBx->PCONR, TMRB_PCONR_PERC, u16Polarity);
 }
 
 /**
@@ -1567,7 +1597,7 @@ uint16_t TIMERB_OC_GetPeriodMatchOutputPolarity(M0P_TMRB_TypeDef *TMRBx)
     /* Check parameters */
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
 
-    return READ_BIT(TMRBx->PCONR, TMRB_PCONR_PERC);
+    return READ_REG16_BIT(TMRBx->PCONR, TMRB_PCONR_PERC);
 }
 
 /**
@@ -1596,7 +1626,7 @@ void TIMERB_OC_SetForceOutputPolarity(M0P_TMRB_TypeDef *TMRBx,
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
     DDL_ASSERT(IS_TIMERB_OC_FORCE_OUTPUT_POLARITY(u16Polarity));
 
-    MODIFY_REG(TMRBx->PCONR, TMRB_PCONR_FORC, u16Polarity);
+    MODIFY_REG16(TMRBx->PCONR, TMRB_PCONR_FORC, u16Polarity);
 }
 
 /**
@@ -1621,7 +1651,7 @@ uint16_t TIMERB_OC_GetForceOutputPolarity(M0P_TMRB_TypeDef *TMRBx)
     /* Check parameters */
     DDL_ASSERT(IS_TIMERB_INSTANCE(TMRBx));
 
-    return READ_BIT(TMRBx->PCONR, TMRB_PCONR_FORC);
+    return READ_REG16_BIT(TMRBx->PCONR, TMRB_PCONR_FORC);
 }
 
 /**

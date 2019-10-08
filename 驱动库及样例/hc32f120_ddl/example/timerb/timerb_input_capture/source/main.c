@@ -82,45 +82,45 @@ typedef struct
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* EXINT Port/Pin definition */
-#define EXINT0_PORT                         GPIO_PORT_7
-#define EXINT0_PIN                          GPIO_PIN_0
+#define EXINT0_PORT                         (GPIO_PORT_7)
+#define EXINT0_PIN                          (GPIO_PIN_0)
 
 /* Green LED Port/Pin definition */
-#define LED_G_PORT                          GPIO_PORT_2
-#define LED_G_PIN                           GPIO_PIN_6
-#define LED_G_ON()                          GPIO_ResetPins(LED_G_PORT, LED_G_PIN)
+#define LED_G_PORT                          (GPIO_PORT_2)
+#define LED_G_PIN                           (GPIO_PIN_6)
+#define LED_G_ON()                          (GPIO_ResetPins(LED_G_PORT, LED_G_PIN))
 
 /* TIMERB input capture unit & interrupt number & counter period/compare value definition */
-#define TIMERB_IC_ODD_UNIT                  M0P_TMRB1
-#define TIMERB_IC_ODD_UNIT_CMP_INT          INT_TMRB_1_CMP
-#define TIMERB_IC_ODD_UNIT_CMP_IRQn         Int022_IRQn
-#define TIMERB_IC_ODD_UNIT_PERIOD_VALUE     TIMERB_OC_UNIT_PERIOD_VALUE
+#define TIMERB_IC_ODD_UNIT                  (M0P_TMRB1)
+#define TIMERB_IC_ODD_UNIT_CMP_INT          (INT_TMRB_1_CMP)
+#define TIMERB_IC_ODD_UNIT_CMP_IRQn         (Int022_IRQn)
+#define TIMERB_IC_ODD_UNIT_PERIOD_VALUE     (TIMERB_OC_UNIT_PERIOD_VALUE)
 
-#define TIMERB_IC_EVEN_UNIT                 M0P_TMRB2
-#define TIMERB_IC_EVEN_UNIT_CMP_INT         INT_TMRB_2_CMP
-#define TIMERB_IC_EVEN_UNIT_CMP_IRQn        Int020_IRQn
-#define TIMERB_IC_EVEN_UNIT_PERIOD_VALUE    TIMERB_OC_UNIT_PERIOD_VALUE
+#define TIMERB_IC_EVEN_UNIT                 (M0P_TMRB2)
+#define TIMERB_IC_EVEN_UNIT_CMP_INT         (INT_TMRB_2_CMP)
+#define TIMERB_IC_EVEN_UNIT_CMP_IRQn        (Int020_IRQn)
+#define TIMERB_IC_EVEN_UNIT_PERIOD_VALUE    (TIMERB_OC_UNIT_PERIOD_VALUE)
 
 /* TIMERB output compare unit & counter period/compare value definition */
-#define TIMERB_OC_UNIT                      M0P_TMRB3
-#define TIMERB_OC_UNIT_PERIOD_VALUE         (SystemCoreClock/512)
-#define TIMERB_OC_UNIT_COMPARE_VALUE        (TIMERB_OC_UNIT_PERIOD_VALUE/2)
+#define TIMERB_OC_UNIT                      (M0P_TMRB3)
+#define TIMERB_OC_UNIT_PERIOD_VALUE         (SystemCoreClock/512ul)
+#define TIMERB_OC_UNIT_COMPARE_VALUE        (TIMERB_OC_UNIT_PERIOD_VALUE/2ul)
 
 /* TIMERB TIMB_t_PWM1 Port/Pin definition */
-#define TIMERB_IC_ODD_UNIT_PWM1_PORT        GPIO_PORT_14    /* P146: TIMB_1_PWM1_D */
-#define TIMERB_IC_ODD_UNIT_PWM1_PIN         GPIO_PIN_6
+#define TIMERB_IC_ODD_UNIT_PWM1_PORT        (GPIO_PORT_14)    /* P146: TIMB_1_PWM1_D */
+#define TIMERB_IC_ODD_UNIT_PWM1_PIN         (GPIO_PIN_6)
 
-#define TIMERB_IC_EVEN_UNIT_PWM1_PORT       GPIO_PORT_1     /* P16: TIMB_2_PWM1_A */
-#define TIMERB_IC_EVEN_UNIT_PWM1_PIN        GPIO_PIN_6
+#define TIMERB_IC_EVEN_UNIT_PWM1_PORT       (GPIO_PORT_1)     /* P16: TIMB_2_PWM1_A */
+#define TIMERB_IC_EVEN_UNIT_PWM1_PIN        (GPIO_PIN_6)
 
-#define TIMERB_OC_UNIT_PWM1_PORT            GPIO_PORT_1     /* P17: TIMB_3_PWM1_A */
-#define TIMERB_OC_UNIT_PWM1_PIN             GPIO_PIN_7
+#define TIMERB_OC_UNIT_PWM1_PORT            (GPIO_PORT_1)     /* P17: TIMB_3_PWM1_A */
+#define TIMERB_OC_UNIT_PWM1_PIN             (GPIO_PIN_7)
 
 /* Function clock gate definition */
 #define FUNCTION_CLK_GATE                   (CLK_FCG_TIMB1 | CLK_FCG_TIMB2 | CLK_FCG_TIMB3 | CLK_FCG_AOS)
 
 /* Buffer size definition */
-#define TIMERB_IC_CMPBUF_SIZE               (50)
+#define TIMERB_IC_CMPBUF_SIZE               (50u)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -139,35 +139,12 @@ static void BufferWrite(stc_buffer_t *pstcBuffer, uint16_t u16Data);
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-static stc_buffer_t m_stcOddUnitCmpBuf = {
-    .u16Index = 0u,
-    .u16Capacity = TIMERB_IC_CMPBUF_SIZE,
-};
-
-static stc_buffer_t m_stcEvenUnitCmpBuf= {
-    .u16Index = 0u,
-    .u16Capacity = TIMERB_IC_CMPBUF_SIZE,
-};
-
 static stc_timerb_init_t m_stcTimerbInit = {
     .u16CntDir = TIMERB_CNT_UP,
     .u16ClkDiv = TIMERB_CLKDIV_DIV512,
     .u16CntMode = TIMERB_SAWTOOTH_WAVE,
     .u16OverflowAction = TIMERB_OVERFLOW_COUNT,
     .u16SynStartState = TIMERB_SYNC_START_DISABLE,
-};
-
-static stc_timerb_ic_init_t m_stcTimerbIcInit = {
-    .u16CaptureCondition = TIMERB_IC_FALLING,
-    .u16NoiseFilterClkDiv = TIMERB_IC_NOFICLKDIV_NONE,
-};
-
-static stc_timerb_oc_init_t m_stcTimerbOcInit = {
-    .u16PortOutputState = TIMERB_OC_PORT_OUTPUT_ENABLE,
-    .u16StartCntOutput = TIMERB_OC_STARTCNT_OUTPUT_HIGH,
-    .u16StopCntOutput = TIMERB_OC_STOPCNT_OUTPUT_HIGH,
-    .u16CompareMatchOutput = TIMERB_OC_CMPMATCH_OUTPUT_INVERTED,
-    .u16PeriodMatchOutput = TIMERB_OC_PERIODMATCH_OUTPUT_INVERTED,
 };
 
 /*******************************************************************************
@@ -181,16 +158,25 @@ static stc_timerb_oc_init_t m_stcTimerbOcInit = {
  */
 static void TimerbOcConfig(void)
 {
+    stc_timerb_oc_init_t stcTimerbOcInit = {
+        .u16CompareVal = 0u,
+        .u16PortOutputState = TIMERB_OC_PORT_OUTPUT_ENABLE,
+        .u16StartCntOutput = TIMERB_OC_STARTCNT_OUTPUT_HIGH,
+        .u16StopCntOutput = TIMERB_OC_STOPCNT_OUTPUT_HIGH,
+        .u16CompareMatchOutput = TIMERB_OC_CMPMATCH_OUTPUT_INVERTED,
+        .u16PeriodMatchOutput = TIMERB_OC_PERIODMATCH_OUTPUT_INVERTED,
+    };
+
     /* Configure TIM_<t>_PWM1. */
-    GPIO_SetFunc(TIMERB_OC_UNIT_PWM1_PORT, TIMERB_OC_UNIT_PWM1_PIN, GPIO_FUNC_TIMB);
+    GPIO_SetFunc(TIMERB_OC_UNIT_PWM1_PORT, TIMERB_OC_UNIT_PWM1_PIN, GPIO_FUNC_2_TIMB);
 
     /* Initialize TIMERB unit. */
-    m_stcTimerbInit.u16PeriodVal = TIMERB_OC_UNIT_PERIOD_VALUE;
+    m_stcTimerbInit.u16PeriodVal = (uint16_t)TIMERB_OC_UNIT_PERIOD_VALUE;
     TIMERB_Init(TIMERB_OC_UNIT, &m_stcTimerbInit);
 
     /* Initialize TIMERB output compare function . */
-    m_stcTimerbOcInit.u16CompareVal = TIMERB_OC_UNIT_COMPARE_VALUE;
-    TIMERB_OC_Init(TIMERB_OC_UNIT, &m_stcTimerbOcInit);
+    stcTimerbOcInit.u16CompareVal = (uint16_t)TIMERB_OC_UNIT_COMPARE_VALUE;
+    TIMERB_OC_Init(TIMERB_OC_UNIT, &stcTimerbOcInit);
 }
 
 /**
@@ -237,6 +223,11 @@ static void LedConfig(void)
  */
 static void TimerbIcOddUnitCmpIrqCallback(void)
 {
+    static stc_buffer_t m_stcOddUnitCmpBuf = {
+        .u16Index = 0u,
+        .u16Capacity = TIMERB_IC_CMPBUF_SIZE,
+    };
+
     BufferWrite(&m_stcOddUnitCmpBuf, TIMERB_GetCompare(TIMERB_IC_ODD_UNIT));
     TIMERB_ClearFlag(TIMERB_IC_ODD_UNIT, TIMERB_FLAG_CMP);
 }
@@ -248,6 +239,11 @@ static void TimerbIcOddUnitCmpIrqCallback(void)
  */
 static void TimerbIcEvenUnitCmpIrqCallback(void)
 {
+    static stc_buffer_t m_stcEvenUnitCmpBuf= {
+        .u16Index = 0u,
+        .u16Capacity = TIMERB_IC_CMPBUF_SIZE,
+    };
+
     BufferWrite(&m_stcEvenUnitCmpBuf, TIMERB_GetCompare(TIMERB_IC_EVEN_UNIT));
     TIMERB_ClearFlag(TIMERB_IC_EVEN_UNIT, TIMERB_FLAG_CMP);
 }
@@ -261,7 +257,7 @@ void EXINT00_Handler(void)
 {
    if (Set == EXINT_GetExIntSrc(EXINT_CH00))
    {
-        EXINT_ClrSrc(EXINT_CH00);
+        EXINT_ClrExIntSrc(EXINT_CH00);
         LED_G_ON();
    }
 }
@@ -276,11 +272,12 @@ static void BufferWrite(stc_buffer_t *pstcBuffer, uint16_t u16Data)
 {
     if (pstcBuffer->u16Index > pstcBuffer->u16Capacity)
     {
-        pstcBuffer->u16Index = 0;
+        pstcBuffer->u16Index = 0u;
     }
 
     pstcBuffer->au16Buf[pstcBuffer->u16Index++] = u16Data;
 }
+
 /**
  * @brief  Main function of TIMERB input capture project
  * @param  None
@@ -291,6 +288,10 @@ int32_t main(void)
     stc_gpio_init_t stcGpioInit;
     stc_exint_config_t stcExIntInit;
     stc_irq_regi_config_t stcIrqRegiConf;
+    stc_timerb_ic_init_t stcTimerbIcInit = {
+        .u16CaptureCondition = TIMERB_IC_FALLING,
+        .u16NoiseFilterClkDiv = TIMERB_IC_NOFICLKDIV_NONE,
+    };
 
     /* Configure system clock. */
     SystemClockConfig();
@@ -317,8 +318,8 @@ int32_t main(void)
     NVIC_EnableIRQ(EXINT00_IRQn);
 
     /* Configure TIM_<t>_PWM1. */
-    GPIO_SetFunc(TIMERB_IC_ODD_UNIT_PWM1_PORT, TIMERB_IC_ODD_UNIT_PWM1_PIN, GPIO_FUNC_TIMB);
-    GPIO_SetFunc(TIMERB_IC_EVEN_UNIT_PWM1_PORT, TIMERB_IC_EVEN_UNIT_PWM1_PIN, GPIO_FUNC_TIMB);
+    GPIO_SetFunc(TIMERB_IC_ODD_UNIT_PWM1_PORT, TIMERB_IC_ODD_UNIT_PWM1_PIN, GPIO_FUNC_2_TIMB);
+    GPIO_SetFunc(TIMERB_IC_EVEN_UNIT_PWM1_PORT, TIMERB_IC_EVEN_UNIT_PWM1_PIN, GPIO_FUNC_2_TIMB);
 
     /* Enable peripheral clock */
     CLK_FcgPeriphClockCmd(FUNCTION_CLK_GATE, Enable);
@@ -327,34 +328,34 @@ int32_t main(void)
     TimerbOcConfig();
 
     /* Initialize TIMERB odd unit. */
-    m_stcTimerbInit.u16PeriodVal = TIMERB_IC_ODD_UNIT_PERIOD_VALUE;
+    m_stcTimerbInit.u16PeriodVal = (uint16_t)TIMERB_IC_ODD_UNIT_PERIOD_VALUE;
     TIMERB_Init(TIMERB_IC_ODD_UNIT, &m_stcTimerbInit);
 
     /* Initialize TIMERB even unit input capture function. */
-    TIMERB_IC_Init(TIMERB_IC_ODD_UNIT, &m_stcTimerbIcInit);
+    TIMERB_IC_Init(TIMERB_IC_ODD_UNIT, &stcTimerbIcInit);
     TIMERB_IntCmd(TIMERB_IC_ODD_UNIT, TIMERB_IT_CMP, Enable);
 
     /* Register IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = TIMERB_IC_ODD_UNIT_CMP_IRQn;
     stcIrqRegiConf.enIntSrc = TIMERB_IC_ODD_UNIT_CMP_INT;
-    stcIrqRegiConf.pfnCallback = TimerbIcOddUnitCmpIrqCallback;
+    stcIrqRegiConf.pfnCallback = &TimerbIcOddUnitCmpIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
     NVIC_EnableIRQ(stcIrqRegiConf.enIRQn);
 
     /* Initialize TIMERB even unit. */
-    m_stcTimerbInit.u16PeriodVal = TIMERB_IC_EVEN_UNIT_PERIOD_VALUE;
+    m_stcTimerbInit.u16PeriodVal = (uint16_t)TIMERB_IC_EVEN_UNIT_PERIOD_VALUE;
     TIMERB_Init(TIMERB_IC_EVEN_UNIT, &m_stcTimerbInit);
 
     /* Initialize TIMERB even unit input capture function . */
-    TIMERB_IC_Init(TIMERB_IC_EVEN_UNIT, &m_stcTimerbIcInit);
+    TIMERB_IC_Init(TIMERB_IC_EVEN_UNIT, &stcTimerbIcInit);
     TIMERB_IntCmd(TIMERB_IC_EVEN_UNIT, TIMERB_IT_CMP, Enable);
 
     /* Register IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = TIMERB_IC_EVEN_UNIT_CMP_IRQn;
     stcIrqRegiConf.enIntSrc = TIMERB_IC_EVEN_UNIT_CMP_INT;
-    stcIrqRegiConf.pfnCallback = TimerbIcEvenUnitCmpIrqCallback;
+    stcIrqRegiConf.pfnCallback = &TimerbIcEvenUnitCmpIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);

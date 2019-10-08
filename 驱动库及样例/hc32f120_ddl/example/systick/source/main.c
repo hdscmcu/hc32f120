@@ -73,20 +73,20 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* LED_R Port/Pin definition */
-#define LED_R_PORT                      GPIO_PORT_2
-#define LED_R_PIN                       GPIO_PIN_5
+#define LED_R_PORT                      (GPIO_PORT_2)
+#define LED_R_PIN                       (GPIO_PIN_5)
 
-#define LED_R_ON()                      GPIO_ResetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_OFF()                     GPIO_SetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_TOGGLE()                  GPIO_TogglePins(LED_R_PORT, LED_R_PIN)
+#define LED_R_ON()                      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_OFF()                     (GPIO_SetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_TOGGLE()                  (GPIO_TogglePins(LED_R_PORT, LED_R_PIN))
 
 /* LED_G Port/Pin definition */
-#define LED_G_PORT                      GPIO_PORT_2
-#define LED_G_PIN                       GPIO_PIN_6
+#define LED_G_PORT                      (GPIO_PORT_2)
+#define LED_G_PIN                       (GPIO_PIN_6)
 
-#define LED_G_ON()                      GPIO_ResetPins(LED_G_PORT, LED_G_PIN)
-#define LED_G_OFF()                     GPIO_SetPins(LED_G_PORT, LED_G_PIN)
-#define LED_G_TOGGLE()                  GPIO_TogglePins(LED_G_PORT, LED_G_PIN)
+#define LED_G_ON()                      (GPIO_ResetPins(LED_G_PORT, LED_G_PIN))
+#define LED_G_OFF()                     (GPIO_SetPins(LED_G_PORT, LED_G_PIN))
+#define LED_G_TOGGLE()                  (GPIO_TogglePins(LED_G_PORT, LED_G_PIN))
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -133,14 +133,14 @@ int32_t main(void)
     LED_G_OFF();
 
     /* SysTick configuration */
-    SysTick_Init(1000);
+    SysTick_Init(1000u);
 
     while (1)
     {
         LED_R_TOGGLE();
-        SysTick_Delay(500);
+        SysTick_Delay(500u);
         LED_G_TOGGLE();
-        SysTick_Delay(500);
+        SysTick_Delay(500u);
     }
 }
 

@@ -92,60 +92,57 @@ typedef struct
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* Key Port/Pin definition */
-#define KEY_PORT                        GPIO_PORT_7
-#define KEY_PIN                         GPIO_PIN_0
+#define KEY_PORT                        (GPIO_PORT_7)
+#define KEY_PIN                         (GPIO_PIN_0)
 
 /* Red LED Port/Pin definition */
-#define LED_R_PORT                      GPIO_PORT_2
-#define LED_R_PIN                       GPIO_PIN_5
-#define LED_R_ON()                      GPIO_ResetPins(LED_R_PORT, LED_R_PIN)
+#define LED_R_PORT                      (GPIO_PORT_2)
+#define LED_R_PIN                       (GPIO_PIN_5)
+#define LED_R_ON()                      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
 
 /* Green LED Port/Pin definition */
-#define LED_G_PORT                      GPIO_PORT_2
-#define LED_G_PIN                       GPIO_PIN_6
-#define LED_G_ON()                      GPIO_ResetPins(LED_G_PORT, LED_G_PIN)
+#define LED_G_PORT                      (GPIO_PORT_2)
+#define LED_G_PIN                       (GPIO_PIN_6)
+#define LED_G_ON()                      (GPIO_ResetPins(LED_G_PORT, LED_G_PIN))
 
 /* CLKSYNC CK/RX/TX Port/Pin definition */
-#define CLKSYNC_CK_PORT                 GPIO_PORT_3
-#define CLKSYNC_CK_PIN                  GPIO_PIN_0      /* P30: USART2_CK_A */
+#define CLKSYNC_CK_PORT                 (GPIO_PORT_3)
+#define CLKSYNC_CK_PIN                  (GPIO_PIN_0)      /* P30: USART2_CK_A */
 
-#define CLKSYNC_RX_PORT                 GPIO_PORT_0
-#define CLKSYNC_RX_PIN                  GPIO_PIN_1      /* P01: USART2_RX_B */
+#define CLKSYNC_RX_PORT                 (GPIO_PORT_0)
+#define CLKSYNC_RX_PIN                  (GPIO_PIN_1)      /* P01: USART2_RX_B */
 
-#define CLKSYNC_TX_PORT                 GPIO_PORT_0
-#define CLKSYNC_TX_PIN                  GPIO_PIN_0      /* P00: USART2_TX_B */
+#define CLKSYNC_TX_PORT                 (GPIO_PORT_0)
+#define CLKSYNC_TX_PIN                  (GPIO_PIN_0)      /* P00: USART2_TX_B */
 
 /* UART unit definition */
-#define CLKSYNC_UNIT                    M0P_USART2
+#define CLKSYNC_UNIT                    (M0P_USART2)
 
 /* UART unit interrupt definition */
-#define USART_UNIT_ERR_INT              INT_USART_2_EI
-#define USART_UNIT_ERR_IRQn             Int016_IRQn
+#define USART_UNIT_ERR_INT              (INT_USART_2_EI)
+#define USART_UNIT_ERR_IRQn             (Int016_IRQn)
 
-#define USART_UNIT_RX_INT               INT_USART_2_RI
-#define USART_UNIT_RX_IRQn              Int018_IRQn
+#define USART_UNIT_RX_INT               (INT_USART_2_RI)
+#define USART_UNIT_RX_IRQn              (Int018_IRQn)
 
-#define USART_UNIT_TX_INT               INT_USART_2_TI
-#define USART_UNIT_TX_IRQn              Int020_IRQn
+#define USART_UNIT_TX_INT               (INT_USART_2_TI)
+#define USART_UNIT_TX_IRQn              (Int020_IRQn)
 
-#define USART_UNIT_TCI_INT              INT_USART_2_TCI
-#define USART_UNIT_TCI_IRQn             Int022_IRQn
+#define USART_UNIT_TCI_INT              (INT_USART_2_TCI)
+#define USART_UNIT_TCI_IRQn             (Int022_IRQn)
 
 /* Function clock gate definition  */
-#define FUNCTION_CLK_GATE               CLK_FCG_UART2
+#define FUNCTION_CLK_GATE               (CLK_FCG_UART2)
 
 /* Timeout max definition  */
-#define TIMEOUT_MAX                     (0xFFFFFFFFU)
-
-/* Size of Reception buffer */
-#define RX_BUF_SIZE                     (ARRAY_SZ(m_u8TxData))
+#define TIMEOUT_MAX                     (0xFFFFFFFFul)
 
 /* CLKSYNC device mode definition */
 #define CLKSYNC_MASTER_MODE             (0u)
 #define CLKSYNC_SLAVE_MODE              (1u)
 
 /* USART master or slave mode selection */
-#define CLKSYNC_DEVICE_MODE             CLKSYNC_MASTER_MODE
+#define CLKSYNC_DEVICE_MODE             (CLKSYNC_MASTER_MODE)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -170,14 +167,6 @@ static en_result_t CLKSYNC_TransmitReceive_IT(M0P_USART_TypeDef *USARTx,
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-static stc_clksync_init_t m_stcClksyncInit;
-
-/* Buffer used for transmission */
-static uint8_t m_u8TxData[] = "CLKSYNC TX/RX example: Communication between two boards using usart interface!";
-
-/* Buffer used for reception */
-static uint8_t m_u8RxData[RX_BUF_SIZE];
-
 static stc_buffer_handle_t m_stcBufHandle;
 
 /*******************************************************************************
@@ -205,8 +194,10 @@ static void LedConfig(void)
  */
 static void UsartTxIrqCallback(void)
 {
-    if ((Set == USART_GetFlag(CLKSYNC_UNIT, USART_FLAG_TXE)) && 
-        (Enable == USART_GetFuncState(CLKSYNC_UNIT, USART_IT_TXE)))
+    en_flag_status_t enFlag = USART_GetFlag(CLKSYNC_UNIT, USART_FLAG_TXE);
+    en_functional_state_t enState = USART_GetFuncState(CLKSYNC_UNIT, USART_IT_TXE);
+
+    if ((Set == enFlag) && (Enable == enState))
     {
         TransmitReceive_IT(CLKSYNC_UNIT, &m_stcBufHandle);
     }
@@ -219,8 +210,10 @@ static void UsartTxIrqCallback(void)
  */
 static void UsartTcIrqCallback(void)
 {
-    if ((Set == USART_GetFlag(CLKSYNC_UNIT, USART_FLAG_TC)) && 
-        (Enable == USART_GetFuncState(CLKSYNC_UNIT, USART_IT_TC)))
+    en_flag_status_t enFlag = USART_GetFlag(CLKSYNC_UNIT, USART_FLAG_TC);
+    en_functional_state_t enState = USART_GetFuncState(CLKSYNC_UNIT, USART_IT_TC);
+
+    if ((Set == enFlag) && (Enable == enState))
     {
         TransmitReceive_IT(CLKSYNC_UNIT, &m_stcBufHandle);
     }
@@ -233,8 +226,10 @@ static void UsartTcIrqCallback(void)
  */
 static void UsartRxIrqCallback(void)
 {
-    if ((Set == USART_GetFlag(CLKSYNC_UNIT, USART_FLAG_RXNE)) && 
-        (Enable == USART_GetFuncState(CLKSYNC_UNIT, USART_IT_RI)))
+    en_flag_status_t enFlag = USART_GetFlag(CLKSYNC_UNIT, USART_FLAG_RXNE);
+    en_functional_state_t enState = USART_GetFuncState(CLKSYNC_UNIT, USART_IT_RI);
+
+    if ((Set == enFlag) && (Enable == enState))
     {
         TransmitReceive_IT(CLKSYNC_UNIT, &m_stcBufHandle);
     }
@@ -259,7 +254,7 @@ static void UsartRxErrIrqCallback(void)
 static void TransmitReceive_IT(M0P_USART_TypeDef *USARTx,
                                stc_buffer_handle_t *pstcBufHandle)
 {
-    if (pstcBufHandle->u16RxXferCount != 0x00U)
+    if (pstcBufHandle->u16RxXferCount != 0u)
     {
         if (USART_GetFlag(USARTx, USART_FLAG_RXNE) != Reset)
         {
@@ -269,24 +264,25 @@ static void TransmitReceive_IT(M0P_USART_TypeDef *USARTx,
     }
 
     /* Check the latest data received */
-    if (pstcBufHandle->u16RxXferCount == 0U)
+    if (pstcBufHandle->u16RxXferCount == 0u)
     {
         /* Disable the USART RXNE && Error Interrupt */
         USART_FuncCmd(USARTx, USART_INT_RX, Disable);
-        return;
     }
-
-    if (pstcBufHandle->u16TxXferCount != 0x00U)
+    else
     {
-        if (USART_GetFlag(USARTx, USART_FLAG_TXE) != Reset)
+        if (pstcBufHandle->u16TxXferCount != 0u)
         {
-            USART_SendData(USARTx, (*pstcBufHandle->pu8TxBuffPtr++));
-            pstcBufHandle->u16TxXferCount--;
-
-            /* Check the latest data transmitted */
-            if (pstcBufHandle->u16TxXferCount == 0U)
+            if (USART_GetFlag(USARTx, USART_FLAG_TXE) != Reset)
             {
-                USART_FuncCmd(USARTx, (USART_INT_TXE | USART_INT_TC), Disable);
+                USART_SendData(USARTx, (uint16_t)(*pstcBufHandle->pu8TxBuffPtr++));
+                pstcBufHandle->u16TxXferCount--;
+
+                /* Check the latest data transmitted */
+                if (pstcBufHandle->u16TxXferCount == 0u)
+                {
+                    USART_FuncCmd(USARTx, (USART_INT_TXE | USART_INT_TC), Disable);
+                }
             }
         }
     }
@@ -309,32 +305,33 @@ static en_result_t CLKSYNC_TransmitReceive_IT(M0P_USART_TypeDef *USARTx,
                                              uint8_t *pu8RxData,
                                              uint16_t u16Size)
 {
+    en_result_t enRet = ErrorInvalidParameter;
     uint32_t u32Func = USART_RX | USART_INT_RX | USART_TX;
 
-    if ((USARTx == NULL) || (pu8TxData == NULL) || (pu8RxData == NULL) || (u16Size == 0U))
+    if ((USARTx) && (pu8TxData) && (pu8RxData) && (u16Size))
     {
-        return ErrorInvalidParameter;
+        pstcBufHandle->pu8RxBuffPtr = pu8RxData;
+        pstcBufHandle->u16RxXferSize = u16Size;
+        pstcBufHandle->u16RxXferCount = u16Size;
+        pstcBufHandle->pu8TxBuffPtr = pu8TxData;
+        pstcBufHandle->u16TxXferSize = u16Size;
+        pstcBufHandle->u16TxXferCount = u16Size;
+
+        USART_FuncCmd(USARTx, (u32Func | USART_INT_TXE | USART_INT_TC), Disable);
+
+        if (USART_EXTCLK == USART_GetClockMode(USARTx))
+        {
+            USART_FuncCmd(USARTx, (u32Func | USART_INT_TXE), Enable);
+        }
+        else
+        {
+            USART_FuncCmd(USARTx, (u32Func | USART_INT_TC), Enable);
+        }
+
+        enRet = Ok;
     }
 
-    pstcBufHandle->pu8RxBuffPtr = pu8RxData;
-    pstcBufHandle->u16RxXferSize = u16Size;
-    pstcBufHandle->u16RxXferCount = u16Size;
-    pstcBufHandle->pu8TxBuffPtr = pu8TxData;
-    pstcBufHandle->u16TxXferSize = u16Size;
-    pstcBufHandle->u16TxXferCount = u16Size;
-
-    USART_FuncCmd(USARTx, (u32Func | USART_INT_TXE | USART_INT_TC), Disable);
-
-    if (USART_EXTCLK == USART_GetClockMode(USARTx))
-    {
-        USART_FuncCmd(USARTx, (u32Func | USART_INT_TXE), Enable);
-    }
-    else
-    {
-        USART_FuncCmd(USARTx, (u32Func | USART_INT_TC), Enable);
-    }
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -344,29 +341,40 @@ static en_result_t CLKSYNC_TransmitReceive_IT(M0P_USART_TypeDef *USARTx,
  */
 int32_t main(void)
 {
+    uint16_t u16TxXferCount = 0u;
+    uint16_t u16RxXferCount = 0u;
     stc_irq_regi_config_t stcIrqRegiConf;
+    stc_clksync_init_t stcClksyncInit;
+    /* Buffer used for transmission */
+    char au8TxData[] = "CLKSYNC TX/RX example: Communication between two boards using usart interface!";
+    /* Buffer used for reception */
+    uint8_t au8RxData[ARRAY_SZ(au8TxData)];
 
     /* Configure LED pin. */
     LedConfig();
 
     /* Configure USART RX/TX pin. */
-    GPIO_SetFunc(CLKSYNC_CK_PORT, CLKSYNC_CK_PIN, GPIO_FUNC_USART);
-    GPIO_SetFunc(CLKSYNC_RX_PORT, CLKSYNC_RX_PIN, GPIO_FUNC_USART);
-    GPIO_SetFunc(CLKSYNC_TX_PORT, CLKSYNC_TX_PIN, GPIO_FUNC_USART);
+    GPIO_SetFunc(CLKSYNC_CK_PORT, CLKSYNC_CK_PIN, GPIO_FUNC_3_USART);
+    GPIO_SetFunc(CLKSYNC_RX_PORT, CLKSYNC_RX_PIN, GPIO_FUNC_3_USART);
+    GPIO_SetFunc(CLKSYNC_TX_PORT, CLKSYNC_TX_PIN, GPIO_FUNC_3_USART);
 
     /* Enable peripheral clock */
     CLK_FcgPeriphClockCmd(FUNCTION_CLK_GATE, Enable);
 
     /* Initialize CLKSYNC function. */
-    m_stcClksyncInit.u32Baudrate = 38400;
-    m_stcClksyncInit.u32BitDirection = USART_LSB;
-    m_stcClksyncInit.u32ClkMode = (CLKSYNC_DEVICE_MODE == CLKSYNC_MASTER_MODE) ? USART_INTCLK_OUTPUT : USART_EXTCLK;
-    USART_ClkSyncInit(CLKSYNC_UNIT, &m_stcClksyncInit);
+    USART_ClkSyncStructInit(&stcClksyncInit);
+    stcClksyncInit.u32Baudrate = 38400ul;
+#if (CLKSYNC_DEVICE_MODE == CLKSYNC_MASTER_MODE)
+    stcClksyncInit.u32ClkMode = USART_INTCLK_OUTPUT;
+#else
+    stcClksyncInit.u32ClkMode = USART_EXTCLK;
+#endif
+    USART_ClkSyncInit(CLKSYNC_UNIT, &stcClksyncInit);
 
     /* Register error IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = USART_UNIT_ERR_IRQn;
     stcIrqRegiConf.enIntSrc = USART_UNIT_ERR_INT;
-    stcIrqRegiConf.pfnCallback = UsartRxErrIrqCallback;
+    stcIrqRegiConf.pfnCallback = &UsartRxErrIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -375,7 +383,7 @@ int32_t main(void)
     /* Register RX IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = USART_UNIT_RX_IRQn;
     stcIrqRegiConf.enIntSrc = USART_UNIT_RX_INT;
-    stcIrqRegiConf.pfnCallback = UsartRxIrqCallback;
+    stcIrqRegiConf.pfnCallback = &UsartRxIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_00);
@@ -384,7 +392,7 @@ int32_t main(void)
     /* Register TX IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = USART_UNIT_TX_IRQn;
     stcIrqRegiConf.enIntSrc = USART_UNIT_TX_INT;
-    stcIrqRegiConf.pfnCallback = UsartTxIrqCallback;
+    stcIrqRegiConf.pfnCallback = &UsartTxIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -393,7 +401,7 @@ int32_t main(void)
     /* Register TC IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = USART_UNIT_TCI_IRQn;
     stcIrqRegiConf.enIntSrc = USART_UNIT_TCI_INT;
-    stcIrqRegiConf.pfnCallback = UsartTcIrqCallback;
+    stcIrqRegiConf.pfnCallback = &UsartTcIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -405,16 +413,21 @@ int32_t main(void)
     /* User key : SW2 */
     while (Pin_Reset != GPIO_ReadInputPortPin(KEY_PORT, KEY_PIN))
     {
+        ;
     }
 
     /* Start the transmission process*/
-    CLKSYNC_TransmitReceive_IT(CLKSYNC_UNIT, &m_stcBufHandle, m_u8TxData, m_u8RxData, RX_BUF_SIZE);
+    CLKSYNC_TransmitReceive_IT(CLKSYNC_UNIT, &m_stcBufHandle, (uint8_t *)au8TxData, au8RxData, (uint16_t)ARRAY_SZ(au8TxData));
 
     /* Wait tranmission complete */
-    while ((m_stcBufHandle.u16TxXferCount != 0U) || (m_stcBufHandle.u16RxXferCount != 0U));
+    do
+    {
+        u16TxXferCount = m_stcBufHandle.u16TxXferCount;
+        u16RxXferCount = m_stcBufHandle.u16RxXferCount;
+    } while ((u16TxXferCount != 0u) || (u16RxXferCount != 0u));
 
     /* Compare m_u8TxBuffer and m_u8RxBuffer data */
-    if (memcmp(m_u8TxData , m_u8RxData, m_stcBufHandle.u16RxXferSize) == 0)
+    if (memcmp(au8TxData , au8RxData, (uint32_t)m_stcBufHandle.u16RxXferSize) == 0)
     {
         LED_G_ON();
     }
@@ -425,6 +438,7 @@ int32_t main(void)
 
     while (1)
     {
+        ;
     }
 }
 

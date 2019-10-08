@@ -85,10 +85,10 @@ __Vectors
                 DCD     Reset_Handler             ; Reset
                 DCD     NMI_Handler               ; NMI
                 DCD     HardFault_Handler         ; Hard Fault
-                DCD     0xA5FF                    ; Reserved
-                DCD     0xA500                    ; Reserved
-                DCD     0x40014020                ; Reserved
-                DCD     0x42280190                ; Reserved
+                DCD     0                         ; Reserved
+                DCD     0                         ; Reserved
+                DCD     0                         ; Reserved
+                DCD     0                         ; Reserved
                 DCD     0                         ; Reserved
                 DCD     0                         ; Reserved
                 DCD     0                         ; Reserved
@@ -147,30 +147,19 @@ Reset_Handler   PROC
                 IMPORT  SystemInit
                 IMPORT  __main
 
-                LDR     R0,=__Vectors
-                LDR     R1,[R0,#0x10]; unprotect
-                LDR     R2,[R0,#0x14]; protect
-                LDR     R3,[R0,#0x18]; PWC_FPRC
-                LDR     R4,[R0,#0x1C]; PWC_RAMCR_RPERDIS
-                MOVS    R5,#1
-                STR     R1,[R3]
-                STRB    R5,[R4]
-                STR     R2,[R3]
+                LDR     R2, =0x40014020 ; PWC_FPRC
+                LDR     R0, =0xA502
+                STR     R0, [R2]        ; PWC_FPRC = 0xA502
 
-               ;reset NVIC if in rom debug
-                LDR     R0, =0x20000000
-                LDR     R2, =0x0
-                MOVS    R1, #0                 ; for warning,
-                ADD     R1, PC,#0              ; for A1609W,
-                CMP     R1, R0
-                BLS     RAMCODE
+                MOVS    R0, #1
+                LDR     R1, =0x42280190 ; PWC_RAMCR_RPERDIS
+                STRB    R0, [R1]        ; PWC_RAMCR_RPERDIS = 1
 
-              ; ram code base address.
-                ADD     R2, R0,R2
-RAMCODE
-              ; reset Vector table address.
-                LDR     R0, =0xE000ED08
-                STR     R2, [R0]
+                LDR     R1, =0x42280004 ; PWC_STPMCR_CKSHRC
+                STRB    R0, [R1]        ; PWC_STPMCR_CKSHRC = 1
+
+                LDR     R0, =0xA500
+                STR     R0, [R2]        ; PWC_FPRC = 0xA500
 
                 LDR     R0, =SystemInit
                 BLX     R0

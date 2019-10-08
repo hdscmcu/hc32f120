@@ -177,7 +177,7 @@
  */
 static uint32_t TIMER0_GetClkMode(void)
 {
-    for(uint32_t i=0; i<SystemCoreClock/10000; i++)
+    for(uint32_t i=0ul; i<SystemCoreClock/10000ul; i++)
     {
         __NOP();
     }
@@ -194,7 +194,7 @@ static void AsyncDelay(void)
 {
     if(TIMER0_CLK_ASYNC == TIMER0_GetClkMode())
     {
-        for(uint32_t i=0; i<SystemCoreClock/10000; i++)
+        for(uint32_t i=0ul; i<SystemCoreClock/10000ul; i++)
         {
             __NOP();
         }
@@ -218,19 +218,21 @@ static void AsyncDelay(void)
  */
 en_result_t TIMER0_StructInit(stc_tim0_init_t* pstcInitStruct)
 {
+    en_result_t enRet = Ok;
     if (pstcInitStruct == NULL)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
     }
-
-    pstcInitStruct->u32ClockDivision = TIMER0_CLK_DIV1;
-    pstcInitStruct->u32ClockSource = TIMER0_CLK_SRC_HCLK;
-    pstcInitStruct->u32ClockMode = TIMER0_CLK_SYNC;
-    pstcInitStruct->u32Tmr0Fun = TIMER0_FUNC_CMP;
-    pstcInitStruct->u16CmpValue = 0x0000FFFF;
-    pstcInitStruct->u32HwTrigFunc = TIMER0_BT_HWTRG_FUNC_NONE;
-
-    return Ok;
+    else
+    {
+        pstcInitStruct->u32ClockDivision = TIMER0_CLK_DIV1;
+        pstcInitStruct->u32ClockSource = TIMER0_CLK_SRC_HCLK;
+        pstcInitStruct->u32ClockMode = TIMER0_CLK_SYNC;
+        pstcInitStruct->u32Tmr0Fun = TIMER0_FUNC_CMP;
+        pstcInitStruct->u16CmpValue = 0xFFFFu;
+        pstcInitStruct->u32HwTrigFunc = TIMER0_BT_HWTRG_FUNC_NONE;
+    }
+    return enRet;
 }
 
 /**
@@ -242,42 +244,44 @@ en_result_t TIMER0_StructInit(stc_tim0_init_t* pstcInitStruct)
  */
 en_result_t TIMER0_Init(const stc_tim0_init_t* pstcTmr0Init)
 {
+    en_result_t enRet = Ok;
     if (pstcTmr0Init == NULL)
     {
-        return ErrorInvalidParameter;
-    }
-
-    DDL_ASSERT(IS_VALID_CLK_DIVISION(pstcTmr0Init->u32ClockDivision));
-    DDL_ASSERT(IS_VALID_CLK_SRC(pstcTmr0Init->u32ClockSource));
-    DDL_ASSERT(IS_VALID_CLK_MODE(pstcTmr0Init->u32ClockMode));
-    DDL_ASSERT(IS_VALID_TMR0_FUNC(pstcTmr0Init->u32Tmr0Fun));
-    DDL_ASSERT(IS_VALID_HW_TRIG_FUNC(pstcTmr0Init->u32HwTrigFunc));
-
-    /* Configure register to default value, TIMER0 enter synchronous mode */
-    M0P_TMR0->BCONR = 0x00000000;
-    AsyncDelay();
-
-    /* Set timer compare value */
-    M0P_TMR0->CMPAR = pstcTmr0Init->u16CmpValue;
-
-    /* Configure clock division, function mode, Hardware trigger function */
-    M0P_TMR0->BCONR = pstcTmr0Init->u32ClockDivision
-                        + pstcTmr0Init->u32HwTrigFunc
-                        + pstcTmr0Init->u32Tmr0Fun;
-
-    /* Configure clock source and clock mode*/
-    if(TIMER0_CLK_ASYNC == pstcTmr0Init->u32ClockMode)
-    {
-        MODIFY_REG(M0P_TMR0->BCONR, TMR0_BCONR_ASYNCLKA, pstcTmr0Init->u32ClockSource);
-        bM0P_TMR0->BCONR_b.SYNSA = 1u;
+        enRet = ErrorInvalidParameter;
     }
     else
     {
-        MODIFY_REG(M0P_TMR0->BCONR, TMR0_BCONR_SYNCLKA, pstcTmr0Init->u32ClockSource);
-        bM0P_TMR0->BCONR_b.SYNSA = 0u;
-    }
+        DDL_ASSERT(IS_VALID_CLK_DIVISION(pstcTmr0Init->u32ClockDivision));
+        DDL_ASSERT(IS_VALID_CLK_SRC(pstcTmr0Init->u32ClockSource));
+        DDL_ASSERT(IS_VALID_CLK_MODE(pstcTmr0Init->u32ClockMode));
+        DDL_ASSERT(IS_VALID_TMR0_FUNC(pstcTmr0Init->u32Tmr0Fun));
+        DDL_ASSERT(IS_VALID_HW_TRIG_FUNC(pstcTmr0Init->u32HwTrigFunc));
 
-    return Ok;
+        /* Configure register to default value, TIMER0 enter synchronous mode */
+        M0P_TMR0->BCONR = 0x00000000ul;
+        AsyncDelay();
+
+        /* Set timer compare value */
+        M0P_TMR0->CMPAR = pstcTmr0Init->u16CmpValue;
+
+        /* Configure clock division, function mode, Hardware trigger function */
+        M0P_TMR0->BCONR = pstcTmr0Init->u32ClockDivision
+                            + pstcTmr0Init->u32HwTrigFunc
+                            + pstcTmr0Init->u32Tmr0Fun;
+
+        /* Configure clock source and clock mode*/
+        if(TIMER0_CLK_ASYNC == pstcTmr0Init->u32ClockMode)
+        {
+            MODIFY_REG(M0P_TMR0->BCONR, TMR0_BCONR_ASYNCLKA, pstcTmr0Init->u32ClockSource);
+            bM0P_TMR0->BCONR_b.SYNSA = 1u;
+        }
+        else
+        {
+            MODIFY_REG(M0P_TMR0->BCONR, TMR0_BCONR_SYNCLKA, pstcTmr0Init->u32ClockSource);
+            bM0P_TMR0->BCONR_b.SYNSA = 0u;
+        }
+    }
+    return enRet;
 }
 
 /**
@@ -342,7 +346,7 @@ void TIMER0_IntCmd(en_functional_state_t enCmd)
  */
 uint16_t TIMER0_GetCntReg(void)
 {
-    return (uint16_t)M0P_TMR0->CNTAR&0xFFFF;
+    return (uint16_t)M0P_TMR0->CNTAR & 0xFFFFu;
 }
 
 /**
@@ -366,7 +370,7 @@ void TIMER0_WriteCntReg(uint16_t u16Cnt)
  */
 uint16_t TIMER0_GetCmpReg(void)
 {
-    return (uint16_t)M0P_TMR0->CMPAR&0xFFFF;
+    return (uint16_t)M0P_TMR0->CMPAR & 0xFFFFu;
 }
 
 /**
@@ -389,11 +393,11 @@ void TIMER0_WriteCmpReg(uint16_t u16Cnt)
  */
 void TIMER0_DeInit(void)
 {
-    M0P_TMR0->BCONR = 0x00000000;
+    M0P_TMR0->BCONR = 0x00000000ul;
     AsyncDelay();
-    M0P_TMR0->CMPAR = 0x0000FFFF;
-    M0P_TMR0->CNTAR = 0x00000000;
-    M0P_TMR0->STFLR = 0x00000000;
+    M0P_TMR0->CMPAR = 0x0000FFFFul;
+    M0P_TMR0->CNTAR = 0x00000000ul;
+    M0P_TMR0->STFLR = 0x00000000ul;
 }
 
 /**

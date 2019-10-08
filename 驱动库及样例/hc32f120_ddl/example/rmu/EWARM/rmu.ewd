@@ -1634,7 +1634,7 @@
     </debuggerPlugins>
   </configuration>
   <configuration>
-    <name>debug</name>
+    <name>Debug</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>

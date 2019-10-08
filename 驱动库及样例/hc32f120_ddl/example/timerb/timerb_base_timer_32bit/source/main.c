@@ -73,19 +73,19 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* Green LED Port/Pin definition */
-#define LED_G_PORT                      GPIO_PORT_2
-#define LED_G_PIN                       GPIO_PIN_6
-#define LED_G_TOGGLE()                  GPIO_TogglePins(LED_G_PORT, LED_G_PIN)
+#define LED_G_PORT                      (GPIO_PORT_2)
+#define LED_G_PIN                       (GPIO_PIN_6)
+#define LED_G_TOGGLE()                  (GPIO_TogglePins(LED_G_PORT, LED_G_PIN))
 
 /* TIMERB unit & interrupt number & counter period value definition */
-#define TIMERB_ODD_UNIT                 M0P_TMRB1
-#define TIMERB_ODD_UNIT_OVF_INT         INT_TMRB_1_OVF
-#define TIMERB_ODD_UNIT_OVF_IRQn        Int020_IRQn
-#define TIMERB_ODD_UNIT_PERIOD_VALUE    (SystemCoreClock/512/TIMERB_EVEN_UNIT_PERIOD_VALUE)
+#define TIMERB_ODD_UNIT                 (M0P_TMRB1)
+#define TIMERB_ODD_UNIT_OVF_INT         (INT_TMRB_1_OVF)
+#define TIMERB_ODD_UNIT_OVF_IRQn        (Int020_IRQn)
+#define TIMERB_ODD_UNIT_PERIOD_VALUE    (SystemCoreClock/512ul/TIMERB_EVEN_UNIT_PERIOD_VALUE)
 
-#define TIMERB_EVEN_UNIT                M0P_TMRB2
-#define TIMERB_EVEN_UNIT_OVF_INT        INT_TMRB_2_OVF
-#define TIMERB_EVEN_UNIT_OVF_IRQn       Int022_IRQn
+#define TIMERB_EVEN_UNIT                (M0P_TMRB2)
+#define TIMERB_EVEN_UNIT_OVF_INT        (INT_TMRB_2_OVF)
+#define TIMERB_EVEN_UNIT_OVF_IRQn       (Int022_IRQn)
 #define TIMERB_EVEN_UNIT_PERIOD_VALUE   (100u)
 
 /* Function clock gate definition */
@@ -105,13 +105,6 @@ static void TimerbEvenUnitOvfIrqCallback(void);
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-static stc_timerb_init_t m_stcTimerbInit = {
-    .u16CntDir = TIMERB_CNT_UP,
-    .u16ClkDiv = TIMERB_CLKDIV_DIV512,
-    .u16CntMode = TIMERB_SAWTOOTH_WAVE,
-    .u16OverflowAction = TIMERB_OVERFLOW_COUNT,
-    .u16SynStartState = TIMERB_SYNC_START_DISABLE,
-};
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -184,6 +177,7 @@ static void TimerbEvenUnitOvfIrqCallback(void)
 int32_t main(void)
 {
     stc_irq_regi_config_t stcIrqRegiConf;
+    static stc_timerb_init_t stcTimerbInit;
 
     /* Configure system clock. */
     SystemClockConfig();
@@ -195,29 +189,31 @@ int32_t main(void)
     CLK_FcgPeriphClockCmd(FUNCTION_CLK_GATE, Enable);
 
     /* Initialize TIMERB odd unit. */
-    m_stcTimerbInit.u16PeriodVal = TIMERB_ODD_UNIT_PERIOD_VALUE;
-    TIMERB_Init(TIMERB_ODD_UNIT, &m_stcTimerbInit);
+    TIMERB_StructInit(&stcTimerbInit);
+    stcTimerbInit.u16PeriodVal = (uint16_t)TIMERB_ODD_UNIT_PERIOD_VALUE;
+    stcTimerbInit.u16ClkDiv = TIMERB_CLKDIV_DIV512;
+    TIMERB_Init(TIMERB_ODD_UNIT, &stcTimerbInit);
     TIMERB_IntCmd(TIMERB_ODD_UNIT, TIMERB_IT_OVF, Enable);
 
     /* Register IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = TIMERB_ODD_UNIT_OVF_IRQn;
     stcIrqRegiConf.enIntSrc = TIMERB_ODD_UNIT_OVF_INT;
-    stcIrqRegiConf.pfnCallback = TimerbOddUnitOvfIrqCallback;
+    stcIrqRegiConf.pfnCallback = &TimerbOddUnitOvfIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
     NVIC_EnableIRQ(stcIrqRegiConf.enIRQn);
 
     /* Initialize TIMERB even unit. */
-    m_stcTimerbInit.u16PeriodVal = TIMERB_EVEN_UNIT_PERIOD_VALUE;
-    TIMERB_Init(TIMERB_EVEN_UNIT, &m_stcTimerbInit);
+    stcTimerbInit.u16PeriodVal = TIMERB_EVEN_UNIT_PERIOD_VALUE;
+    TIMERB_Init(TIMERB_EVEN_UNIT, &stcTimerbInit);
     TIMERB_IntCmd(TIMERB_EVEN_UNIT, TIMERB_IT_OVF, Enable);
     TIMERB_SetHwUpCondition(TIMERB_EVEN_UNIT, TIMERB_HWUP_OVERFLOW); /* link odd uint for 32bit counter */
 
     /* Register IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = TIMERB_EVEN_UNIT_OVF_IRQn;
     stcIrqRegiConf.enIntSrc = TIMERB_EVEN_UNIT_OVF_INT;
-    stcIrqRegiConf.pfnCallback = TimerbEvenUnitOvfIrqCallback;
+    stcIrqRegiConf.pfnCallback = &TimerbEvenUnitOvfIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_02);

@@ -118,7 +118,7 @@ typedef struct
  * @defgroup SWDT_Counter_Cycle SWDT Counter Cycle
  * @{
  */
-#define SWDT_COUNTER_CYCLE_256                  ((uint32_t)0x00000000)      /*!< 256 clock cycle */
+#define SWDT_COUNTER_CYCLE_256                  ((uint32_t)0x00000000ul)    /*!< 256 clock cycle */
 #define SWDT_COUNTER_CYCLE_4096                 ((uint32_t)SWDT_CR_PERI_0)  /*!< 4096 clock cycle */
 #define SWDT_COUNTER_CYCLE_16384                ((uint32_t)SWDT_CR_PERI_1)  /*!< 16384 clock cycle */
 #define SWDT_COUNTER_CYCLE_65536                ((uint32_t)SWDT_CR_PERI)    /*!< 65536 clock cycle */
@@ -130,7 +130,7 @@ typedef struct
  * @defgroup SWDT_Clock_Division SWDT Clock Division
  * @{
  */
-#define SWDT_CLOCK_DIV1                         ((uint32_t)0x00000000)         /*!< SWDTCLK */
+#define SWDT_CLOCK_DIV1                         ((uint32_t)0x00000000ul)       /*!< SWDTCLK */
 #define SWDT_CLOCK_DIV16                        ((uint32_t)SWDT_CR_CKS_2)      /*!< SWDTCLK/16 */
 #define SWDT_CLOCK_DIV32                        ((uint32_t)(SWDT_CR_CKS_0 | \
                                                             SWDT_CR_CKS_2))    /*!< SWDTCLK/32 */
@@ -151,7 +151,7 @@ typedef struct
  * @defgroup SWDT_Refresh_Percent_Range SWDT Refresh Percent Range
  * @{
  */
-#define SWDT_RANGE_100PCT                       ((uint32_t)0x00000000)         /*!< 100% */
+#define SWDT_RANGE_100PCT                       ((uint32_t)0x00000000ul)       /*!< 100% */
 #define SWDT_RANGE_0TO25PCT                     ((uint32_t)SWDT_CR_WDPT_0)     /*!< 0%~25% */
 #define SWDT_RANGE_25TO50PCT                    ((uint32_t)SWDT_CR_WDPT_1)     /*!< 25%~50% */
 #define SWDT_RANGE_0TO50PCT                     ((uint32_t)(SWDT_CR_WDPT_0 | \
@@ -190,7 +190,7 @@ typedef struct
  * @brief SWDT count control in the sleep/stop mode
  * @{
  */
-#define SWDT_LPW_MODE_COUNT_CONTINUE            ((uint32_t)0x00000000)      /*!< SWDT count continue in the sleep/stop mode */
+#define SWDT_LPW_MODE_COUNT_CONTINUE            ((uint32_t)0x00000000ul)    /*!< SWDT count continue in the sleep/stop mode */
 #define SWDT_LPW_MODE_COUNT_STOP                ((uint32_t)SWDT_CR_SLPOFF)  /*!< SWDT count stop in the sleep/stop mode */
 /**
  * @}
@@ -200,8 +200,8 @@ typedef struct
 * @defgroup SWDT_Trigger_Event_Type SWDT Trigger Event Type
 * @{
 */
-#define SWDT_TRIG_EVENT_INT                     ((uint32_t)0x00000000)   /*!< SWDT trigger interrupt */
-#define SWDT_TRIG_EVENT_RESET                   ((uint32_t)SWDT_CR_ITS)  /*!< SWDT trigger reset */
+#define SWDT_TRIG_EVENT_INT                     ((uint32_t)0x00000000ul)  /*!< SWDT trigger interrupt */
+#define SWDT_TRIG_EVENT_RESET                   ((uint32_t)SWDT_CR_ITS)   /*!< SWDT trigger reset */
 /**
  * @}
  */

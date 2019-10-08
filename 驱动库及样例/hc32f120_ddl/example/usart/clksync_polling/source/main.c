@@ -74,47 +74,44 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* Key Port/Pin definition */
-#define KEY_PORT                        GPIO_PORT_7
-#define KEY_PIN                         GPIO_PIN_0
+#define KEY_PORT                        (GPIO_PORT_7)
+#define KEY_PIN                         (GPIO_PIN_0)
 
 /* Red LED Port/Pin definition */
-#define LED_R_PORT                      GPIO_PORT_2
-#define LED_R_PIN                       GPIO_PIN_5
-#define LED_R_ON()                      GPIO_ResetPins(LED_R_PORT, LED_R_PIN)
+#define LED_R_PORT                      (GPIO_PORT_2)
+#define LED_R_PIN                       (GPIO_PIN_5)
+#define LED_R_ON()                      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
 
 /* Green LED Port/Pin definition */
-#define LED_G_PORT                      GPIO_PORT_2
-#define LED_G_PIN                       GPIO_PIN_6
-#define LED_G_ON()                      GPIO_ResetPins(LED_G_PORT, LED_G_PIN)
+#define LED_G_PORT                      (GPIO_PORT_2)
+#define LED_G_PIN                       (GPIO_PIN_6)
+#define LED_G_ON()                      (GPIO_ResetPins(LED_G_PORT, LED_G_PIN))
 
 /* CLKSYNC CK/RX/TX Port/Pin definition */
-#define CLKSYNC_CK_PORT                 GPIO_PORT_3
-#define CLKSYNC_CK_PIN                  GPIO_PIN_0      /* P30: USART2_CK_A */
+#define CLKSYNC_CK_PORT                 (GPIO_PORT_3)
+#define CLKSYNC_CK_PIN                  (GPIO_PIN_0)      /* P30: USART2_CK_A */
 
-#define CLKSYNC_RX_PORT                 GPIO_PORT_0
-#define CLKSYNC_RX_PIN                  GPIO_PIN_1      /* P01: USART2_RX_B */
+#define CLKSYNC_RX_PORT                 (GPIO_PORT_0)
+#define CLKSYNC_RX_PIN                  (GPIO_PIN_1)      /* P01: USART2_RX_B */
 
-#define CLKSYNC_TX_PORT                 GPIO_PORT_0
-#define CLKSYNC_TX_PIN                  GPIO_PIN_0      /* P00: USART2_TX_B */
+#define CLKSYNC_TX_PORT                 (GPIO_PORT_0)
+#define CLKSYNC_TX_PIN                  (GPIO_PIN_0)      /* P00: USART2_TX_B */
 
 /* USART unit definition */
-#define CLKSYNC_UNIT                    M0P_USART2
+#define CLKSYNC_UNIT                    (M0P_USART2)
 
 /* Function clock gate definition  */
-#define FUNCTION_CLK_GATE               CLK_FCG_UART2
+#define FUNCTION_CLK_GATE               (CLK_FCG_UART2)
 
 /* Timeout max definition  */
-#define TIMEOUT_MAX                     0xFFFFFFFFU
-
-/* Size of Reception buffer */
-#define RX_BUF_SIZE                     (ARRAY_SZ(m_u8TxBuffer))
+#define TIMEOUT_MAX                     (0xFFFFFFFFul)
 
 /* CLKSYNC device mode definition */
 #define CLKSYNC_MASTER_MODE             (0u)
 #define CLKSYNC_SLAVE_MODE              (1u)
 
 /* USART master or slave mode selection */
-#define CLKSYNC_DEVICE_MODE             CLKSYNC_MASTER_MODE
+#define CLKSYNC_DEVICE_MODE             (CLKSYNC_MASTER_MODE)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -131,21 +128,15 @@ static en_result_t USART_WaitOnFlagUntilTimeout(M0P_USART_TypeDef *USARTx,
                                                 uint32_t u32TickStart,
                                                 uint32_t u32Timeout);
 static en_result_t CLKSYNC_TransmitReceive(M0P_USART_TypeDef *USARTx,
-                                           uint8_t *pu8TxData,
-                                           uint8_t *pu8RxData,
+                                           const uint8_t au8TxData[],
+                                           uint8_t au8RxData[],
                                            uint32_t u32Size,
                                            uint32_t u32Timeout);
 
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-static stc_clksync_init_t m_stcClksyncInit;
 
-/* Buffer used for transmission */
-static uint8_t m_u8TxBuffer[] = "CLKSYNC TX/RX example: Communication between two boards using usart interface!";
-
-/* Buffer used for reception */
-static uint8_t m_u8RxBuffer[RX_BUF_SIZE];
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -203,76 +194,91 @@ static en_result_t USART_WaitOnFlagUntilTimeout(M0P_USART_TypeDef *USARTx,
                                                 uint32_t u32TickStart,
                                                 uint32_t u32Timeout)
 {
+    en_result_t enRet = Ok;
+
     /* Wait until flag is set */
     while((USART_GetFlag(USARTx, u32Flag) ? Set : Reset) == enStatus)
     {
         /* Check for the Timeout */
-        if (u32Timeout != TIMEOUT_MAX)
+        if (TIMEOUT_MAX - u32Timeout)
         {
-            if ((u32Timeout == 0U) || ((SysTick_GetTick() - u32TickStart) > u32Timeout))
+            if (((SysTick_GetTick() - u32TickStart) > u32Timeout) || (!u32Timeout))
             {
-                return ErrorTimeout;
+                enRet = ErrorTimeout;
+                break;
             }
         }
     }
 
-    return Ok;
+    return enRet;
 }
 
 /**
  * @brief  Send && receive an amount of data in full-duplex mode (blocking mode).
  * @param  [in] USARTx                  Pointer to a USART instance.
- * @param  [in] pu8TxData               Pointer to data transmitted buffer
- * @param  [out] pu8RxData              Pointer to data received buffer
+ * @param  [in] au8TxData               Data transmitted buffer
+ * @param  [out] au8RxData              Data received buffer
  * @param  [in] u32Size                 Amount of data to be sent
  * @param  [in] u32Timeout              Timeout duration
  * @retval An en_result_t enumeration value:
  *           - Ok: success
- *           - ErrorInvalidParameter: USARTx/pu8TxData/pu8RxData/u16Size is invalid
+ *           - ErrorInvalidParameter: USARTx/au8TxData/au8RxData/u16Size is invalid
  */
 static en_result_t CLKSYNC_TransmitReceive(M0P_USART_TypeDef *USARTx,
-                                           uint8_t *pu8TxData,
-                                           uint8_t *pu8RxData,
+                                           const uint8_t au8TxData[],
+                                           uint8_t au8RxData[],
                                            uint32_t u32Size,
                                            uint32_t u32Timeout)
 {
+    uint32_t i = 0ul;
     uint32_t u32Flag;
-    uint32_t u32TickStart = 0U;
+    uint32_t u32TickStart = 0ul;
     uint32_t u32XferCount = u32Size;
+    en_result_t enRet = ErrorInvalidParameter;
 
-    if((USARTx == NULL) || (pu8TxData == NULL) || (pu8RxData == NULL) || (u32Size == 0U))
+    if((USARTx) && (au8TxData) && (au8RxData) && (u32Size))
     {
-        return ErrorInvalidParameter;
+        enRet = Ok;
+
+        /* Init tickstart for timeout managment */
+        u32TickStart = SysTick_GetTick();
+
+        /* Check the remain data to be received */
+        while (u32XferCount > 0ul)
+        {
+            u32XferCount--;
+
+            /* Wait for TX empty or TX complete flag in order to write data in DR */
+            u32Flag = (USART_INTCLK_OUTPUT == USART_GetClockMode(USARTx)) ? USART_FLAG_TC : USART_FLAG_TXE;
+            if (USART_WaitOnFlagUntilTimeout(USARTx, u32Flag, Reset, u32TickStart, u32Timeout) != Ok)
+            {
+                enRet = ErrorTimeout;
+            }
+            else
+            {
+                USART_SendData(USARTx, (uint16_t)(au8TxData[i]));
+
+                /* Wait for RXNE Flag */
+                if (USART_WaitOnFlagUntilTimeout(USARTx, USART_FLAG_RXNE, Reset, u32TickStart, u32Timeout) != Ok)
+                {
+                    enRet = ErrorTimeout;
+                }
+                else
+                {
+                    /* Receive data */
+                    au8RxData[i] = (uint8_t)USART_RecData(USARTx);
+                }
+                i++;
+            }
+
+            if (enRet != Ok)
+            {
+                break;
+            }
+        }
     }
 
-    /* Init tickstart for timeout managment */
-    u32TickStart = SysTick_GetTick();
-
-    /* Check the remain data to be received */
-    while (u32XferCount > 0U)
-    {
-        u32XferCount--;
-
-        /* Wait for TX empty or TX complete flag in order to write data in DR */
-        u32Flag = (USART_INTCLK_OUTPUT == USART_GetClockMode(USARTx)) ? USART_FLAG_TC : USART_FLAG_TXE;
-        if (USART_WaitOnFlagUntilTimeout(USARTx, u32Flag, Reset, u32TickStart, u32Timeout) != Ok)
-        {
-            return ErrorTimeout;
-        }
-
-        USART_SendData(USARTx, *pu8TxData++);
-
-        /* Wait for RXNE Flag */
-        if (USART_WaitOnFlagUntilTimeout(USARTx, USART_FLAG_RXNE, Reset, u32TickStart, u32Timeout) != Ok)
-        {
-            return ErrorTimeout;
-        }
-
-        /* Receive data */
-        *pu8RxData++ = (uint8_t)USART_RecData(USARTx);
-    }
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -282,28 +288,38 @@ static en_result_t CLKSYNC_TransmitReceive(M0P_USART_TypeDef *USARTx,
  */
 int32_t main(void)
 {
+    stc_clksync_init_t stcClksyncInit;
+    /* Buffer used for transmission */
+    char au8TxBuffer[] = "CLKSYNC TX/RX example: Communication between two boards using usart interface!";
+    /* Buffer used for reception */
+    uint8_t au8RxBuffer[(ARRAY_SZ(au8TxBuffer))];
+
     /* Configure system clock. */
     SystemClockConfig();
 
     /* Configure system tick. */
-    SysTick_Init(100);
+    SysTick_Init(100ul);
 
     /* Configure LED pin. */
     LedConfig();
 
     /* Configure USART RX/TX pin. */
-    GPIO_SetFunc(CLKSYNC_CK_PORT, CLKSYNC_CK_PIN, GPIO_FUNC_USART);
-    GPIO_SetFunc(CLKSYNC_RX_PORT, CLKSYNC_RX_PIN, GPIO_FUNC_USART);
-    GPIO_SetFunc(CLKSYNC_TX_PORT, CLKSYNC_TX_PIN, GPIO_FUNC_USART);
+    GPIO_SetFunc(CLKSYNC_CK_PORT, CLKSYNC_CK_PIN, GPIO_FUNC_3_USART);
+    GPIO_SetFunc(CLKSYNC_RX_PORT, CLKSYNC_RX_PIN, GPIO_FUNC_3_USART);
+    GPIO_SetFunc(CLKSYNC_TX_PORT, CLKSYNC_TX_PIN, GPIO_FUNC_3_USART);
 
     /* Enable peripheral clock */
     CLK_FcgPeriphClockCmd(FUNCTION_CLK_GATE, Enable);
 
     /* Initialize CLKSYNC function. */
-    m_stcClksyncInit.u32Baudrate = 38400;
-    m_stcClksyncInit.u32BitDirection = USART_LSB;
-    m_stcClksyncInit.u32ClkMode = (CLKSYNC_DEVICE_MODE == CLKSYNC_MASTER_MODE) ? USART_INTCLK_OUTPUT : USART_EXTCLK;
-    USART_ClkSyncInit(CLKSYNC_UNIT, &m_stcClksyncInit);
+    USART_ClkSyncStructInit(&stcClksyncInit);
+    stcClksyncInit.u32Baudrate = 38400ul;
+#if (CLKSYNC_DEVICE_MODE == CLKSYNC_MASTER_MODE)
+    stcClksyncInit.u32ClkMode = USART_INTCLK_OUTPUT;
+#else
+    stcClksyncInit.u32ClkMode = USART_EXTCLK;
+#endif
+    USART_ClkSyncInit(CLKSYNC_UNIT, &stcClksyncInit);
 
     /* Enable RX/TX function */
     USART_FuncCmd(CLKSYNC_UNIT, (USART_RX | USART_TX), Enable);
@@ -314,10 +330,10 @@ int32_t main(void)
     }
 
     /* Start the transmission process*/
-    CLKSYNC_TransmitReceive(CLKSYNC_UNIT, m_u8TxBuffer, m_u8RxBuffer, RX_BUF_SIZE, TIMEOUT_MAX);
+    CLKSYNC_TransmitReceive(CLKSYNC_UNIT, (uint8_t *)au8TxBuffer, au8RxBuffer, (ARRAY_SZ(au8TxBuffer)), TIMEOUT_MAX);
 
     /* Compare m_u8TxBuffer and m_u8RxBuffer data */
-    if (memcmp(m_u8TxBuffer, m_u8RxBuffer, RX_BUF_SIZE) == 0)
+    if (memcmp(au8TxBuffer, au8RxBuffer, (ARRAY_SZ(au8TxBuffer))) == 0)
     {
         LED_G_ON();
     }

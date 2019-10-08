@@ -73,16 +73,16 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* LED_R Port/Pin definition */
-#define LED_R_PORT                      GPIO_PORT_2
-#define LED_R_PIN                       GPIO_PIN_5
+#define LED_R_PORT                      (GPIO_PORT_2)
+#define LED_R_PIN                       (GPIO_PIN_5)
 
-#define LED_R_ON()                      GPIO_ResetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_OFF()                     GPIO_SetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_TOGGLE()                  GPIO_TogglePins(LED_R_PORT, LED_R_PIN)
+#define LED_R_ON()                      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_OFF()                     (GPIO_SetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_TOGGLE()                  (GPIO_TogglePins(LED_R_PORT, LED_R_PIN))
 
 /* Clock output Port/Pin definition */
-#define MCO_PORT                        GPIO_PORT_1
-#define MCO_PIN                         GPIO_PIN_5
+#define MCO_PORT                        (GPIO_PORT_1)
+#define MCO_PIN                         (GPIO_PIN_5)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -114,12 +114,12 @@ void SysTick_IrqHandler(void)
  * @param  None
  * @retval None
  */
-void Clock_OutputConfig(void)
+static void Clock_OutputConfig(void)
 {
     /* Configure clock output system clock */
     CLK_MCOConfig(CLK_MCOSOURCCE_HRC, CLK_MCODIV_1);
     /* Configure clock output pin */
-    GPIO_SetFunc(MCO_PORT, MCO_PIN, GPIO_FUNC_PULBUZ);
+    GPIO_SetFunc(MCO_PORT, MCO_PIN, GPIO_FUNC_1_PULBUZ);
 }
 
 /**
@@ -134,7 +134,7 @@ int32_t main(void)
      @brief Modify hc32f120_icg.h file of define
      @verbatim
      #define ICG0_HRC_HARDWARE_START    ICG_FUNCTION_ON
-     
+
      #define ICG0_HRC_REQS              ICG_HRC_FREQ_16MHZ
      @endverbatim
      ***************************************************************************
@@ -152,7 +152,7 @@ int32_t main(void)
     /* Configure clock output */
     Clock_OutputConfig();
     /* Init system tick */
-    SysTick_Init(1);    // 1S
+    SysTick_Init(1ul);    /* 1S */
 
     while (1)
     {

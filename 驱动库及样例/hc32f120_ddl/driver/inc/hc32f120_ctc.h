@@ -125,10 +125,10 @@ typedef struct stc_ctc_init
  *           - 0xXXXXXXXX  : Flag mask in the CTC_STR register
  * @{
  */
-#define CTC_FLAG_TRMOK                          CTC_STR_TRIMOK  /*!< Trimming OK flag */
-#define CTC_FLAG_TRMOVF                         CTC_STR_TRMOVF  /*!< Trimming overflow flag */
-#define CTC_FLAG_TRMUDF                         CTC_STR_TRMUDF  /*!< Trimming underflow flag */
-#define CTC_FLAG_BUSY                           CTC_STR_CTCBSY  /*!< CTC busy flag */
+#define CTC_FLAG_TRMOK                          (CTC_STR_TRIMOK)    /*!< Trimming OK flag */
+#define CTC_FLAG_TRMOVF                         (CTC_STR_TRMOVF)    /*!< Trimming overflow flag */
+#define CTC_FLAG_TRMUDF                         (CTC_STR_TRMUDF)    /*!< Trimming underflow flag */
+#define CTC_FLAG_BUSY                           (CTC_STR_CTCBSY)    /*!< CTC busy flag */
 /**
  * @}
  */
@@ -137,14 +137,17 @@ typedef struct stc_ctc_init
  * @defgroup CTC_Reference_Clock_Prescaler_Division CTC Reference Clock Prescaler Division
  * @{
  */
-#define CTC_REFCLK_PRESCALER_DIV8               ((uint32_t)0x00000000)                  /*!< REFCLK/8 */
-#define CTC_REFCLK_PRESCALER_DIV32              CTC_CR1_REFPSC_0                        /*!< REFCLK/32 */
-#define CTC_REFCLK_PRESCALER_DIV128             CTC_CR1_REFPSC_1                        /*!< REFCLK/128 */
-#define CTC_REFCLK_PRESCALER_DIV256             (CTC_CR1_REFPSC_1 | CTC_CR1_REFPSC_0)   /*!< REFCLK/256 */
-#define CTC_REFCLK_PRESCALER_DIV512             CTC_CR1_REFPSC_2                        /*!< REFCLK/512 */
-#define CTC_REFCLK_PRESCALER_DIV1024            (CTC_CR1_REFPSC_2 | CTC_CR1_REFPSC_0)   /*!< REFCLK/1024 */
-#define CTC_REFCLK_PRESCALER_DIV2048            (CTC_CR1_REFPSC_2 | CTC_CR1_REFPSC_1)   /*!< REFCLK/2048 */
-#define CTC_REFCLK_PRESCALER_DIV4096            CTC_CR1_REFPSC                          /*!< REFCLK/4096 */
+#define CTC_REFCLK_PRESCALER_DIV8               ((uint32_t)0x00000000ul)        /*!< REFCLK/8 */
+#define CTC_REFCLK_PRESCALER_DIV32              (CTC_CR1_REFPSC_0)              /*!< REFCLK/32 */
+#define CTC_REFCLK_PRESCALER_DIV128             (CTC_CR1_REFPSC_1)              /*!< REFCLK/128 */
+#define CTC_REFCLK_PRESCALER_DIV256             (CTC_CR1_REFPSC_1 |            \
+                                                 CTC_CR1_REFPSC_0)              /*!< REFCLK/256 */
+#define CTC_REFCLK_PRESCALER_DIV512             (CTC_CR1_REFPSC_2)                      /*!< REFCLK/512 */
+#define CTC_REFCLK_PRESCALER_DIV1024            (CTC_CR1_REFPSC_2 |            \
+                                                 CTC_CR1_REFPSC_0)              /*!< REFCLK/1024 */
+#define CTC_REFCLK_PRESCALER_DIV2048            (CTC_CR1_REFPSC_2 |            \
+                                                 CTC_CR1_REFPSC_1)              /*!< REFCLK/2048 */
+#define CTC_REFCLK_PRESCALER_DIV4096            (CTC_CR1_REFPSC)                /*!< REFCLK/4096 */
 /**
  * @}
  */
@@ -153,9 +156,9 @@ typedef struct stc_ctc_init
  * @defgroup CTC_Reference_Clock_Selection CTC Reference Clock Selection
  * @{
  */
-#define CTC_REFCLK_CTCREF                       CTC_CR1_REFCKS_0    /*!< Clock source: CTCREF */
-#define CTC_REFCLK_XTAL32                       CTC_CR1_REFCKS_1    /*!< Clock source: XTAL32 */
-#define CTC_REFCLK_XTAL                         CTC_CR1_REFCKS      /*!< Clock source: XTAL */
+#define CTC_REFCLK_CTCREF                       (CTC_CR1_REFCKS_0)  /*!< Clock source: CTCREF */
+#define CTC_REFCLK_XTAL32                       (CTC_CR1_REFCKS_1)  /*!< Clock source: XTAL32 */
+#define CTC_REFCLK_XTAL                         (CTC_CR1_REFCKS)    /*!< Clock source: XTAL */
 /**
  * @}
  */
@@ -164,7 +167,7 @@ typedef struct stc_ctc_init
  * @defgroup CTC_Default_Tolerance_Bias CTC Default Tolerance Bias definition
  * @{
  */
-#define CTC_DEFAULT_TOLERANCE_BIAS              (0.02)              /*!< CTC default tolerance bias: 2% */
+#define CTC_DEFAULT_TOLERANCE_BIAS              (0.02f)             /*!< CTC default tolerance bias: 2% */
 /**
  * @}
  */
@@ -173,19 +176,19 @@ typedef struct stc_ctc_init
  * @defgroup CTC_Trimming_HRC_Frequency CTC Trimming HRC Frequency definition
  * @{
  */
-#define CTC_TRIMMING_HRC_1MHZ                   ((uint32_t)1000000)     /*!< CTC Trimming 1MHz */
-#define CTC_TRIMMING_HRC_2MHZ                   ((uint32_t)2000000)     /*!< CTC Trimming 2MHz */
-#define CTC_TRIMMING_HRC_4MHZ                   ((uint32_t)4000000)     /*!< CTC Trimming 4MHz */
-#define CTC_TRIMMING_HRC_8MHZ                   ((uint32_t)8000000)     /*!< CTC Trimming 8MHz */
-#define CTC_TRIMMING_HRC_16MHZ                  ((uint32_t)16000000)    /*!< CTC Trimming 16MHz */
-#define CTC_TRIMMING_HRC_32MHZ                  ((uint32_t)32000000)    /*!< CTC Trimming 32MHz */
+#define CTC_TRIMMING_HRC_1MHZ                   ((uint32_t)1000000ul)   /*!< CTC Trimming 1MHz */
+#define CTC_TRIMMING_HRC_2MHZ                   ((uint32_t)2000000ul)   /*!< CTC Trimming 2MHz */
+#define CTC_TRIMMING_HRC_4MHZ                   ((uint32_t)4000000ul)   /*!< CTC Trimming 4MHz */
+#define CTC_TRIMMING_HRC_8MHZ                   ((uint32_t)8000000ul)   /*!< CTC Trimming 8MHz */
+#define CTC_TRIMMING_HRC_16MHZ                  ((uint32_t)16000000ul)  /*!< CTC Trimming 16MHz */
+#define CTC_TRIMMING_HRC_32MHZ                  ((uint32_t)32000000ul)  /*!< CTC Trimming 32MHz */
 
-#define CTC_TRIMMING_HRC_1P5MHZ                 ((uint32_t)1500000)     /*!< CTC Trimming 1.5MHz */
-#define CTC_TRIMMING_HRC_3MHZ                   ((uint32_t)3000000)     /*!< CTC Trimming 3MHz */
-#define CTC_TRIMMING_HRC_6MHZ                   ((uint32_t)6000000)     /*!< CTC Trimming 6MHz */
-#define CTC_TRIMMING_HRC_12MHZ                  ((uint32_t)12000000)    /*!< CTC Trimming 12MHz */
-#define CTC_TRIMMING_HRC_24MHZ                  ((uint32_t)24000000)    /*!< CTC Trimming 24MHz */
-#define CTC_TRIMMING_HRC_48MHZ                  ((uint32_t)48000000)    /*!< CTC Trimming 48MHz */
+#define CTC_TRIMMING_HRC_1P5MHZ                 ((uint32_t)1500000ul)   /*!< CTC Trimming 1.5MHz */
+#define CTC_TRIMMING_HRC_3MHZ                   ((uint32_t)3000000ul)   /*!< CTC Trimming 3MHz */
+#define CTC_TRIMMING_HRC_6MHZ                   ((uint32_t)6000000ul)   /*!< CTC Trimming 6MHz */
+#define CTC_TRIMMING_HRC_12MHZ                  ((uint32_t)12000000ul)  /*!< CTC Trimming 12MHz */
+#define CTC_TRIMMING_HRC_24MHZ                  ((uint32_t)24000000ul)  /*!< CTC Trimming 24MHz */
+#define CTC_TRIMMING_HRC_48MHZ                  ((uint32_t)48000000ul)  /*!< CTC Trimming 48MHz */
 /**
  * @}
  */

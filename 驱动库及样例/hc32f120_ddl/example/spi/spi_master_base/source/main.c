@@ -72,71 +72,65 @@
 /*******************************************************************************
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
-/* Enable SPI peripheral. */
-#define ENABLE_SPI()                CLK_FcgPeriphClockCmd(CLK_FCG_SPI, Enable)
-
-/* Disable SPI peripheral. */
-#define DISABLE_SPI()               CLK_FcgPeriphClockCmd(CLK_FCG_SPI, Disable)
-
 /* Slave test definition. */
 #define SLAVE_TEST
 
 /* SPI pin group definition. */
-#define SPI_PIN_GROUP_A             1u
-#define SPI_PIN_GROUP_B             2u
-#define SPI_PIN_GROUP_C             3u
-#define SPI_PIN_GROUP               SPI_PIN_GROUP_B
+#define SPI_PIN_GROUP_A             (1u)
+#define SPI_PIN_GROUP_B             (2u)
+#define SPI_PIN_GROUP_C             (3u)
+#define SPI_PIN_GROUP               (SPI_PIN_GROUP_B)
 
 #if (SPI_PIN_GROUP == SPI_PIN_GROUP_A)
-#define SPI_NSS_PORT                GPIO_PORT_1
-#define SPI_NSS_PIN                 GPIO_PIN_7
-#define SPI_SCK_PORT                GPIO_PORT_5
-#define SPI_SCK_PIN                 GPIO_PIN_1
-#define SPI_MOSI_PORT               GPIO_PORT_1
-#define SPI_MOSI_PIN                GPIO_PIN_5
-#define SPI_MISO_PORT               GPIO_PORT_1
-#define SPI_MISO_PIN                GPIO_PIN_6
+#define SPI_NSS_PORT                (GPIO_PORT_1)
+#define SPI_NSS_PIN                 (GPIO_PIN_7)
+#define SPI_SCK_PORT                (GPIO_PORT_5)
+#define SPI_SCK_PIN                 (GPIO_PIN_1)
+#define SPI_MOSI_PORT               (GPIO_PORT_1)
+#define SPI_MOSI_PIN                (GPIO_PIN_5)
+#define SPI_MISO_PORT               (GPIO_PORT_1)
+#define SPI_MISO_PIN                (GPIO_PIN_6)
 #elif (SPI_PIN_GROUP == SPI_PIN_GROUP_B)
-#define SPI_NSS_PORT                GPIO_PORT_2
-#define SPI_NSS_PIN                 GPIO_PIN_2
-#define SPI_SCK_PORT                GPIO_PORT_2
-#define SPI_SCK_PIN                 GPIO_PIN_3
-#define SPI_MOSI_PORT               GPIO_PORT_2
-#define SPI_MOSI_PIN                GPIO_PIN_0
-#define SPI_MISO_PORT               GPIO_PORT_2
-#define SPI_MISO_PIN                GPIO_PIN_1
+#define SPI_NSS_PORT                (GPIO_PORT_2)
+#define SPI_NSS_PIN                 (GPIO_PIN_2)
+#define SPI_SCK_PORT                (GPIO_PORT_2)
+#define SPI_SCK_PIN                 (GPIO_PIN_3)
+#define SPI_MOSI_PORT               (GPIO_PORT_2)
+#define SPI_MOSI_PIN                (GPIO_PIN_0)
+#define SPI_MISO_PORT               (GPIO_PORT_2)
+#define SPI_MISO_PIN                (GPIO_PIN_1)
 #else
-#define SPI_NSS_PORT                GPIO_PORT_6
-#define SPI_NSS_PIN                 GPIO_PIN_3
-#define SPI_SCK_PORT                GPIO_PORT_7
-#define SPI_SCK_PIN                 GPIO_PIN_3
-#define SPI_MOSI_PORT               GPIO_PORT_7
-#define SPI_MOSI_PIN                GPIO_PIN_1
-#define SPI_MISO_PORT               GPIO_PORT_7
-#define SPI_MISO_PIN                GPIO_PIN_2
+#define SPI_NSS_PORT                (GPIO_PORT_6)
+#define SPI_NSS_PIN                 (GPIO_PIN_3)
+#define SPI_SCK_PORT                (GPIO_PORT_7)
+#define SPI_SCK_PIN                 (GPIO_PIN_3)
+#define SPI_MOSI_PORT               (GPIO_PORT_7)
+#define SPI_MOSI_PIN                (GPIO_PIN_1)
+#define SPI_MISO_PORT               (GPIO_PORT_7)
+#define SPI_MISO_PIN                (GPIO_PIN_2)
 #endif // #if (SPI_PIN_GROUP == SPI_PIN_GROUP_A)
 
 /* SPI wire mode definition. */
-#define SPI_APP_3_WIRE              3u
-#define SPI_APP_4_WIRE              4u
-#define SPI_APP_X_WIRE              SPI_APP_4_WIRE
+#define SPI_APP_3_WIRE              (3u)
+#define SPI_APP_4_WIRE              (4u)
+#define SPI_APP_X_WIRE              (SPI_APP_4_WIRE)
 
 #if (SPI_APP_X_WIRE == SPI_APP_4_WIRE)
-#define SPI_WIRE_MODE               SPI_WIRE_4
-#define SPI_SPI_MODE                SPI_MODE_0  /*!< Depends on your application. */
+#define SPI_WIRE_MODE               (SPI_WIRE_4)
+#define SPI_SPI_MODE                (SPI_MODE_0)    /*!< Depends on your application. */
 #else
-#define SPI_WIRE_MODE               SPI_WIRE_3
+#define SPI_WIRE_MODE               (SPI_WIRE_3)
 #ifdef SLAVE_TEST
-#define SPI_SPI_MODE                SPI_MODE_1  /*!< HC32F120: Only SPI_MODE_1 and SPI_MODE_3 can be used in 3-wire slave mode. */
+#define SPI_SPI_MODE                (SPI_MODE_1)    /*!< HC32F120: Only SPI_MODE_1 and SPI_MODE_3 can be used in 3-wire slave mode. */
 #else
-#define SPI_SPI_MODE                SPI_MODE_1  /*!< Depends on your application. */
+#define SPI_SPI_MODE                (SPI_MODE_1)    /*!< Depends on your application. */
 #endif
 //#define SPI_APP_CUSTOM_NSS
 #endif // #if (SPI_APP_X_WIRE == SPI_APP_4_WIRE)
 
 #ifdef SPI_APP_CUSTOM_NSS
-#define SPI_CUSTOM_NSS_PORT         GPIO_PORT_6
-#define SPI_CUSTOM_NSS_PIN          GPIO_PIN_3
+#define SPI_CUSTOM_NSS_PORT         (GPIO_PORT_6)
+#define SPI_CUSTOM_NSS_PIN          (GPIO_PIN_3)
 
 //#define SPI_APP_RECEIVE_WHILE_TRANSMIT
 #endif // #ifdef SPI_APP_CUSTOM_NSS
@@ -146,15 +140,15 @@
 #define SPI_APP_SEND_ONLY           (1u)        /*!< Send only. */
 #define SPI_APP_FULL_DUPLEX         (2u)        /*!< Send and receive. */
 #ifdef SLAVE_TEST
-#define SPI_APP_TRANS_MODE          SPI_APP_FULL_DUPLEX
+#define SPI_APP_TRANS_MODE          (SPI_APP_FULL_DUPLEX)
 #else
-#define SPI_APP_TRANS_MODE          SPI_APP_FULL_DUPLEX
+#define SPI_APP_TRANS_MODE          (SPI_APP_FULL_DUPLEX)
 #endif
 
 #if (SPI_APP_TRANS_MODE == SPI_APP_FULL_DUPLEX)
-#define SPI_TRANS_MODE              SPI_FULL_DUPLEX
+#define SPI_TRANS_MODE              (SPI_FULL_DUPLEX)
 #else
-#define SPI_TRANS_MODE              SPI_SEND_ONLY
+#define SPI_TRANS_MODE              (SPI_SEND_ONLY)
 #endif // #if (SPI_APP_TRANS_MODE == SPI_APP_FULL_DUPLEX)
 
 
@@ -162,30 +156,30 @@
 #ifdef SLAVE_TEST
 /* The maximum transmission baud rate of the slave is 6 divisions of its PCLK.
    Master baud rate depends on slave PCLK frequency. */
-#define SPI_BR_DIV                  SPI_BR_DIV_8
+#define SPI_BR_DIV                  (SPI_BR_DIV_8)
 #else
-#define SPI_BR_DIV                  SPI_BR_DIV_8
+#define SPI_BR_DIV                  (SPI_BR_DIV_8)
 #endif
 
 
 /* SPI NSS pin active level definition. */
-#define SPI_NSS_ACTIVE_LO           0u
-#define SPI_NSS_ACTIVE_HI           1u
-#define SPI_NSS_ACTIVE_LEVEL        SPI_NSS_ACTIVE_LO
+#define SPI_NSS_ACTIVE_LO           (0u)
+#define SPI_NSS_ACTIVE_HI           (1u)
+#define SPI_NSS_ACTIVE_LEVEL        (SPI_NSS_ACTIVE_LO)
 
 #if (SPI_NSS_ACTIVE_LEVEL == SPI_NSS_ACTIVE_LO)
-#define SPI_NSS_ACTIVE              SPI_NSS_ACTIVE_LOW
+#define SPI_NSS_ACTIVE              (SPI_NSS_ACTIVE_LOW)
 #else
-#define SPI_NSS_ACTIVE              SPI_NSS_ACTIVE_HIGH
+#define SPI_NSS_ACTIVE              (SPI_NSS_ACTIVE_HIGH)
 #endif
 
 
 /* SPI data buffer size definition. */
-#define SPI_BUFFER_LENGTH           6u
+#define SPI_BUFFER_LENGTH           (6u)
 #ifdef SLAVE_TEST
-#define SPI_WRITE_SLAVE             0x51u       /*!< Customer definition. */
-#define SPI_READ_SLAVE              0x56u       /*!< Customer definition. */
-#define SPI_TX_BUFFER_LENGTH        SPI_BUFFER_LENGTH
+#define SPI_WRITE_SLAVE             (0x51u)         /*!< Customer definition. */
+#define SPI_READ_SLAVE              (0x56u)         /*!< Customer definition. */
+#define SPI_TX_BUFFER_LENGTH        (SPI_BUFFER_LENGTH)
 #define SPI_RX_BUFFER_LENGTH        (SPI_TX_BUFFER_LENGTH + 2u)
 #endif
 
@@ -304,6 +298,9 @@ int32_t main(void)
  */
 static void SystemClockConfig(void)
 {
+    /* Set EFM read latency when system clock greater than 24MHz. */
+    EFM_SetLatency(EFM_LATENCY_1);
+
     /* Configure the system clock to HRC32MHz. */
     CLK_HRCInit(CLK_HRC_ON, CLK_HRCFREQ_32);
 }
@@ -328,20 +325,20 @@ static void SpiConfig(void)
     stcInit.u32BaudRatePrescaler = SPI_BR_DIV;
 
     /* The SPI register can be written only after the SPI peripheral is enabled. */
-    ENABLE_SPI();
+    CLK_FcgPeriphClockCmd(CLK_FCG_SPI, Enable);
 
     /* Initializes SPI. */
     SPI_Init(&stcInit);
 
     /* Set the pins to SPI function. */
 #if (SPI_APP_X_WIRE == SPI_APP_4_WIRE)
-    GPIO_SetFunc(SPI_NSS_PORT, SPI_NSS_PIN, GPIO_FUNC_SPI);
+    GPIO_SetFunc(SPI_NSS_PORT, SPI_NSS_PIN, GPIO_FUNC_4_SPI);
 #elif defined SPI_APP_CUSTOM_NSS
     SpiInitNssPin();
 #endif // #if (SPI_APP_X_WIRE == SPI_APP_4_WIRE)
-    GPIO_SetFunc(SPI_SCK_PORT, SPI_SCK_PIN, GPIO_FUNC_SPI);
-    GPIO_SetFunc(SPI_MOSI_PORT, SPI_MOSI_PIN, GPIO_FUNC_SPI);
-    GPIO_SetFunc(SPI_MISO_PORT, SPI_MISO_PIN, GPIO_FUNC_SPI);
+    GPIO_SetFunc(SPI_SCK_PORT, SPI_SCK_PIN, GPIO_FUNC_4_SPI);
+    GPIO_SetFunc(SPI_MOSI_PORT, SPI_MOSI_PIN, GPIO_FUNC_4_SPI);
+    GPIO_SetFunc(SPI_MISO_PORT, SPI_MISO_PIN, GPIO_FUNC_4_SPI);
 
     /* Enable SPI function. */
     SPI_FunctionCmd(Enable);

@@ -115,16 +115,14 @@
       <TargetDriverDllRegistry>
         <SetRegEntry>
           <Number>0</Number>
-          <Key>JL2CM3</Key>
-          <Name>-U158007610 -O78 -S2 -ZTIFSpeedSel5000 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -RST2 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO7 -FD20000000 -FC1000 -FN1 -FF0HC32F120 -FS00 -FL080000 -FP0($$Device:HC32F120H8TA$Flash\HC32F120.FLM)</Name>
+          <Key>UL2CM3</Key>
+          <Name>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN2 -FF0HC32F120 -FS00 -FL010000 -FF1FlashHC32F120 -FS10 -FL110000 -FP0($$Device:HC32F120H8TA$FlashARM\HC32F120.FLM) -FP1($$Device:HC32F120H8TA$FlashIAR\FlashHC32F120.flash))</Name>
         </SetRegEntry>
-        <!--
         <SetRegEntry>
           <Number>0</Number>
-          <Key>UL2CM3</Key>
-          <Name>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0NEW_DEVICE -FS00 -FL040000 -FP0($$Device:ARMCM0P$Device\ARM\Flash\NEW_DEVICE.FLM))</Name>
+          <Key>JL2CM3</Key>
+          <Name>-U730000000 -O78 -S2 -ZTIFSpeedSel5000 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -RST2 -N00("ARM CoreSight SW-DP") -D00(0BC11477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO7 -FD20000000 -FC1000 -FN1 -FF0HC32F120 -FS00 -FL010000 -FP0($$Device:HC32F120H8TA$FlashARM\HC32F120.FLM)</Name>
         </SetRegEntry>
-        -->
       </TargetDriverDllRegistry>
       <Breakpoint/>
       <Tracepoint>
@@ -215,7 +213,7 @@
       <OPTFL>
         <tvExp>0</tvExp>
         <tvExpOptDlg>0</tvExpOptDlg>
-        <IsCurrentTarget>1</IsCurrentTarget>
+        <IsCurrentTarget>0</IsCurrentTarget>
       </OPTFL>
       <CpuCode>7</CpuCode>
       <DebugOpt>
@@ -256,16 +254,14 @@
       <TargetDriverDllRegistry>
         <SetRegEntry>
           <Number>0</Number>
-          <Key>JL2CM3</Key>
-          <Name>-U158007610 -O78 -S2 -ZTIFSpeedSel5000 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -RST2 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO7 -FD20000000 -FC1000 -FN1 -FF0HC32F120 -FS00 -FL080000 -FP0($$Device:HC32F120H8TA$Flash\HC32F120.FLM)</Name>
+          <Key>UL2CM3</Key>
+          <Name>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN2 -FF0HC32F120 -FS00 -FL010000 -FF1FlashHC32F120 -FS10 -FL110000 -FP0($$Device:HC32F120H8TA$FlashARM\HC32F120.FLM) -FP1($$Device:HC32F120H8TA$FlashIAR\FlashHC32F120.flash))</Name>
         </SetRegEntry>
-        <!--
         <SetRegEntry>
           <Number>0</Number>
-          <Key>UL2CM3</Key>
-          <Name>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0NEW_DEVICE -FS00 -FL040000 -FP0($$Device:ARMCM0P$Device\ARM\Flash\NEW_DEVICE.FLM))</Name>
+          <Key>JL2CM3</Key>
+          <Name>-U730000000 -O78 -S2 -ZTIFSpeedSel5000 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -RST2 -N00("ARM CoreSight SW-DP") -D00(0BC11477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO7 -FD20000000 -FC1000 -FN1 -FF0HC32F120 -FS00 -FL010000 -FP0($$Device:HC32F120H8TA$FlashARM\HC32F120.FLM)</Name>
         </SetRegEntry>
-        -->
       </TargetDriverDllRegistry>
       <Breakpoint/>
       <Tracepoint>

@@ -73,12 +73,12 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* LED_R Port/Pin definition */
-#define LED_R_PORT                      GPIO_PORT_2
-#define LED_R_PIN                       GPIO_PIN_5
+#define LED_R_PORT                      (GPIO_PORT_2)
+#define LED_R_PIN                       (GPIO_PIN_5)
 
-#define LED_R_ON()                      GPIO_ResetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_OFF()                     GPIO_SetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_TOGGLE()                  GPIO_TogglePins(LED_R_PORT, LED_R_PIN)
+#define LED_R_ON()                      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_OFF()                     (GPIO_SetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_TOGGLE()                  (GPIO_TogglePins(LED_R_PORT, LED_R_PIN))
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -91,8 +91,8 @@
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-static uint8_t u8SecIntFlag = 0;
-static uint8_t u8AlarmIntFlag = 0, u8AlarmCnt = 0;
+static uint8_t u8SecIntFlag = 0u;
+static uint8_t u8AlarmIntFlag = 0u, u8AlarmCnt = 0u;
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -102,7 +102,7 @@ static uint8_t u8AlarmIntFlag = 0, u8AlarmCnt = 0;
  * @param  None
  * @retval None
  */
-void RtcPeriod_IrqCallback(void)
+static void RtcPeriod_IrqCallback(void)
 {
     u8SecIntFlag = 1u;
     RTC_ClearIntFlag(RTC_FLAG_PERIOD);
@@ -113,7 +113,7 @@ void RtcPeriod_IrqCallback(void)
  * @param  None
  * @retval None
  */
-void RtcAlarm_IrqCallback(void)
+static void RtcAlarm_IrqCallback(void)
 {
     u8AlarmCnt = 10u;
     u8AlarmIntFlag = 1u;
@@ -125,21 +125,21 @@ void RtcAlarm_IrqCallback(void)
  * @param  None
  * @retval None
  */
-void RTC_CalendarConfig(void)
+static void RTC_CalendarConfig(void)
 {
     stc_rtc_date_t stcRtcDateCfg;
     stc_rtc_time_t stcRtcTimeCfg;
 
     /* Date configuration */
-    stcRtcDateCfg.u8Year = 18;
-    stcRtcDateCfg.u8Month = 10;
-    stcRtcDateCfg.u8Day = 10;
+    stcRtcDateCfg.u8Year = 18u;
+    stcRtcDateCfg.u8Month = 10u;
+    stcRtcDateCfg.u8Day = 10u;
     stcRtcDateCfg.u8Weekday = RTC_WEEKDAY_WEDNESDAY;
 
     /* Time configuration */
-    stcRtcTimeCfg.u8Hour = 11;
-    stcRtcTimeCfg.u8Minute = 59;
-    stcRtcTimeCfg.u8Second = 55;
+    stcRtcTimeCfg.u8Hour = 11u;
+    stcRtcTimeCfg.u8Minute = 59u;
+    stcRtcTimeCfg.u8Second = 55u;
     stcRtcTimeCfg.u8AmPm = RTC_HOUR12_PM;
 
     if (RTC_SetDate(RTC_DATA_FORMAT_DEC, &stcRtcDateCfg) != Ok)
@@ -165,7 +165,7 @@ void RTC_CalendarConfig(void)
  *   @arg  RTC_WEEKDAY_SATURDAY         Saturday
  * @retval None
  */
-void RTC_DisplayWeekday(uint8_t u8Weekday)
+static void RTC_DisplayWeekday(uint8_t u8Weekday)
 {
     switch (u8Weekday)
     {
@@ -209,8 +209,8 @@ void RTC_DisplayWeekday(uint8_t u8Weekday)
  * @retval None
  *
  */
-void RTC_DisplayDataTime(uint8_t u8Format, char *pTitle, stc_rtc_date_t *pRtcDate,
-                         stc_rtc_time_t *pRtcTime)
+static void RTC_DisplayDataTime(uint8_t u8Format, char *pTitle, const stc_rtc_date_t *pRtcDate,
+                                const stc_rtc_time_t *pRtcTime)
 {
     if (RTC_DATA_FORMAT_BCD == u8Format)
     {
@@ -241,7 +241,7 @@ void RTC_DisplayDataTime(uint8_t u8Format, char *pTitle, stc_rtc_date_t *pRtcDat
  * @param  None
  * @retval None
  */
-void RTC_Config(void)
+static void RTC_Config(void)
 {
     uint8_t u8Ret;
     stc_rtc_init_t stcRtcInit;
@@ -255,70 +255,75 @@ void RTC_Config(void)
     if (ErrorTimeout == RTC_DeInit())
     {
         printf("Reset RTC failed!\r\n");
-        return;
     }
-
-    /* Configuration RTC structure */
-    stcRtcInit.u8ClockSource = RTC_CLOCK_SOURCE_XTAL32;
-    stcRtcInit.u8HourFormat = RTC_HOUR_FORMAT_12;
-    stcRtcInit.u8PeriodInterrupt = RTC_PERIOD_INT_ONE_SECOND;
-    RTC_Init(&stcRtcInit);
-
-    /* Configuration alarm clock time: Monday to Friday£¬PM 12:00 */
-    stcRtcAlarmCfg.u8AlarmHour = 0x12;
-    stcRtcAlarmCfg.u8AlarmMinute = 0x00;
-    stcRtcAlarmCfg.u8AlarmWeekday = RTC_ALARM_WEEKDAY_MONDAY | RTC_ALARM_WEEKDAY_TUESDAY |
-                                    RTC_ALARM_WEEKDAY_WEDNESDAY | RTC_ALARM_WEEKDAY_THURSDAY |
-                                    RTC_ALARM_WEEKDAY_FRIDAY;
-    stcRtcAlarmCfg.u8AlarmAmPm = RTC_HOUR12_AM;
-    RTC_SetAlarm(RTC_DATA_FORMAT_BCD, &stcRtcAlarmCfg);
-    RTC_AlarmCmd(Enable);
-
-    /* Update date and time */
-    RTC_CalendarConfig();
-
-    /* Configure interrupt of RTC period */
-    stcIrqRegister.enIntSrc = INT_RTC_PRD;
-    stcIrqRegister.enIRQn = Int022_IRQn;
-    stcIrqRegister.pfnCallback = RtcPeriod_IrqCallback;
-    u8Ret = INTC_IrqRegistration(&stcIrqRegister);
-    if (Ok != u8Ret)
+    else
     {
-        // check parameter
-        while (1);
+        /* Configuration RTC structure */
+        stcRtcInit.u8ClockSource = RTC_CLOCK_SOURCE_XTAL32;
+        stcRtcInit.u8HourFormat = RTC_HOUR_FORMAT_12;
+        stcRtcInit.u8PeriodInterrupt = RTC_PERIOD_INT_ONE_SECOND;
+        RTC_Init(&stcRtcInit);
+
+        /* Configuration alarm clock time: Monday to Friday£¬PM 12:00 */
+        stcRtcAlarmCfg.u8AlarmHour = 0x12u;
+        stcRtcAlarmCfg.u8AlarmMinute = 0x00u;
+        stcRtcAlarmCfg.u8AlarmWeekday = RTC_ALARM_WEEKDAY_MONDAY | RTC_ALARM_WEEKDAY_TUESDAY |
+                                        RTC_ALARM_WEEKDAY_WEDNESDAY | RTC_ALARM_WEEKDAY_THURSDAY |
+                                        RTC_ALARM_WEEKDAY_FRIDAY;
+        stcRtcAlarmCfg.u8AlarmAmPm = RTC_HOUR12_AM;
+        RTC_SetAlarm(RTC_DATA_FORMAT_BCD, &stcRtcAlarmCfg);
+        RTC_AlarmCmd(Enable);
+
+        /* Update date and time */
+        RTC_CalendarConfig();
+
+        /* Configure interrupt of RTC period */
+        stcIrqRegister.enIntSrc = INT_RTC_PRD;
+        stcIrqRegister.enIRQn = Int022_IRQn;
+        stcIrqRegister.pfnCallback = &RtcPeriod_IrqCallback;
+        u8Ret = INTC_IrqRegistration(&stcIrqRegister);
+        if (Ok != u8Ret)
+        {
+            /* check parameter */
+            while (1)
+            {
+            }
+        }
+
+        /* Clear pending */
+        NVIC_ClearPendingIRQ(stcIrqRegister.enIRQn);
+        /* Set priority */
+        NVIC_SetPriority(stcIrqRegister.enIRQn, DDL_IRQ_PRIORITY_DEFAULT);
+        /* Enable NVIC */
+        NVIC_EnableIRQ(stcIrqRegister.enIRQn);
+
+        /* Configure interrupt of RTC alarm */
+        stcIrqRegister.enIntSrc = INT_RTC_ALM;
+        stcIrqRegister.enIRQn = Int023_IRQn;
+        stcIrqRegister.pfnCallback = &RtcAlarm_IrqCallback;
+        u8Ret = INTC_IrqRegistration(&stcIrqRegister);
+        if (Ok != u8Ret)
+        {
+            /* check parameter */
+            while (1)
+            {
+            }
+        }
+
+        /* Clear pending */
+        NVIC_ClearPendingIRQ(stcIrqRegister.enIRQn);
+        /* Set priority */
+        NVIC_SetPriority(stcIrqRegister.enIRQn, DDL_IRQ_PRIORITY_DEFAULT);
+        /* Enable NVIC */
+        NVIC_EnableIRQ(stcIrqRegister.enIRQn);
+
+        /* Enable period and alarm interrupt */
+        RTC_IntCmd(RTC_INT_PERIOD, Enable);
+        RTC_IntCmd(RTC_INT_ALARM, Enable);
+
+        /* Startup RTC count */
+        RTC_Cmd(Enable);
     }
-
-    /* Clear pending */
-    NVIC_ClearPendingIRQ(stcIrqRegister.enIRQn);
-    /* Set priority */
-    NVIC_SetPriority(stcIrqRegister.enIRQn, DDL_IRQ_PRIORITY_DEFAULT);
-    /* Enable NVIC */
-    NVIC_EnableIRQ(stcIrqRegister.enIRQn);
-
-    /* Configure interrupt of RTC alarm */
-    stcIrqRegister.enIntSrc = INT_RTC_ALM;
-    stcIrqRegister.enIRQn = Int023_IRQn;
-    stcIrqRegister.pfnCallback = RtcAlarm_IrqCallback;
-    u8Ret = INTC_IrqRegistration(&stcIrqRegister);
-    if (Ok != u8Ret)
-    {
-        // check parameter
-        while (1);
-    }
-
-    /* Clear pending */
-    NVIC_ClearPendingIRQ(stcIrqRegister.enIRQn);
-    /* Set priority */
-    NVIC_SetPriority(stcIrqRegister.enIRQn, DDL_IRQ_PRIORITY_DEFAULT);
-    /* Enable NVIC */
-    NVIC_EnableIRQ(stcIrqRegister.enIRQn);
-
-    /* Enable period and alarm interrupt */
-    RTC_IntCmd(RTC_INT_PERIOD, Enable);
-    RTC_IntCmd(RTC_INT_ALARM, Enable);
-
-    /* Startup RTC count */
-    RTC_Cmd(Enable);
 }
 
 /**
@@ -348,7 +353,7 @@ static void SystemClockConfig(void)
     stcXTAL32Init.u8Xtal32NF = CLK_XTAL32NF_FULL;
     CLK_XTAL32Init(&stcXTAL32Init);
     /* Wait for xtal32 running */
-    DDL_Delay1ms(3000);
+    DDL_Delay1ms(3000u);
 }
 
 /**
@@ -382,14 +387,14 @@ int32_t main(void)
     {
         if (1u == u8SecIntFlag)
         {
-            u8SecIntFlag = 0;
+            u8SecIntFlag = 0u;
             /* Print alarm information */
-            if ((1u == u8AlarmIntFlag) && (u8AlarmCnt > 0))
+            if ((1u == u8AlarmIntFlag) && (u8AlarmCnt > 0u))
             {
                 /* Alarm LED flicker */
                 LED_R_TOGGLE();
                 u8AlarmCnt--;
-                if (0 == u8AlarmCnt)
+                if (0u == u8AlarmCnt)
                 {
                     u8AlarmIntFlag = 0u;
                     LED_R_OFF();

@@ -72,38 +72,38 @@
 /*******************************************************************************
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
-#define EXINT0_PORT     GPIO_PORT_7
-#define EXINT0_PIN      GPIO_PIN_0
-#define EXINT6_PORT     GPIO_PORT_6
-#define EXINT6_PIN      GPIO_PIN_2
-#define EXINT8_PORT     GPIO_PORT_6
-#define EXINT8_PIN      GPIO_PIN_0
+#define EXINT0_PORT     (GPIO_PORT_7)
+#define EXINT0_PIN      (GPIO_PIN_0)
+#define EXINT6_PORT     (GPIO_PORT_6)
+#define EXINT6_PIN      (GPIO_PIN_2)
+#define EXINT8_PORT     (GPIO_PORT_6)
+#define EXINT8_PIN      (GPIO_PIN_0)
 
-#define LED_RGB_PORT    GPIO_PORT_2
-#define LED_R_PORT      GPIO_PORT_2
-#define LED_G_PORT      GPIO_PORT_2
-#define LED_B_PORT      GPIO_PORT_2
+#define LED_RGB_PORT    (GPIO_PORT_2)
+#define LED_R_PORT      (GPIO_PORT_2)
+#define LED_G_PORT      (GPIO_PORT_2)
+#define LED_B_PORT      (GPIO_PORT_2)
 
-#define LED_R_PIN       GPIO_PIN_5
-#define LED_G_PIN       GPIO_PIN_6
-#define LED_B_PIN       GPIO_PIN_7
+#define LED_R_PIN       (GPIO_PIN_5)
+#define LED_G_PIN       (GPIO_PIN_6)
+#define LED_B_PIN       (GPIO_PIN_7)
 
-#define LED_R_ON()      GPIO_ResetPins(LED_R_PORT, LED_R_PIN)
-#define LED_G_ON()      GPIO_ResetPins(LED_G_PORT, LED_G_PIN)
-#define LED_B_ON()      GPIO_ResetPins(LED_B_PORT, LED_B_PIN)
+#define LED_R_ON()      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
+#define LED_G_ON()      (GPIO_ResetPins(LED_G_PORT, LED_G_PIN))
+#define LED_B_ON()      (GPIO_ResetPins(LED_B_PORT, LED_B_PIN))
 
-#define LED_R_OFF()     GPIO_SetPins(LED_R_PORT, LED_R_PIN)
-#define LED_G_OFF()     GPIO_SetPins(LED_G_PORT, LED_G_PIN)
-#define LED_B_OFF()     GPIO_SetPins(LED_B_PORT, LED_B_PIN)
+#define LED_R_OFF()     (GPIO_SetPins(LED_R_PORT, LED_R_PIN))
+#define LED_G_OFF()     (GPIO_SetPins(LED_G_PORT, LED_G_PIN))
+#define LED_B_OFF()     (GPIO_SetPins(LED_B_PORT, LED_B_PIN))
 
-#define LED_R_TOGGLE()  GPIO_TogglePins(LED_R_PORT, LED_R_PIN)
-#define LED_G_TOGGLE()  GPIO_TogglePins(LED_G_PORT, LED_G_PIN)
-#define LED_B_TOGGLE()  GPIO_TogglePins(LED_B_PORT, LED_B_PIN)
+#define LED_R_TOGGLE()  (GPIO_TogglePins(LED_R_PORT, LED_R_PIN))
+#define LED_G_TOGGLE()  (GPIO_TogglePins(LED_G_PORT, LED_G_PIN))
+#define LED_B_TOGGLE()  (GPIO_TogglePins(LED_B_PORT, LED_B_PIN))
 #define LED_RGB_TOGGLE()                                                        \
-        GPIO_TogglePins(LED_RGB_PORT, LED_R_PIN | LED_G_PIN | LED_B_PIN)
+        (GPIO_TogglePins(LED_RGB_PORT, LED_R_PIN | LED_G_PIN | LED_B_PIN))
 
-#define LED_RGB_ON()    GPIO_ResetPins(LED_RGB_PORT, LED_R_PIN | LED_G_PIN | LED_B_PIN)
-#define LED_RGB_OFF()   GPIO_SetPins(LED_RGB_PORT, LED_R_PIN | LED_G_PIN | LED_B_PIN)
+#define LED_RGB_ON()    (GPIO_ResetPins(LED_RGB_PORT, LED_R_PIN | LED_G_PIN | LED_B_PIN))
+#define LED_RGB_OFF()   (GPIO_SetPins(LED_RGB_PORT, LED_R_PIN | LED_G_PIN | LED_B_PIN))
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -129,7 +129,7 @@ void EXINT00_Handler(void)
 {
    if (Set == EXINT_GetExIntSrc(EXINT_CH00))
    {
-        EXINT_ClrSrc(EXINT_CH00);
+        EXINT_ClrExIntSrc(EXINT_CH00);
         LED_R_TOGGLE();
    }
 }
@@ -143,7 +143,7 @@ void EXINT06_Handler(void)
 {
    if (Set == EXINT_GetExIntSrc(EXINT_CH06))
    {
-        EXINT_ClrSrc(EXINT_CH06);
+        EXINT_ClrExIntSrc(EXINT_CH06);
         LED_G_TOGGLE();
    }
 }
@@ -157,7 +157,7 @@ void EXINT08_IrqCallback(void)
 {
    if (Set == EXINT_GetExIntSrc(EXINT_CH08))
    {
-        EXINT_ClrSrc(EXINT_CH08);
+        EXINT_ClrExIntSrc(EXINT_CH08);
         LED_G_OFF();
         LED_B_TOGGLE();
    }
@@ -170,22 +170,22 @@ void EXINT08_IrqCallback(void)
  */
 void NMI_IrqCallback(void)
 {
-    if (Set == NMI_GetNmiSrc(INTC_NMIFR_NMIF))
+    if (Set == NMI_GetNmiSrc((uint8_t)INTC_NMIFR_NMIF))
     {
-        NMI_ClrNmiSrc(INTC_NMIFR_NMIF);
+        NMI_ClrNmiSrc((uint8_t)INTC_NMIFR_NMIF);
         LED_RGB_TOGGLE();
     }
-    if (Set == NMI_GetNmiSrc(INTC_NMIFR_XTALSTPF))
+    if (Set == NMI_GetNmiSrc((uint8_t)INTC_NMIFR_XTALSTPF))
     {
-        NMI_ClrNmiSrc(INTC_NMIFR_XTALSTPF);
+        NMI_ClrNmiSrc((uint8_t)INTC_NMIFR_XTALSTPF);
     }
-    if (Set == NMI_GetNmiSrc(INTC_NMIFR_SWDTF))
+    if (Set == NMI_GetNmiSrc((uint8_t)INTC_NMIFR_SWDTF))
     {
-        NMI_ClrNmiSrc(INTC_NMIFR_SWDTF);
+        NMI_ClrNmiSrc((uint8_t)INTC_NMIFR_SWDTF);
     }
-    if (Set == NMI_GetNmiSrc(INTC_NMIFR_PVDF))
+    if (Set == NMI_GetNmiSrc((uint8_t)INTC_NMIFR_PVDF))
     {
-        NMI_ClrNmiSrc(INTC_NMIFR_PVDF);
+        NMI_ClrNmiSrc((uint8_t)INTC_NMIFR_PVDF);
     }
 }
 
@@ -217,14 +217,14 @@ int32_t main(void)
     EXINT_StructInit(&stcExIntInit);
 
     /* EXINT Channel 0 (SW2) configure */
-    stcExIntInit.u16ExIntCh     = EXINT_CH00;
+    stcExIntInit.u16ExIntCh     = (uint16_t)EXINT_CH00;
     stcExIntInit.u8ExIntFE      = EXINT_FILTER_ON;
     stcExIntInit.u8ExIntFClk    = EXINT_FCLK_HCLK_DIV8;
     stcExIntInit.u8ExIntLvl     = EXINT_TRIGGER_FALLING;
     EXINT_Init(&stcExIntInit);
 
     /* EXINT Channel 6 (SW1) and Channel 8 (P60) configure */
-    stcExIntInit.u16ExIntCh     = EXINT_CH06 | EXINT_CH08;
+    stcExIntInit.u16ExIntCh     = (uint16_t)EXINT_CH06 | (uint16_t)EXINT_CH08;
     stcExIntInit.u8ExIntFE      = EXINT_FILTER_ON;
     stcExIntInit.u8ExIntFClk    = EXINT_FCLK_HCLK_DIV32;
     stcExIntInit.u8ExIntLvl     = EXINT_TRIGGER_RISING;
@@ -233,12 +233,15 @@ int32_t main(void)
     /* Set IRQ handler 9 as the external interrupt channel 8 entry */
     stcIrqRegister.enIRQn       = Int009_IRQn;
     stcIrqRegister.enIntSrc     = INT_PORT_EIRQ8;
-    stcIrqRegister.pfnCallback  = EXINT08_IrqCallback;
+    stcIrqRegister.pfnCallback  = &EXINT08_IrqCallback;
     u8Ret = INTC_IrqRegistration(&stcIrqRegister);
     if (Ok != u8Ret)
     {
         // check parameter
-        while(1);
+        while(1)
+        {
+            ;
+        }
     }
     /* NVIC configure */
     /* EXINT0, fixed entry */
@@ -262,7 +265,7 @@ int32_t main(void)
     stcNmiInit.u8NmiFClk        = NMI_FCLK_HCLK_DIV64;
     stcNmiInit.u8NmiTigger      = NMI_TRIGGER_RISING;
     stcNmiInit.u8NmiSrc         = NMI_SRC_NMI_PIN;
-    stcNmiInit.pfnNmiCallback   = NMI_IrqCallback;
+    stcNmiInit.pfnNmiCallback   = &NMI_IrqCallback;
     NMI_Init(&stcNmiInit);
 
     while (1)

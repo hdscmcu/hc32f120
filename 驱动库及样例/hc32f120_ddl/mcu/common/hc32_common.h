@@ -175,9 +175,9 @@ typedef enum
     #define __WEAKDEF                   __attribute__((weak))
     #define __ALIGN_BEGIN               __align(4)
     #define __NOINLINE                  __attribute__((noinline))
-    /* RAM functions are defined using the toolchain options. 
+    /* RAM functions are defined using the toolchain options.
     Functions that are executed in RAM should reside in a separate source module.
-    Using the 'Options for File' dialog you can simply change the 'Code / Const' 
+    Using the 'Options for File' dialog you can simply change the 'Code / Const'
     area of a module to a memory space in physical RAM. */
     #define __RAM_FUNC
 #else
@@ -189,13 +189,13 @@ typedef enum
  * @{
  */
 /* Decimal to BCD */
-#define DEC2BCD(x)                      ((((x) / 10) << 4) + ((x) % 10))
+#define DEC2BCD(x)                      ((((x) / 10u) << 4u) + ((x) % 10u))
 
 /* BCD to decimal */
-#define BCD2DEC(x)                      ((((x) >> 4) * 10) + ((x) & 0x0F))
+#define BCD2DEC(x)                      ((((x) >> 4u) * 10u) + ((x) & 0x0Fu))
 
 /* Returns the dimension of an array */
-#define ARRAY_SZ(X)                     (sizeof(X) / sizeof(X[0]))
+#define ARRAY_SZ(X)                     (sizeof(X) / sizeof((X)[0]))
 /**
  * @}
  */
@@ -216,7 +216,42 @@ typedef enum
 
 #define READ_REG(REG)                   ((REG))
 
-#define MODIFY_REG(REG, CLEARMASK, SETMASK)  WRITE_REG((REG), (((READ_REG(REG)) & (~(CLEARMASK))) | (SETMASK)))
+#define MODIFY_REG(REGS, CLEARMASK, SETMASK)    (WRITE_REG((REGS), (((READ_REG((REGS))) & (~(CLEARMASK))) | (SETMASK))))
+
+/* Specificed register bit width */
+#define SET_REG8_BIT(REG, BIT)          ((REG) |= ((uint8_t)(BIT)))
+#define SET_REG16_BIT(REG, BIT)         ((REG) |= ((uint16_t)(BIT)))
+#define SET_REG32_BIT(REG, BIT)         ((REG) |= ((uint32_t)(BIT)))
+
+/* Specificed register bit width */
+#define CLEAR_REG8_BIT(REG, BIT)        ((REG) &= ((uint8_t)(~(BIT))))
+#define CLEAR_REG16_BIT(REG, BIT)       ((REG) &= ((uint16_t)(~(BIT))))
+#define CLEAR_REG32_BIT(REG, BIT)       ((REG) &= ((uint32_t)(~(BIT))))
+
+/* Specificed register bit width */
+#define READ_REG8_BIT(REG, BIT)         ((REG) & ((uint8_t)(BIT)))
+#define READ_REG16_BIT(REG, BIT)        ((REG) & ((uint16_t)(BIT)))
+#define READ_REG32_BIT(REG, BIT)        ((REG) & ((uint32_t)(BIT)))
+
+/* Specificed register bit width */
+#define CLEAR_REG8(REG, BIT)            ((REG) = ((uint8_t)(0u)))
+#define CLEAR_REG16(REG, BIT)           ((REG) = ((uint16_t)(0u)))
+#define CLEAR_REG32(REG, BIT)           ((REG) = ((uint32_t)(0ul)))
+
+/* Specificed register bit width */
+#define WRITE_REG8(REG, VAL)            ((REG) = ((uint8_t)(VAL)))
+#define WRITE_REG16(REG, VAL)           ((REG) = ((uint16_t)(VAL)))
+#define WRITE_REG32(REG, VAL)           ((REG) = ((uint32_t)(VAL)))
+
+/* Specificed register bit width */
+#define READ_REG8(REG)                  ((uint8_t)(REG))
+#define READ_REG16(REG)                 ((uint16_t)(REG))
+#define READ_REG32(REG)                 ((uint32_t)(REG))
+
+/* Specificed register bit width */
+#define MODIFY_REG8(REGS, CLEARMASK, SETMASK)   (WRITE_REG((REGS), (((READ_REG((REGS))) & ((uint8_t)(~(CLEARMASK)))) | ((uint8_t)(SETMASK)))))
+#define MODIFY_REG16(REGS, CLEARMASK, SETMASK)  (WRITE_REG((REGS), (((READ_REG((REGS))) & ((uint16_t)(~(CLEARMASK)))) | ((uint16_t)(SETMASK)))))
+#define MODIFY_REG32(REGS, CLEARMASK, SETMASK)  (WRITE_REG((REGS), (((READ_REG((REGS))) & ((uint32_t)(~(CLEARMASK)))) | ((uint32_t)(SETMASK)))))
 /**
  * @}
  */

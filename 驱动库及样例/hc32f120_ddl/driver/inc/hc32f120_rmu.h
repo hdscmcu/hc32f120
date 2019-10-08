@@ -84,7 +84,7 @@ extern "C"
  * @defgroup RMU_Global_Types RMU Global Types
  * @{
  */
- 
+
 /**
   * @brief  system reset cause flag
   */
@@ -117,17 +117,17 @@ typedef struct
 /** @defgroup RMU_REG_Write_Configuration RMU register write Configuration
   * @{
   */
-#define RMU_REG_WRITE_ENABLE()      (M0P_PWC->FPRC = 0xa502)
-#define RMU_REG_WRITE_DISABLE()     (M0P_PWC->FPRC = 0xa500)
+#define RMU_REG_WRITE_ENABLE()      (M0P_PWC->FPRC = 0xa502u)
+#define RMU_REG_WRITE_DISABLE()     (M0P_PWC->FPRC = 0xa500u)
 
 /**
   * @}
   */
-  
+
 /**
   * @}
   */
-  
+
 /*******************************************************************************
  * Global variable definitions ('extern')
  ******************************************************************************/

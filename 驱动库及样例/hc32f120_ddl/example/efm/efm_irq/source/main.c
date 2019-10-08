@@ -73,29 +73,29 @@
 /*******************************************************************************
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
-#define EFM_IRQn                Int024_IRQn
+#define EFM_IRQn                (Int024_IRQn)
 
-#define EFM_WIN_START_ADDR      0x000002810
-#define EFM_WIN_END_ADDR        0x000002910
+#define EFM_WIN_START_ADDR      (0x000002810u)
+#define EFM_WIN_END_ADDR        (0x000002910u)
 
 /* LED0 Port/Pin definition */
-#define LED_PORT                GPIO_PORT_2
-#define LED0_PORT               GPIO_PORT_2
-#define LED0_PIN                GPIO_PIN_5
+#define LED_PORT                (GPIO_PORT_2)
+#define LED0_PORT               (GPIO_PORT_2)
+#define LED0_PIN                (GPIO_PIN_5)
 
 /* LED1 Port/Pin definition */
-#define LED1_PORT               GPIO_PORT_2
-#define LED1_PIN                GPIO_PIN_6
+#define LED1_PORT               (GPIO_PORT_2)
+#define LED1_PIN                (GPIO_PIN_6)
 
 /* LED0~1 definition */
-#define LED0_ON()               GPIO_ResetPins(LED0_PORT, LED0_PIN)
-#define LED0_OFF()              GPIO_SetPins(LED0_PORT, LED0_PIN)
+#define LED0_ON()               (GPIO_ResetPins(LED0_PORT, LED0_PIN))
+#define LED0_OFF()              (GPIO_SetPins(LED0_PORT, LED0_PIN))
 
-#define LED1_ON()               GPIO_ResetPins(LED1_PORT, LED1_PIN)
-#define LED1_OFF()              GPIO_SetPins(LED1_PORT, LED1_PIN)
+#define LED1_ON()               (GPIO_ResetPins(LED1_PORT, LED1_PIN))
+#define LED1_OFF()              (GPIO_SetPins(LED1_PORT, LED1_PIN))
 
-#define LED_ON()                GPIO_ResetPins(LED_PORT, LED0_PIN | LED1_PIN)
-#define LED_OFF()               GPIO_SetPins(LED_PORT, LED0_PIN | LED1_PIN)
+#define LED_ON()                (GPIO_ResetPins(LED_PORT, LED0_PIN | LED1_PIN))
+#define LED_OFF()               (GPIO_SetPins(LED_PORT, LED0_PIN | LED1_PIN))
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -133,7 +133,7 @@ void EfmPgmEraseErr_IrqHandler(void)
  * @param  None
  * @retval None
  */
-void Led_Init(void)
+static void Led_Init(void)
 {
     stc_gpio_init_t stcGpioInit;
 
@@ -153,7 +153,7 @@ void Led_Init(void)
 int32_t main(void)
 {
     stc_efm_win_protect_addr_t  stcWinAddr;
-    const uint32_t u32TestData = 0x5A5A5A5A;
+    const uint32_t u32TestData = 0x5A5A5A5Au;
     uint32_t u32Addr;
 
     /* Led Init */
@@ -166,7 +166,10 @@ int32_t main(void)
     /* Enable EFM. */
     EFM_Cmd(Enable);
     /* Wait flash ready. */
-    while(Set != EFM_GetFlagStatus(EFM_FLAG_RDY));
+    while(Set != EFM_GetFlagStatus(EFM_FLAG_RDY))
+    {
+        ;
+    }
 
     /* Set windows protect address. */
     stcWinAddr.u32StartAddr = EFM_WIN_START_ADDR;
@@ -188,20 +191,26 @@ int32_t main(void)
     NVIC_EnableIRQ(EFM_IRQn);
 
      /* program between windows address. */
-    u32Addr = EFM_WIN_START_ADDR + 4;
+    u32Addr = EFM_WIN_START_ADDR + 4ul;
     EFM_ProgramWord(u32Addr,u32TestData);
 
     /* SW2 */
-    while(Pin_Reset != GPIO_ReadInputPortPin(GPIO_PORT_7, GPIO_PIN_0));
+    while(Pin_Reset != GPIO_ReadInputPortPin(GPIO_PORT_7, GPIO_PIN_0))
+    {
+        ;
+    }
 
     /* program out of windows address. */
-    u32Addr = EFM_WIN_START_ADDR - 4;
+    u32Addr = EFM_WIN_START_ADDR - 4ul;
     EFM_ProgramWord(u32Addr,u32TestData);
 
     /* Lock EFM. */
     EFM_Lock();
 
-    while(1);
+    while(1)
+    {
+        ;
+    }
 }
 
 /**

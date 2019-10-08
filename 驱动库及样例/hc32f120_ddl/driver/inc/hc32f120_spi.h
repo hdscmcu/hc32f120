@@ -133,7 +133,7 @@ typedef struct
  * @{
  */
 #define SPI_WIRE_4                  (0ul)
-#define SPI_WIRE_3                  SPI_CR1_SPIMDS
+#define SPI_WIRE_3                  (SPI_CR1_SPIMDS)
 /**
  * @}
  */
@@ -142,8 +142,8 @@ typedef struct
  * @defgroup SPI_Transfer_Mode SPI Transfer Mode
  * @{
  */
-#define SPI_FULL_DUPLEX             (0ul)           /*!< Full duplex. */
-#define SPI_SEND_ONLY               SPI_CR1_TXMDS   /*!< Send only. */
+#define SPI_FULL_DUPLEX             (0ul)               /*!< Full duplex. */
+#define SPI_SEND_ONLY               (SPI_CR1_TXMDS)     /*!< Send only. */
 /**
  * @}
  */
@@ -153,7 +153,7 @@ typedef struct
  * @{
  */
 #define SPI_SLAVE                   (0ul)
-#define SPI_MASTER                  SPI_CR1_MSTR
+#define SPI_MASTER                  (SPI_CR1_MSTR)
 /**
  * @}
  */
@@ -164,8 +164,8 @@ typedef struct
  * @{
  */
 #define SPI_SPLPBK_INVALID          (0ul)
-#define SPI_SPLPBK_MOSI_NOT         SPI_CR1_SPLPBK  /*!< MISO data is the inverse of the data output by MOSI. */
-#define SPI_SPLPBK_MOSI             SPI_CR1_SPLPBK2 /*!< MISO data is the data output by MOSI. */
+#define SPI_SPLPBK_MOSI_NOT         (SPI_CR1_SPLPBK)    /*!< MISO data is the inverse of the data output by MOSI. */
+#define SPI_SPLPBK_MOSI             (SPI_CR1_SPLPBK2)   /*!< MISO data is the data output by MOSI. */
 /**
  * @}
  */
@@ -174,10 +174,10 @@ typedef struct
  * @defgroup SPI_Interrupt_Type SPI Interrupt Type
  * @{
  */
-#define SPI_INT_ERROR               SPI_CR1_EIE     /*!< Including overload, underload and parity error. */
-#define SPI_INT_TX_BUFFER_EMPTY     SPI_CR1_TXIE
-#define SPI_INT_RX_BUFFER_FULL      SPI_CR1_RXIE
-#define SPI_INT_IDLE                SPI_CR1_IDIE
+#define SPI_INT_ERROR               (SPI_CR1_EIE)       /*!< Including overload, underload and parity error. */
+#define SPI_INT_TX_BUFFER_EMPTY     (SPI_CR1_TXIE)
+#define SPI_INT_RX_BUFFER_FULL      (SPI_CR1_RXIE)
+#define SPI_INT_IDLE                (SPI_CR1_IDIE)
 #define SPI_INT_ALL                 (SPI_INT_ERROR           |   \
                                      SPI_INT_TX_BUFFER_EMPTY |   \
                                      SPI_INT_RX_BUFFER_FULL  |   \
@@ -190,8 +190,8 @@ typedef struct
  * @defgroup SPI_Mode_Fault_Dectet_Command SPI Mode Fault Dectet Command
  * @{
  */
-#define SPI_MODFE_DISABLE           (0ul)           /*!< Disable mode fault detection. */
-#define SPI_MODFE_ENABLE            SPI_CR1_MODFE   /*!< Enable mode fault detection. */
+#define SPI_MODFE_DISABLE           (0ul)               /*!< Disable mode fault detection. */
+#define SPI_MODFE_ENABLE            (SPI_CR1_MODFE)     /*!< Enable mode fault detection. */
 /**
  * @}
  */
@@ -200,8 +200,8 @@ typedef struct
  * @defgroup SPI_Parity_Check_Error_Self_Diagnosis SPI Parity Check Error Self Diagnosis
  * @{
  */
-#define SPI_PATE_DISABLE            (0ul)           /*!< Disable self diagnosis of parity check. */
-#define SPI_PATE_ENABLE             SPI_CR1_PATE    /*!< Enable self diagnosis of parity check. */
+#define SPI_PATE_DISABLE            (0ul)               /*!< Disable self diagnosis of parity check. */
+#define SPI_PATE_ENABLE             (SPI_CR1_PATE)      /*!< Enable self diagnosis of parity check. */
 /**
  * @}
  */
@@ -211,7 +211,7 @@ typedef struct
  * @{
  */
 #define SPI_PARITY_INVALID          (0ul)                           /*!< Parity check invalid. */
-#define SPI_PARITY_EVEN             SPI_CR1_PAE                     /*!< Parity check selection even parity. */
+#define SPI_PARITY_EVEN             (SPI_CR1_PAE)                   /*!< Parity check selection even parity. */
 #define SPI_PARITY_ODD              (SPI_CR1_PAE | SPI_CR1_PAOE)    /*!< Parity check selection odd parity. */
 /**
  * @}
@@ -221,8 +221,8 @@ typedef struct
  * @defgroup SPI_NSS_Active_Level SPI NSS Active Level
  * @{
  */
-#define SPI_NSS_ACTIVE_LOW          (0ul)           /*!< NSS pin active low. */
-#define SPI_NSS_ACTIVE_HIGH         SPI_CFG1_SS0PV  /*!< NSS pin active high. */
+#define SPI_NSS_ACTIVE_LOW          (0ul)               /*!< NSS pin active low. */
+#define SPI_NSS_ACTIVE_HIGH         (SPI_CFG1_SS0PV)    /*!< NSS pin active high. */
 /**
  * @}
  */
@@ -232,8 +232,8 @@ typedef struct
  * @{
  */
 #define SPI_MODE_0                  (0ul)
-#define SPI_MODE_1                  SPI_CFG2_CPHA
-#define SPI_MODE_2                  SPI_CFG2_CPOL
+#define SPI_MODE_1                  (SPI_CFG2_CPHA)
+#define SPI_MODE_2                  (SPI_CFG2_CPOL)
 #define SPI_MODE_3                  (SPI_CFG2_CPOL | SPI_CFG2_CPHA)
 /**
  * @}
@@ -244,10 +244,10 @@ typedef struct
  * @{
  */
 #define SPI_BR_DIV_2                (0ul)                               /*!< SPI baud rate is the system clock divided by 2. */
-#define SPI_BR_DIV_4                SPI_CFG2_MBR_0                      /*!< SPI baud rate is the system clock divided by 4. */
-#define SPI_BR_DIV_8                SPI_CFG2_MBR_1                      /*!< SPI baud rate is the system clock divided by 8. */
+#define SPI_BR_DIV_4                (SPI_CFG2_MBR_0)                    /*!< SPI baud rate is the system clock divided by 4. */
+#define SPI_BR_DIV_8                (SPI_CFG2_MBR_1)                    /*!< SPI baud rate is the system clock divided by 8. */
 #define SPI_BR_DIV_16               (SPI_CFG2_MBR_1 | SPI_CFG2_MBR_0)   /*!< SPI baud rate is the system clock divided by 16. */
-#define SPI_BR_DIV_32               SPI_CFG2_MBR_2                      /*!< SPI baud rate is the system clock divided by 32. */
+#define SPI_BR_DIV_32               (SPI_CFG2_MBR_2)                    /*!< SPI baud rate is the system clock divided by 32. */
 #define SPI_BR_DIV_64               (SPI_CFG2_MBR_2 | SPI_CFG2_MBR_0)   /*!< SPI baud rate is the system clock divided by 64. */
 #define SPI_BR_DIV_128              (SPI_CFG2_MBR_2 | SPI_CFG2_MBR_1)   /*!< SPI baud rate is the system clock divided by 128. */
 #define SPI_BR_DIV_256              (SPI_CFG2_MBR_2 | SPI_CFG2_MBR_1 | SPI_CFG2_MBR_0)  /*!< SPI baud rate is the system clock divided by 256. */
@@ -260,7 +260,7 @@ typedef struct
  * @{
  */
 #define SPI_DATA_SIZE_8BIT          (0ul)
-#define SPI_DATA_SIZE_16BIT         SPI_CFG2_DSIZE
+#define SPI_DATA_SIZE_16BIT         (SPI_CFG2_DSIZE)
 /**
  * @}
  */
@@ -270,7 +270,7 @@ typedef struct
  * @{
  */
 #define SPI_FIRST_MSB               (0ul)
-#define SPI_FIRST_LSB               SPI_CFG2_LSBF
+#define SPI_FIRST_LSB               (SPI_CFG2_LSBF)
 /**
  * @}
  */
@@ -279,15 +279,15 @@ typedef struct
  * @defgroup SPI_State_Flag SPI State Flag
  * @{
  */
-#define SPI_FLAG_OVERLOAD           SPI_SR_OVRERF
-#define SPI_FLAG_IDLE               SPI_SR_IDLNF
-#define SPI_FLAG_MODE_FAULT         SPI_SR_MODFERF
-#define SPI_FLAG_PARITY_ERROR       SPI_SR_PERF
-#define SPI_FLAG_UNDERLOAD          SPI_SR_UDRERF
-#define SPI_FLAG_TX_BUFFER_EMPTY    SPI_SR_TDEF         /*!< This flag is set when the data in the data register
+#define SPI_FLAG_OVERLOAD           (SPI_SR_OVRERF)
+#define SPI_FLAG_IDLE               (SPI_SR_IDLNF)
+#define SPI_FLAG_MODE_FAULT         (SPI_SR_MODFERF)
+#define SPI_FLAG_PARITY_ERROR       (SPI_SR_PERF)
+#define SPI_FLAG_UNDERLOAD          (SPI_SR_UDRERF)
+#define SPI_FLAG_TX_BUFFER_EMPTY    (SPI_SR_TDEF)       /*!< This flag is set when the data in the data register
                                                              is copied into the shift register, but the transmission
                                                              of the data bit may not have been completed. */
-#define SPI_FLAG_RX_BUFFER_FULL     SPI_SR_RDFF         /*!< When this flag is set, it indicates that a data was received. */
+#define SPI_FLAG_RX_BUFFER_FULL     (SPI_SR_RDFF)       /*!< When this flag is set, it indicates that a data was received. */
 
 #define SPI_FLAG_ALL                (SPI_FLAG_OVERLOAD          |   \
                                      SPI_FLAG_IDLE              |   \
@@ -297,7 +297,11 @@ typedef struct
                                      SPI_FLAG_TX_BUFFER_EMPTY   |   \
                                      SPI_FLAG_RX_BUFFER_FULL)
 
-#define SPI_FLAG_CLR_ALL            (SPI_FLAG_ALL & (~(SPI_FLAG_TX_BUFFER_EMPTY | SPI_FLAG_RX_BUFFER_FULL)))
+#define SPI_FLAG_CLR_ALL            (SPI_FLAG_OVERLOAD          |   \
+                                     SPI_FLAG_IDLE              |   \
+                                     SPI_FLAG_MODE_FAULT        |   \
+                                     SPI_FLAG_PARITY_ERROR      |   \
+                                     SPI_FLAG_UNDERLOAD)
 
 /**
  * @}
@@ -349,7 +353,14 @@ __STATIC_INLINE void SPI_FunctionCmd(en_functional_state_t enNewState)
  */
 __STATIC_INLINE en_flag_status_t SPI_GetFlag(uint32_t u32Flag)
 {
-    return (en_flag_status_t)((M0P_SPI->SR & u32Flag) != 0u);
+    en_flag_status_t enFlag = Reset;
+
+    if ((M0P_SPI->SR & u32Flag) != 0u)
+    {
+        enFlag = Set;
+    }
+
+    return enFlag;
 }
 
 /**
@@ -367,7 +378,7 @@ __STATIC_INLINE en_flag_status_t SPI_GetFlag(uint32_t u32Flag)
 __STATIC_INLINE void SPI_ClearFlag(uint32_t u32Flag)
 {
     u32Flag &= SPI_FLAG_CLR_ALL;
-    M0P_SPI->SR &= ~u32Flag;
+    M0P_SPI->SR &= (uint32_t)(~u32Flag);
 }
 
 /**
@@ -397,9 +408,9 @@ en_result_t SPI_StructInit(stc_spi_init_t *pstcInit);
 
 void SPI_IntCmd(uint32_t u32IntType, en_functional_state_t enNewState);
 
-en_result_t SPI_Transmit(void *pvTxBuf, uint32_t u32TxLength);
+en_result_t SPI_Transmit(const void *pvTxBuf, uint32_t u32TxLength);
 en_result_t SPI_Receive(void *pvRxBuf, uint32_t u32RxLength);
-en_result_t SPI_TransmitReceive(void *pvTxBuf, void *pvRxBuf, uint32_t u32Length);
+en_result_t SPI_TransmitReceive(const void *pvTxBuf, void *pvRxBuf, uint32_t u32Length);
 
 /**
  * @}

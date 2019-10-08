@@ -72,36 +72,36 @@
 /*******************************************************************************
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
-#define EKEY0_PORT      GPIO_PORT_7
-#define EKEY0_PIN       GPIO_PIN_0
-#define EKEY5_PORT      GPIO_PORT_6
-#define EKEY5_PIN       GPIO_PIN_2
+#define EKEY0_PORT      (GPIO_PORT_7)
+#define EKEY0_PIN       (GPIO_PIN_0)
+#define EKEY5_PORT      (GPIO_PORT_6)
+#define EKEY5_PIN       (GPIO_PIN_2)
 
-#define LED_RGB_PORT    GPIO_PORT_2
-#define LED_R_PORT      GPIO_PORT_2
-#define LED_G_PORT      GPIO_PORT_2
-#define LED_B_PORT      GPIO_PORT_2
+#define LED_RGB_PORT    (GPIO_PORT_2)
+#define LED_R_PORT      (GPIO_PORT_2)
+#define LED_G_PORT      (GPIO_PORT_2)
+#define LED_B_PORT      (GPIO_PORT_2)
 
-#define LED_R_PIN       GPIO_PIN_5
-#define LED_G_PIN       GPIO_PIN_6
-#define LED_B_PIN       GPIO_PIN_7
+#define LED_R_PIN       (GPIO_PIN_5)
+#define LED_G_PIN       (GPIO_PIN_6)
+#define LED_B_PIN       (GPIO_PIN_7)
 
-#define LED_R_ON()      GPIO_ResetPins(LED_R_PORT, LED_R_PIN)
-#define LED_G_ON()      GPIO_ResetPins(LED_G_PORT, LED_G_PIN)
-#define LED_B_ON()      GPIO_ResetPins(LED_B_PORT, LED_B_PIN)
+#define LED_R_ON()      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
+#define LED_G_ON()      (GPIO_ResetPins(LED_G_PORT, LED_G_PIN))
+#define LED_B_ON()      (GPIO_ResetPins(LED_B_PORT, LED_B_PIN))
 
-#define LED_R_OFF()     GPIO_SetPins(LED_R_PORT, LED_R_PIN)
-#define LED_G_OFF()     GPIO_SetPins(LED_G_PORT, LED_G_PIN)
-#define LED_B_OFF()     GPIO_SetPins(LED_B_PORT, LED_B_PIN)
+#define LED_R_OFF()     (GPIO_SetPins(LED_R_PORT, LED_R_PIN))
+#define LED_G_OFF()     (GPIO_SetPins(LED_G_PORT, LED_G_PIN))
+#define LED_B_OFF()     (GPIO_SetPins(LED_B_PORT, LED_B_PIN))
 
-#define LED_R_TOGGLE()  GPIO_TogglePins(LED_R_PORT, LED_R_PIN)
-#define LED_G_TOGGLE()  GPIO_TogglePins(LED_G_PORT, LED_G_PIN)
-#define LED_B_TOGGLE()  GPIO_TogglePins(LED_B_PORT, LED_B_PIN)
+#define LED_R_TOGGLE()  (GPIO_TogglePins(LED_R_PORT, LED_R_PIN))
+#define LED_G_TOGGLE()  (GPIO_TogglePins(LED_G_PORT, LED_G_PIN))
+#define LED_B_TOGGLE()  (GPIO_TogglePins(LED_B_PORT, LED_B_PIN))
 #define LED_RGB_TOGGLE()                                                        \
-        GPIO_TogglePins(LED_RGB_PORT, LED_R_PIN | LED_G_PIN | LED_B_PIN)
+        (GPIO_TogglePins(LED_RGB_PORT, LED_R_PIN | LED_G_PIN | LED_B_PIN))
 
-#define LED_RGB_ON()    GPIO_ResetPins(LED_RGB_PORT, LED_R_PIN | LED_G_PIN | LED_B_PIN)
-#define LED_RGB_OFF()   GPIO_SetPins(LED_RGB_PORT, LED_R_PIN | LED_G_PIN | LED_B_PIN)
+#define LED_RGB_ON()    (GPIO_ResetPins(LED_RGB_PORT, LED_R_PIN | LED_G_PIN | LED_B_PIN))
+#define LED_RGB_OFF()   (GPIO_SetPins(LED_RGB_PORT, LED_R_PIN | LED_G_PIN | LED_B_PIN))
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -129,13 +129,19 @@ void EKEY_IrqCallback(void)
     {
         LED_R_TOGGLE();
         /* wait EKEY0 release */
-        while(Pin_Reset == GPIO_ReadInputPortPin(EKEY0_PORT, EKEY0_PIN));
+        while(Pin_Reset == GPIO_ReadInputPortPin(EKEY0_PORT, EKEY0_PIN))
+        {
+            ;
+        }
     }
     if (Pin_Reset == GPIO_ReadInputPortPin(EKEY5_PORT, EKEY5_PIN))
     {
         LED_G_TOGGLE();
         /* wait EKEY5 release */
-        while(Pin_Reset == GPIO_ReadInputPortPin(EKEY5_PORT, EKEY5_PIN));
+        while(Pin_Reset == GPIO_ReadInputPortPin(EKEY5_PORT, EKEY5_PIN))
+        {
+            ;
+        }
     }
 }
 
@@ -158,18 +164,21 @@ int32_t main(void)
     GPIO_OE(LED_RGB_PORT, (LED_R_PIN | LED_G_PIN | LED_B_PIN), Enable);
 
     /* Set P70/P62 to EKEY0/EKEY5 on START-KIT */
-    GPIO_SetFunc(EKEY0_PORT, EKEY0_PIN, GPIO_FUNC_KR);
-    GPIO_SetFunc(EKEY5_PORT, EKEY5_PIN, GPIO_FUNC_KR);
+    GPIO_SetFunc(EKEY0_PORT, EKEY0_PIN, GPIO_FUNC_5_KR);
+    GPIO_SetFunc(EKEY5_PORT, EKEY5_PIN, GPIO_FUNC_5_KR);
 
     /* Set IRQ handler 14 as the EKEY interrupt entry */
     stcIrqRegister.enIRQn       = Int014_IRQn;
     stcIrqRegister.enIntSrc     = INT_PORT_EKEY;
-    stcIrqRegister.pfnCallback  = EKEY_IrqCallback;
+    stcIrqRegister.pfnCallback  = &EKEY_IrqCallback;
     u8Ret = INTC_IrqRegistration(&stcIrqRegister);
     if (Ok != u8Ret)
     {
         // check parameter
-        while(1);
+        while(1)
+        {
+            ;
+        }
     }
     /* Enable NVIC  */
     NVIC_ClearPendingIRQ(Int014_IRQn);

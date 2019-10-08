@@ -1571,8 +1571,8 @@
                             <access>read-write</access>
                         </field>
                         <field>
-                            <name>TRIMVAL</name>
-                            <description>desc TRIMVAL</description>
+                            <name>TRMVAL</name>
+                            <description>desc TRMVAL</description>
                             <msb>21</msb>
                             <lsb>16</lsb>
                             <access>read-write</access>
@@ -1803,7 +1803,7 @@
             <baseAddress>0x40000800</baseAddress>
             <addressBlock>
                 <offset>0x0</offset>
-                <size>0x283</size>
+                <size>0x285</size>
             </addressBlock>
             <registers>
                 <register>

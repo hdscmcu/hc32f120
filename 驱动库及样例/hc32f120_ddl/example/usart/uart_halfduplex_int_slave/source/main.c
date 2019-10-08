@@ -76,27 +76,27 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* UART TX Port/Pin definition */
-#define UART_SLAVE_TX_PORT              GPIO_PORT_0
-#define UART_SLAVE_TX_PIN               GPIO_PIN_0      /* P00: USART2_TX_B */
+#define UART_SLAVE_TX_PORT              (GPIO_PORT_0)
+#define UART_SLAVE_TX_PIN               (GPIO_PIN_0)      /* P00: USART2_TX_B */
 
 /* UART unit definition */
-#define UART_SLAVE_UNIT                 M0P_USART2
+#define UART_SLAVE_UNIT                 (M0P_USART2)
 
 /* UART unit interrupt definition */
-#define UART_SLAVE_UNIT_ERR_INT         INT_USART_2_EI
-#define UART_SLAVE_UNIT_ERR_IRQn        Int016_IRQn
+#define UART_SLAVE_UNIT_ERR_INT         (INT_USART_2_EI)
+#define UART_SLAVE_UNIT_ERR_IRQn        (Int016_IRQn)
 
-#define UART_SLAVE_UNIT_RX_INT          INT_USART_2_RI
-#define UART_SLAVE_UNIT_RX_IRQn         Int018_IRQn
+#define UART_SLAVE_UNIT_RX_INT          (INT_USART_2_RI)
+#define UART_SLAVE_UNIT_RX_IRQn         (Int018_IRQn)
 
-#define UART_SLAVE_UNIT_TX_INT          INT_USART_2_TI
-#define UART_SLAVE_UNIT_TX_IRQn         Int020_IRQn
+#define UART_SLAVE_UNIT_TX_INT          (INT_USART_2_TI)
+#define UART_SLAVE_UNIT_TX_IRQn         (Int020_IRQn)
 
-#define UART_SLAVE_UNIT_TCI_INT         INT_USART_2_TCI
-#define UART_SLAVE_UNIT_TCI_IRQn        Int022_IRQn
+#define UART_SLAVE_UNIT_TCI_INT         (INT_USART_2_TCI)
+#define UART_SLAVE_UNIT_TCI_IRQn        (Int022_IRQn)
 
 /* Function clock gate definition  */
-#define FUNCTION_CLK_GATE               CLK_FCG_UART2
+#define FUNCTION_CLK_GATE               (CLK_FCG_UART2)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -114,19 +114,7 @@ static void UartSlaveUnitErrIrqCallback(void);
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-static uint8_t m_u8UartSlaveRxData = 0;
-
-static const stc_uart_init_t m_stcUartInit = {
-    .u32Baudrate = 19200,
-    .u32BitDirection = USART_LSB,
-    .u32StopBit = USART_STOP_BITS_1,
-    .u32Parity = USART_PARITY_NONE,
-    .u32DataWidth = USART_DATA_WIDTH_BITS_8,
-    .u32ClkMode = USART_INTCLK_NONE_OUTPUT,
-    .u32OversamplingBits = USART_OVERSAMPLING_BITS_8,
-    .u32NoiseFilterState = USART_NOISE_FILTER_DISABLE,
-    .u32SbDetectPolarity = USART_SB_DETECT_FALLING,
-};
+static uint8_t m_u8UartSlaveRxData = 0u;
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -162,10 +150,12 @@ static void SystemClockConfig(void)
  */
 static void UartSlaveUnitTxIrqCallback(void)
 {
-    if ((Set == USART_GetFlag(UART_SLAVE_UNIT, USART_FLAG_TXE)) && 
-        (Enable == USART_GetFuncState(UART_SLAVE_UNIT, USART_IT_TXE)))
+    en_flag_status_t enFlag = USART_GetFlag(UART_SLAVE_UNIT, USART_FLAG_TXE);
+    en_functional_state_t enState = USART_GetFuncState(UART_SLAVE_UNIT, USART_IT_TXE);
+
+    if ((Set == enFlag) && (Enable == enState))
     {
-        USART_SendData(UART_SLAVE_UNIT, m_u8UartSlaveRxData);
+        USART_SendData(UART_SLAVE_UNIT, (uint16_t)m_u8UartSlaveRxData);
 
         /* Disable slave TX & Enable TC interrupt function */
         USART_FuncCmd(UART_SLAVE_UNIT, USART_INT_TXE, Disable);
@@ -180,8 +170,10 @@ static void UartSlaveUnitTxIrqCallback(void)
  */
 static void UartSlaveUnitTcIrqCallback(void)
 {
-    if ((Set == USART_GetFlag(UART_SLAVE_UNIT, USART_FLAG_TC)) && 
-        (Enable == USART_GetFuncState(UART_SLAVE_UNIT, USART_IT_TC)))
+    en_flag_status_t enFlag = USART_GetFlag(UART_SLAVE_UNIT, USART_FLAG_TC);
+    en_functional_state_t enState = USART_GetFuncState(UART_SLAVE_UNIT, USART_IT_TC);
+
+    if ((Set == enFlag) && (Enable == enState))
     {
         /* Enable RX & RX no empty interrupt function && Disable TX & TC interrupt function*/
         USART_FuncCmd(UART_SLAVE_UNIT, (USART_TX | USART_INT_TC), Disable);
@@ -196,10 +188,12 @@ static void UartSlaveUnitTcIrqCallback(void)
  */
 static void UartSlaveUnitRxIrqCallback(void)
 {
-    if ((Set == USART_GetFlag(UART_SLAVE_UNIT, USART_FLAG_RXNE)) && 
-        (Enable == USART_GetFuncState(UART_SLAVE_UNIT, USART_IT_RI)))
+    en_flag_status_t enFlag = USART_GetFlag(UART_SLAVE_UNIT, USART_FLAG_RXNE);
+    en_functional_state_t enState = USART_GetFuncState(UART_SLAVE_UNIT, USART_IT_RI);
+
+    if ((Set == enFlag) && (Enable == enState))
     {
-        m_u8UartSlaveRxData = USART_RecData(UART_SLAVE_UNIT);
+        m_u8UartSlaveRxData = (uint8_t)USART_RecData(UART_SLAVE_UNIT);
 
         /* Disable slave RX & RX no empty interrupt function && Enable TX & TC interrupt function*/
         USART_FuncCmd(UART_SLAVE_UNIT, (USART_RX | USART_INT_RX), Disable);
@@ -218,9 +212,6 @@ static void UartSlaveUnitErrIrqCallback(void)
     {
         USART_ClearFlag(UART_SLAVE_UNIT, (USART_CLEAR_FLAG_PE | USART_CLEAR_FLAG_FE | USART_CLEAR_FLAG_ORE));
     }
-    else
-    {
-    }
 }
 
 /**
@@ -231,23 +222,34 @@ static void UartSlaveUnitErrIrqCallback(void)
 int32_t main(void)
 {
     stc_irq_regi_config_t stcIrqRegiConf;
+    const stc_uart_init_t stcUartInit = {
+        .u32Baudrate = 19200,
+        .u32BitDirection = USART_LSB,
+        .u32StopBit = USART_STOP_BITS_1,
+        .u32Parity = USART_PARITY_NONE,
+        .u32DataWidth = USART_DATA_WIDTH_BITS_8,
+        .u32ClkMode = USART_INTCLK_NONE_OUTPUT,
+        .u32OversamplingBits = USART_OVERSAMPLING_BITS_8,
+        .u32NoiseFilterState = USART_NOISE_FILTER_DISABLE,
+        .u32SbDetectPolarity = USART_SB_DETECT_FALLING,
+    };
 
     /* Configure system clock. */
     SystemClockConfig();
 
     /* Configure USART TX pin. */
-    GPIO_SetFunc(UART_SLAVE_TX_PORT, UART_SLAVE_TX_PIN, GPIO_FUNC_USART);
+    GPIO_SetFunc(UART_SLAVE_TX_PORT, UART_SLAVE_TX_PIN, GPIO_FUNC_3_USART);
     
     /* Enable peripheral clock */
     CLK_FcgPeriphClockCmd(FUNCTION_CLK_GATE, Enable);
 
     /* Initialize UART slave half-duplex function. */
-    USART_HalfDuplexInit(UART_SLAVE_UNIT, &m_stcUartInit);
+    USART_HalfDuplexInit(UART_SLAVE_UNIT, &stcUartInit);
 
     /* Register RX IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = UART_SLAVE_UNIT_RX_IRQn;
     stcIrqRegiConf.enIntSrc = UART_SLAVE_UNIT_RX_INT;
-    stcIrqRegiConf.pfnCallback = UartSlaveUnitRxIrqCallback;
+    stcIrqRegiConf.pfnCallback = &UartSlaveUnitRxIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -256,7 +258,7 @@ int32_t main(void)
     /* Register RX error IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = UART_SLAVE_UNIT_ERR_IRQn;
     stcIrqRegiConf.enIntSrc = UART_SLAVE_UNIT_ERR_INT;
-    stcIrqRegiConf.pfnCallback = UartSlaveUnitErrIrqCallback;
+    stcIrqRegiConf.pfnCallback = &UartSlaveUnitErrIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -265,7 +267,7 @@ int32_t main(void)
     /* Register TX IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = UART_SLAVE_UNIT_TX_IRQn;
     stcIrqRegiConf.enIntSrc = UART_SLAVE_UNIT_TX_INT;
-    stcIrqRegiConf.pfnCallback = UartSlaveUnitTxIrqCallback;
+    stcIrqRegiConf.pfnCallback = &UartSlaveUnitTxIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -274,7 +276,7 @@ int32_t main(void)
     /* Register TC IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = UART_SLAVE_UNIT_TCI_IRQn;
     stcIrqRegiConf.enIntSrc = UART_SLAVE_UNIT_TCI_INT;
-    stcIrqRegiConf.pfnCallback = UartSlaveUnitTcIrqCallback;
+    stcIrqRegiConf.pfnCallback = &UartSlaveUnitTcIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -285,6 +287,7 @@ int32_t main(void)
 
     while (1)
     {
+        ;
     }
 }
 

@@ -93,19 +93,19 @@ extern "C"
  * @{
  */
 #if !defined (HRC_VALUE)
-    #define HRC_VALUE ((uint32_t)8000000)  /*!< Internal high speed RC freq. */
+    #define HRC_VALUE ((uint32_t)8000000ul)  /*!< Internal high speed RC freq. */
 #endif
 
 #if !defined (LRC_VALUE)
-    #define LRC_VALUE ((uint32_t)32768)     /*!< Internal low speed RC freq. */
+    #define LRC_VALUE ((uint32_t)32768ul)     /*!< Internal low speed RC freq. */
 #endif
 
 #if !defined (XTAL_VALUE)
-    #define XTAL_VALUE ((uint32_t)20000000)  /*!< External high speed OSC freq. */
+    #define XTAL_VALUE ((uint32_t)20000000ul)  /*!< External high speed OSC freq. */
 #endif
 
 #if !defined (XTAL32_VALUE)
-    #define XTAL32_VALUE ((uint32_t)32768)  /*!< External low speed OSC freq. */
+    #define XTAL32_VALUE ((uint32_t)32768ul)  /*!< External low speed OSC freq. */
 #endif
 
 /**

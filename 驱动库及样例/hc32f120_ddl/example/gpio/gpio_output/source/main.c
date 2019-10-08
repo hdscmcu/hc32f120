@@ -72,33 +72,33 @@
 /*******************************************************************************
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
-#define LED_RGB_PORT    GPIO_PORT_2
-#define LED_R_PORT      GPIO_PORT_2
-#define LED_G_PORT      GPIO_PORT_2
-#define LED_B_PORT      GPIO_PORT_2
+#define LED_RGB_PORT    (GPIO_PORT_2)
+#define LED_R_PORT      (GPIO_PORT_2)
+#define LED_G_PORT      (GPIO_PORT_2)
+#define LED_B_PORT      (GPIO_PORT_2)
 
-#define LED_R_PIN       GPIO_PIN_5
-#define LED_G_PIN       GPIO_PIN_6
-#define LED_B_PIN       GPIO_PIN_7
+#define LED_R_PIN       (GPIO_PIN_5)
+#define LED_G_PIN       (GPIO_PIN_6)
+#define LED_B_PIN       (GPIO_PIN_7)
 
-#define LED_R_ON()      GPIO_ResetPins(LED_R_PORT, LED_R_PIN)
-#define LED_G_ON()      GPIO_ResetPins(LED_G_PORT, LED_G_PIN)
-#define LED_B_ON()      GPIO_ResetPins(LED_B_PORT, LED_B_PIN)
+#define LED_R_ON()      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
+#define LED_G_ON()      (GPIO_ResetPins(LED_G_PORT, LED_G_PIN))
+#define LED_B_ON()      (GPIO_ResetPins(LED_B_PORT, LED_B_PIN))
 
-#define LED_R_OFF()     GPIO_SetPins(LED_R_PORT, LED_R_PIN)
-#define LED_G_OFF()     GPIO_SetPins(LED_G_PORT, LED_G_PIN)
-#define LED_B_OFF()     GPIO_SetPins(LED_B_PORT, LED_B_PIN)
+#define LED_R_OFF()     (GPIO_SetPins(LED_R_PORT, LED_R_PIN))
+#define LED_G_OFF()     (GPIO_SetPins(LED_G_PORT, LED_G_PIN))
+#define LED_B_OFF()     (GPIO_SetPins(LED_B_PORT, LED_B_PIN))
 
-#define LED_R_TOGGLE()  GPIO_TogglePins(LED_R_PORT, LED_R_PIN)
-#define LED_G_TOGGLE()  GPIO_TogglePins(LED_G_PORT, LED_G_PIN)
-#define LED_B_TOGGLE()  GPIO_TogglePins(LED_B_PORT, LED_B_PIN)
+#define LED_R_TOGGLE()  (GPIO_TogglePins(LED_R_PORT, LED_R_PIN))
+#define LED_G_TOGGLE()  (GPIO_TogglePins(LED_G_PORT, LED_G_PIN))
+#define LED_B_TOGGLE()  (GPIO_TogglePins(LED_B_PORT, LED_B_PIN))
 #define LED_RGB_TOGGLE()                                                        \
-        GPIO_TogglePins(LED_RGB_PORT, LED_R_PIN | LED_G_PIN | LED_B_PIN)
+        (GPIO_TogglePins(LED_RGB_PORT, LED_R_PIN | LED_G_PIN | LED_B_PIN))
 
-#define LED_RGB_ON()    GPIO_ResetPins(LED_RGB_PORT, LED_R_PIN | LED_G_PIN | LED_B_PIN)
-#define LED_RGB_OFF()   GPIO_SetPins(LED_RGB_PORT, LED_R_PIN | LED_G_PIN | LED_B_PIN)
+#define LED_RGB_ON()    (GPIO_ResetPins(LED_RGB_PORT, LED_R_PIN | LED_G_PIN | LED_B_PIN))
+#define LED_RGB_OFF()   (GPIO_SetPins(LED_RGB_PORT, LED_R_PIN | LED_G_PIN | LED_B_PIN))
 
-#define DLY_MS  500
+#define DLY_MS  (500ul)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')

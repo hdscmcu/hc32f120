@@ -73,24 +73,24 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* LED_R Port/Pin definition */
-#define LED_R_PORT                      GPIO_PORT_2
-#define LED_R_PIN                       GPIO_PIN_5
+#define LED_R_PORT                      (GPIO_PORT_2)
+#define LED_R_PIN                       (GPIO_PIN_5)
 
-#define LED_R_ON()                      GPIO_ResetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_OFF()                     GPIO_SetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_TOGGLE()                  GPIO_TogglePins(LED_R_PORT, LED_R_PIN)
+#define LED_R_ON()                      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_OFF()                     (GPIO_SetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_TOGGLE()                  (GPIO_TogglePins(LED_R_PORT, LED_R_PIN))
 
 /* LED_G Port/Pin definition */
-#define LED_G_PORT                      GPIO_PORT_2
-#define LED_G_PIN                       GPIO_PIN_6
+#define LED_G_PORT                      (GPIO_PORT_2)
+#define LED_G_PIN                       (GPIO_PIN_6)
 
-#define LED_G_ON()                      GPIO_ResetPins(LED_G_PORT, LED_G_PIN)
-#define LED_G_OFF()                     GPIO_SetPins(LED_G_PORT, LED_G_PIN)
-#define LED_G_TOGGLE()                  GPIO_TogglePins(LED_G_PORT, LED_G_PIN)
+#define LED_G_ON()                      (GPIO_ResetPins(LED_G_PORT, LED_G_PIN))
+#define LED_G_OFF()                     (GPIO_SetPins(LED_G_PORT, LED_G_PIN))
+#define LED_G_TOGGLE()                  (GPIO_TogglePins(LED_G_PORT, LED_G_PIN))
 
 /* SW1 Port/Pin definition */
-#define SW1_PORT                        GPIO_PORT_6
-#define SW1_PIN                         GPIO_PIN_2
+#define SW1_PORT                        (GPIO_PORT_6)
+#define SW1_PIN                         (GPIO_PIN_2)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -103,7 +103,7 @@
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-static uint8_t u8ExIntCnt = 0;
+static uint8_t u8ExIntCnt = 0u;
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -113,7 +113,7 @@ static uint8_t u8ExIntCnt = 0;
  * @param  None
  * @retval None
  */
-void SWDT_IrqCallback(void)
+static void SWDT_IrqCallback(void)
 {
     en_flag_status_t enFlagSta;
 
@@ -158,7 +158,7 @@ void EXINT06_Handler(void)
         }
         LED_R_OFF();
         LED_G_OFF();
-        EXINT_ClrSrc(EXINT_CH06);
+        EXINT_ClrExIntSrc(EXINT_CH06);
     }
 }
 
@@ -167,7 +167,7 @@ void EXINT06_Handler(void)
  * @param  None
  * @retval None
  */
-void SW1_Config(void)
+static void SW1_Config(void)
 {
     stc_gpio_init_t stcGpioInit;
     stc_exint_config_t stcExIntInit;
@@ -202,7 +202,7 @@ void SW1_Config(void)
  * @param  None
  * @retval None
  */
-void SWDT_Config(void)
+static void SWDT_Config(void)
 {
     uint8_t u8Ret;
     stc_swdt_init_t stcSwdtInit;
@@ -219,12 +219,14 @@ void SWDT_Config(void)
     /* NVIC configure of SWDT */
     stcIrqRegister.enIntSrc = INT_SWDT_NMIUNDF;
     stcIrqRegister.enIRQn = Int008_IRQn;
-    stcIrqRegister.pfnCallback = SWDT_IrqCallback;
+    stcIrqRegister.pfnCallback = &SWDT_IrqCallback;
     u8Ret = INTC_IrqRegistration(&stcIrqRegister);
     if (Ok != u8Ret)
     {
-        // check parameter
-        while (1);
+        /* check parameter */
+        while (1)
+        {
+        }
     }
 
     /* Clear pending */
@@ -275,6 +277,10 @@ int32_t main(void)
         else if (2u == u8ExIntCnt)
         {
             PWC_EnterStopMode();
+        }
+        else
+        {
+            /* Reserved */
         }
     }
 }

@@ -85,91 +85,90 @@
 /**
  * @brief   Maximum IRQ handler number
  */
-#define IRQ_NUM_MAX         16u
+#define IRQ_NUM_MAX         (16u)
 
 /**
  * @defgroup INTC_Check_Parameters_Validity INTC Check Parameters Validity
  * @{
  */
 /*  Parameter validity check for wakeup source from stop mode. */
-#define IS_INTC_WKUP_SRC(SOURCE)                                                \
-(   ((SOURCE) & (INTC_WUPENR_EIRQWUEN       | INTC_WUPENR_SWDTWUEN      |       \
+#define IS_INTC_WKUP_SRC(src)                                                   \
+(   ((src) & (INTC_WUPENR_EIRQWUEN          | INTC_WUPENR_SWDTWUEN      |       \
                  INTC_WUPENR_EKEYWUEN       | INTC_WUPENR_TMR0CMPWUEN   |       \
                  INTC_WUPENR_PVDWUEN        | INTC_WUPENR_RTCALMWUEN    |       \
-                 INTC_WUPENR_RTCPRDWUEN))   != (uint32_t)0x00000000)
+                 INTC_WUPENR_RTCPRDWUEN))   != (uint32_t)0x00000000ul)
 
 /*  Parameter validity check for event number. */
-#define IS_INTC_EVENT(EVENT)                                                    \
-(   ((EVENT) & (INTC_EVTER_EVTEN0   | INTC_EVTER_EVTEN1                 |       \
+#define IS_INTC_EVENT(event)                                                    \
+(   ((event) & (INTC_EVTER_EVTEN0   | INTC_EVTER_EVTEN1                 |       \
                 INTC_EVTER_EVTEN2   | INTC_EVTER_EVTEN3                 |       \
                 INTC_EVTER_EVTEN4   | INTC_EVTER_EVTEN5                 |       \
-                INTC_EVTER_EVTEN6   | INTC_EVTER_EVTEN7)) != (uint8_t)0x00)
+                INTC_EVTER_EVTEN6   | INTC_EVTER_EVTEN7)) != (uint8_t)0x00u)
 
 /*  Parameter validity check for NMI pin filter function. */
-#define IS_NMI_FE(FE)                                                           \
-(   ((FE) == NMI_FILTER_OFF)                    ||                              \
-    ((FE) == NMI_FILTER_ON))
+#define IS_NMI_FE(fe)                                                           \
+(   ((fe) == NMI_FILTER_OFF)                    ||                              \
+    ((fe) == NMI_FILTER_ON))
 
 /*  Parameter validity check for MNI pin filter clock division. */
-#define IS_NMI_FCLK(FCLK)                                                       \
-(   ((FCLK) == NMI_FCLK_HCLK_DIV1)              ||                              \
-    ((FCLK) == NMI_FCLK_HCLK_DIV8)              ||                              \
-    ((FCLK) == NMI_FCLK_HCLK_DIV32)             ||                              \
-    ((FCLK) == NMI_FCLK_HCLK_DIV64))
+#define IS_NMI_FCLK(fclk)                                                       \
+(   ((fclk) == NMI_FCLK_HCLK_DIV1)              ||                              \
+    ((fclk) == NMI_FCLK_HCLK_DIV8)              ||                              \
+    ((fclk) == NMI_FCLK_HCLK_DIV32)             ||                              \
+    ((fclk) == NMI_FCLK_HCLK_DIV64))
 
 /*  Parameter validity check for NMI pin trigger edge. */
-#define IS_NMI_TRIGGER(TRIGGER)                                                 \
-(   ((TRIGGER) == NMI_TRIGGER_FALLING)          ||                              \
-    ((TRIGGER) == NMI_TRIGGER_RISING))
+#define IS_NMI_TRIGGER(trigger)                                                 \
+(   ((trigger) == NMI_TRIGGER_FALLING)          ||                              \
+    ((trigger) == NMI_TRIGGER_RISING))
 
 /*  Parameter validity check for NMI trigger souce. */
-#define IS_NMI_SRC(SRC) (((SRC) & NMI_SRC_MASK) != (uint8_t)0x00)
+#define IS_NMI_SRC(src) (((src) & NMI_SRC_MASK) != (uint8_t)0x00u)
 
 /*  Parameter validity check for get NMI trigger source. */
-#define IS_GET_NMI_SRC(SRC)                                                     \
-(   ((SRC) == NMI_SRC_NMI_PIN)                  ||                              \
-    ((SRC) == NMI_SRC_XTAL_STP)                 ||                              \
-    ((SRC) == NMI_SRC_SWDT)                     ||                              \
-    ((SRC) == NMI_SRC_LVD))
+#define IS_GET_NMI_SRC(src)                                                     \
+(   ((src) == NMI_SRC_NMI_PIN)                  ||                              \
+    ((src) == NMI_SRC_XTAL_STP)                 ||                              \
+    ((src) == NMI_SRC_SWDT)                     ||                              \
+    ((src) == NMI_SRC_LVD))
 
 /*  Parameter validity check for EXINT filter function. */
-#define IS_EXINT_FE(FE)                                                         \
-(   ((FE) == EXINT_FILTER_OFF)                  ||                              \
-    ((FE) == EXINT_FILTER_ON))
+#define IS_EXINT_FE(fe)                                                         \
+(   ((fe) == EXINT_FILTER_OFF)                  ||                              \
+    ((fe) == EXINT_FILTER_ON))
 
 /*  Parameter validity check for EXINT filter clock division. */
-#define IS_EXINT_FCLK(FCLK)                                                     \
-(   ((FCLK) == EXINT_FCLK_HCLK_DIV1)            ||                              \
-    ((FCLK) == EXINT_FCLK_HCLK_DIV8)            ||                              \
-    ((FCLK) == EXINT_FCLK_HCLK_DIV32)           ||                              \
-    ((FCLK) == EXINT_FCLK_HCLK_DIV64))
+#define IS_EXINT_FCLK(fclk)                                                     \
+(   ((fclk) == EXINT_FCLK_HCLK_DIV1)            ||                              \
+    ((fclk) == EXINT_FCLK_HCLK_DIV8)            ||                              \
+    ((fclk) == EXINT_FCLK_HCLK_DIV32)           ||                              \
+    ((fclk) == EXINT_FCLK_HCLK_DIV64))
 
 /*  Parameter validity check for EXINT trigger edge. */
-#define IS_EXINT_TRIGGER(TRIGGER)                                               \
-(   ((TRIGGER) == EXINT_TRIGGER_LOW)            ||                              \
-    ((TRIGGER) == EXINT_TRIGGER_RISING)         ||                              \
-    ((TRIGGER) == EXINT_TRIGGER_FALLING)        ||                              \
-    ((TRIGGER) == EXINT_TRIGGER_BOTH))
+#define IS_EXINT_TRIGGER(trigger)                                               \
+(   ((trigger) == EXINT_TRIGGER_LOW)            ||                              \
+    ((trigger) == EXINT_TRIGGER_RISING)         ||                              \
+    ((trigger) == EXINT_TRIGGER_FALLING)        ||                              \
+    ((trigger) == EXINT_TRIGGER_BOTH))
 
 /*  Parameter validity check for EXINT channel. */
-#define IS_EXINT_CH(CH)     (((CH) & EXINT_CH_MASK) != (uint16_t)0x0000)
+#define IS_EXINT_CH(ch)     (((ch) & EXINT_CH_MASK) != (uint16_t)0x0000u)
 
 /*  Parameter validity check for get EXINT channel. */
-#define IS_GET_EXINT_CH(CH)                                                     \
-(   ((CH) == EXINT_CH00)                        ||                              \
-    ((CH) == EXINT_CH01)                        ||                              \
-    ((CH) == EXINT_CH02)                        ||                              \
-    ((CH) == EXINT_CH03)                        ||                              \
-    ((CH) == EXINT_CH04)                        ||                              \
-    ((CH) == EXINT_CH05)                        ||                              \
-    ((CH) == EXINT_CH06)                        ||                              \
-    ((CH) == EXINT_CH07)                        ||                              \
-    ((CH) == EXINT_CH08)                        ||                              \
-    ((CH) == EXINT_CH09))
+#define IS_GET_EXINT_CH(ch)                                                     \
+(   ((ch) == EXINT_CH00)                        ||                              \
+    ((ch) == EXINT_CH01)                        ||                              \
+    ((ch) == EXINT_CH02)                        ||                              \
+    ((ch) == EXINT_CH03)                        ||                              \
+    ((ch) == EXINT_CH04)                        ||                              \
+    ((ch) == EXINT_CH05)                        ||                              \
+    ((ch) == EXINT_CH06)                        ||                              \
+    ((ch) == EXINT_CH07)                        ||                              \
+    ((ch) == EXINT_CH08)                        ||                              \
+    ((ch) == EXINT_CH09))
 
 /*  Parameter validity check for EKEY. */
-#define IS_INTC_EKEY(EKEY)  (((EKEY) & INTC_EKEY_MASK) != (uint8_t)0x00)
-
+#define IS_INTC_EKEY(ekey)  (((ekey) & INTC_EKEY_MASK) != (uint8_t)0x00u)
 /**
  * @}
  */
@@ -220,37 +219,43 @@ static func_ptr_t pfnNmiCallback;
 en_result_t INTC_IrqRegistration(const stc_irq_regi_config_t *pstcIrqRegiConfig)
 {
     __IO stc_intc_iselar_field_t *stcIntSel;
+    en_result_t enRet = Ok;
 
     /* Check if pointer is NULL */
     if (NULL == pstcIrqRegiConfig)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
     }
-
-    INTC_Unlock();
-
-    /* Checking validity for Interrupt source of Group 0~7 and IRQ No. */
-    if (((pstcIrqRegiConfig->enIntSrc / 0x10)*2 + 8 != pstcIrqRegiConfig->enIRQn) &&    \
-        ((pstcIrqRegiConfig->enIntSrc / 0x10)*2 + 9 != pstcIrqRegiConfig->enIRQn))
+    else
     {
-        return ErrorInvalidParameter;
+        /* Checking validity for Interrupt source of Group 0~7 and IRQ No. */
+        if (((pstcIrqRegiConfig->enIntSrc / 0x10u)*2u + 8u != pstcIrqRegiConfig->enIRQn) && \
+            ((pstcIrqRegiConfig->enIntSrc / 0x10u)*2u + 9u != pstcIrqRegiConfig->enIRQn))
+        {
+            enRet = ErrorInvalidParameter;
+        }
+        else
+        {
+            /* EIRQ0~7 are fixed allocation of IRQ handler 0~7 */
+            if ((0u == pstcIrqRegiConfig->enIntSrc % 0x10u) || (pstcIrqRegiConfig->enIRQn < 8u))
+            {
+                enRet = ErrorInvalidParameter;
+            }
+            else
+            {
+                INTC_Unlock();
+                stcIntSel = (stc_intc_iselar_field_t *)((uint32_t)(&M0P_INTC->ISELAR8) +    \
+                                                     (4u * (pstcIrqRegiConfig->enIRQn - 8u)));
+                stcIntSel->ISEL = (pstcIrqRegiConfig->enIntSrc) % 0x10u;
+
+                /* Callback function */
+                pfnIrqHandler[pstcIrqRegiConfig->enIRQn-8u] = pstcIrqRegiConfig->pfnCallback;
+
+                INTC_Lock();
+            }
+        }
     }
-
-    /* EIRQ0~7 are fixed allocation of IRQ handler 0~7 */
-    if ((0 == pstcIrqRegiConfig->enIntSrc % 0x10) || (pstcIrqRegiConfig->enIRQn < 8))
-    {
-        return ErrorInvalidParameter;
-    }
-
-    stcIntSel = (stc_intc_iselar_field_t *)((uint32_t)(&M0P_INTC->ISELAR8) +    \
-                                         (4 * (pstcIrqRegiConfig->enIRQn - 8)));
-    stcIntSel->ISEL = (pstcIrqRegiConfig->enIntSrc) % 0x10;
-
-    /* Callback function */
-    pfnIrqHandler[pstcIrqRegiConfig->enIRQn-8] = pstcIrqRegiConfig->pfnCallback;
-
-    INTC_Lock();
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -265,27 +270,28 @@ en_result_t INTC_IrqRegistration(const stc_irq_regi_config_t *pstcIrqRegiConfig)
 en_result_t INTC_ShareIrqCmd(en_int_src_t enIntSrc, en_functional_state_t enNewState)
 {
     __IO uint32_t *ISELRx;
+    en_result_t enRet = Ok;
 
     /* EXINT0~7 cannot be configured into share IRQ */
-    if (0 == enIntSrc%0x10)
+    if (0u == enIntSrc % 0x10u)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
     }
     else
     {
         INTC_Unlock();
-        ISELRx = (uint32_t *)(((uint32_t)&M0P_INTC->ISELBR24) + (4 * (enIntSrc / 16)));
+        ISELRx = (uint32_t *)(((uint32_t)&M0P_INTC->ISELBR24) + (4u * (enIntSrc / 16u)));
         if (Enable == enNewState)
         {
-            SET_BIT(*ISELRx, (1u << (enIntSrc % 16)));
+            SET_REG32_BIT(*ISELRx, (1ul << (enIntSrc % 16ul)));
         }
         else
         {
-            CLEAR_BIT(*ISELRx, (1u << (enIntSrc % 16)));
+            CLEAR_REG32_BIT(*ISELRx, (1ul << (enIntSrc % 16ul)));
         }
         INTC_Lock();
-        return Ok;
     }
+    return enRet;
 }
 
 /**
@@ -322,11 +328,11 @@ void INTC_WakeupSrcCmd(uint32_t u32WakeupSrc, en_functional_state_t enNewState)
     INTC_Unlock();
     if (Enable == enNewState)
     {
-        SET_BIT(M0P_INTC->WUPENR, u32WakeupSrc);
+        SET_REG32_BIT(M0P_INTC->WUPENR, u32WakeupSrc);
     }
     else
     {
-        CLEAR_BIT(M0P_INTC->WUPENR, u32WakeupSrc);
+        CLEAR_REG32_BIT(M0P_INTC->WUPENR, u32WakeupSrc);
     }
     INTC_Lock();
 }
@@ -355,11 +361,11 @@ void INTC_EventCmd(uint8_t u8Event, en_functional_state_t enNewState)
     INTC_Unlock();
     if (Enable == enNewState)
     {
-        SET_BIT(M0P_INTC->EVTER, u8Event);
+        SET_REG8_BIT(M0P_INTC->EVTER, u8Event);
     }
     else
     {
-        CLEAR_BIT(M0P_INTC->EVTER, u8Event);
+        CLEAR_REG8_BIT(M0P_INTC->EVTER, u8Event);
     }
     INTC_Lock();
 }
@@ -373,19 +379,23 @@ void INTC_EventCmd(uint8_t u8Event, en_functional_state_t enNewState)
  */
 en_result_t NMI_StructInit(stc_nmi_config_t *pstcNmiConfig)
 {
+    en_result_t enRet = Ok;
+
     /* Check if pointer is NULL */
     if (NULL == pstcNmiConfig)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
     }
-    /* Configure to default value */
-    pstcNmiConfig->u8NmiFE          = NMI_FILTER_OFF;
-    pstcNmiConfig->u8NmiFClk        = NMI_FCLK_HCLK_DIV1;
-    pstcNmiConfig->u8NmiTigger      = NMI_TRIGGER_FALLING;
-    pstcNmiConfig->u8NmiSrc         = NMI_SRC_NMI_PIN;
-    pstcNmiConfig->pfnNmiCallback   = NULL;
-
-    return Ok;
+    else
+    {
+        /* Configure to default value */
+        pstcNmiConfig->u8NmiFE          = NMI_FILTER_OFF;
+        pstcNmiConfig->u8NmiFClk        = NMI_FCLK_HCLK_DIV1;
+        pstcNmiConfig->u8NmiTigger      = NMI_TRIGGER_FALLING;
+        pstcNmiConfig->u8NmiSrc         = NMI_SRC_NMI_PIN;
+        pstcNmiConfig->pfnNmiCallback   = NULL;
+    }
+    return enRet;
 }
 
 /**
@@ -397,36 +407,41 @@ en_result_t NMI_StructInit(stc_nmi_config_t *pstcNmiConfig)
  */
 en_result_t NMI_Init(const stc_nmi_config_t *pstcNmiConfig)
 {
+    en_result_t enRet = Ok;
+
     /* Check if pointer is NULL */
-    if ((NULL == pstcNmiConfig->pfnNmiCallback) || (NULL == pstcNmiConfig))
+    if ((NULL == pstcNmiConfig) || (NULL == pstcNmiConfig->pfnNmiCallback))
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
     }
+    else
+    {
+        /* Parameter validity checking */
+        DDL_ASSERT(IS_NMI_FCLK(pstcNmiConfig->u8NmiFClk));
+        DDL_ASSERT(IS_NMI_FE(pstcNmiConfig->u8NmiFE));
+        DDL_ASSERT(IS_NMI_TRIGGER(pstcNmiConfig->u8NmiTigger));
+        DDL_ASSERT(IS_NMI_SRC(pstcNmiConfig->u8NmiSrc));
 
-    /* Parameter validity checking */
-    DDL_ASSERT(IS_NMI_FCLK(pstcNmiConfig->u8NmiFClk));
-    DDL_ASSERT(IS_NMI_FE(pstcNmiConfig->u8NmiFE));
-    DDL_ASSERT(IS_NMI_TRIGGER(pstcNmiConfig->u8NmiTigger));
-    DDL_ASSERT(IS_NMI_SRC(pstcNmiConfig->u8NmiSrc));
+        INTC_Unlock();
 
-    INTC_Unlock();
+        /* NMI pin interrupt configure */
+        WRITE_REG8(M0P_INTC->NMICR,                                             \
+                  (pstcNmiConfig->u8NmiFE         |                             \
+                   pstcNmiConfig->u8NmiFClk       |                             \
+                   pstcNmiConfig->u8NmiTigger));
 
-    /* NMI pin interrupt configure */
-    WRITE_REG(M0P_INTC->NMICR,                                                  \
-              (pstcNmiConfig->u8NmiFE | pstcNmiConfig->u8NmiFClk |              \
-               pstcNmiConfig->u8NmiTigger));
+        /* Clear all NMI trigger source before set */
+        WRITE_REG8(M0P_INTC->NMICLR, INTC_NMICLR_MASK);
 
-    /* Clear all NMI trigger source before set */
-    WRITE_REG(M0P_INTC->NMICLR, INTC_NMICLR_MASK);
+        /* NMI trigger source configure */
+        WRITE_REG8(M0P_INTC->NMIER, pstcNmiConfig->u8NmiSrc);
 
-    /* NMI trigger source configure */
-    WRITE_REG(M0P_INTC->NMIER, pstcNmiConfig->u8NmiSrc);
+        /* NMI callback function configure */
+        pfnNmiCallback = pstcNmiConfig->pfnNmiCallback;
 
-    /* NMI callback function configure */
-    pfnNmiCallback = pstcNmiConfig->pfnNmiCallback;
-
-    INTC_Lock();
-    return Ok;
+        INTC_Lock();
+    }
+    return enRet;
 }
 
 /**
@@ -444,7 +459,7 @@ en_flag_status_t NMI_GetNmiSrc(uint8_t u8NmiSrc)
     /* Parameter validity checking */
     DDL_ASSERT(IS_GET_NMI_SRC(u8NmiSrc));
 
-    return (en_flag_status_t)!!(READ_REG(M0P_INTC->NMIFR) & u8NmiSrc);
+    return ((READ_REG8(M0P_INTC->NMIFR) & u8NmiSrc)) ? Set : Reset;
 }
 
 /**
@@ -462,7 +477,7 @@ void NMI_ClrNmiSrc(uint8_t u8NmiSrc)
     DDL_ASSERT(IS_NMI_SRC(u8NmiSrc));
 
     INTC_Unlock();
-    MODIFY_REG(M0P_INTC->NMICLR, INTC_NMICLR_MASK, u8NmiSrc);
+    MODIFY_REG8(M0P_INTC->NMICLR, INTC_NMICLR_MASK, u8NmiSrc);
     INTC_Lock();
 }
 
@@ -488,34 +503,36 @@ void NMI_IrqHandler(void)
  */
 en_result_t EXINT_Init(const stc_exint_config_t *pstcExIntConfig)
 {
-    uint8_t u8ExIntPos = 0;
+    uint8_t u8ExIntPos = 0u;
+    en_result_t enRet = Ok;
 
     /* Check if pointer is NULL */
     if (NULL == pstcExIntConfig)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
     }
-
-    /* Parameter validity checking */
-    DDL_ASSERT(IS_EXINT_FE(pstcExIntConfig->u8ExIntFE));
-    DDL_ASSERT(IS_EXINT_FCLK(pstcExIntConfig->u8ExIntFClk));
-    DDL_ASSERT(IS_EXINT_TRIGGER(pstcExIntConfig->u8ExIntLvl));
-    DDL_ASSERT(IS_EXINT_CH(pstcExIntConfig->u16ExIntCh));
-
-    INTC_Unlock();
-    for (u8ExIntPos = 0; u8ExIntPos < 10; u8ExIntPos++)
+    else
     {
-        if (pstcExIntConfig->u16ExIntCh & (1<<u8ExIntPos))
-        {
-            WRITE_REG(*(uint32_t *)(&M0P_INTC->EIRQCR0 + u8ExIntPos),           \
-                      (pstcExIntConfig->u8ExIntFE   |                           \
-                       pstcExIntConfig->u8ExIntFClk |                           \
-                       pstcExIntConfig->u8ExIntLvl));
-        }
-    }
-    INTC_Lock();
+        /* Parameter validity checking */
+        DDL_ASSERT(IS_EXINT_FE(pstcExIntConfig->u8ExIntFE));
+        DDL_ASSERT(IS_EXINT_FCLK(pstcExIntConfig->u8ExIntFClk));
+        DDL_ASSERT(IS_EXINT_TRIGGER(pstcExIntConfig->u8ExIntLvl));
+        DDL_ASSERT(IS_EXINT_CH(pstcExIntConfig->u16ExIntCh));
 
-    return Ok;
+        INTC_Unlock();
+        for (u8ExIntPos = 0u; u8ExIntPos < 10u; u8ExIntPos++)
+        {
+            if (pstcExIntConfig->u16ExIntCh & (1ul << u8ExIntPos))
+            {
+                WRITE_REG8(*(uint8_t *)((uint32_t)(&M0P_INTC->EIRQCR0) + u8ExIntPos),   \
+                          (pstcExIntConfig->u8ExIntFE         |                         \
+                           pstcExIntConfig->u8ExIntFClk       |                         \
+                           pstcExIntConfig->u8ExIntLvl));
+            }
+        }
+        INTC_Lock();
+    }
+    return enRet;
 }
 
 /**
@@ -527,18 +544,22 @@ en_result_t EXINT_Init(const stc_exint_config_t *pstcExIntConfig)
  */
 en_result_t EXINT_StructInit(stc_exint_config_t *pstcExintConfig)
 {
+    en_result_t enRet = Ok;
+
     /* Check if pointer is NULL */
     if (NULL == pstcExintConfig)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
     }
-    /* Configure to default value */
-    pstcExintConfig->u16ExIntCh     = NULL;
-    pstcExintConfig->u8ExIntFE      = EXINT_FILTER_OFF;
-    pstcExintConfig->u8ExIntFClk    = EXINT_FCLK_HCLK_DIV1;
-    pstcExintConfig->u8ExIntLvl     = EXINT_TRIGGER_FALLING;
-
-    return Ok;
+    else
+    {
+        /* Configure to default value */
+        pstcExintConfig->u16ExIntCh     = (uint16_t)0ul;
+        pstcExintConfig->u8ExIntFE      = EXINT_FILTER_OFF;
+        pstcExintConfig->u8ExIntFClk    = EXINT_FCLK_HCLK_DIV1;
+        pstcExintConfig->u8ExIntLvl     = EXINT_TRIGGER_FALLING;
+    }
+    return enRet;
 }
 
 /**
@@ -556,13 +577,13 @@ en_result_t EXINT_StructInit(stc_exint_config_t *pstcExintConfig)
  *   @arg  EXINT_CH09
  * @retval None
  */
-void EXINT_ClrSrc(uint16_t u16ExIntCh)
+void EXINT_ClrExIntSrc(uint16_t u16ExIntCh)
 {
     /* Parameter validity checking */
     DDL_ASSERT(IS_EXINT_CH(u16ExIntCh));
 
     INTC_Unlock();
-    SET_BIT(M0P_INTC->EIRQCLR, u16ExIntCh);
+    SET_REG16_BIT(M0P_INTC->EIRQCLR, u16ExIntCh);
     INTC_Lock();
 }
 
@@ -587,7 +608,7 @@ en_flag_status_t EXINT_GetExIntSrc(uint16_t u16ExIntCh)
     /* Parameter validity checking */
     DDL_ASSERT(IS_EXINT_CH(u16ExIntCh));
 
-    return (en_flag_status_t)!!(READ_REG(M0P_INTC->EIRQFR) & u16ExIntCh);
+    return (READ_REG16(M0P_INTC->EIRQFR) & u16ExIntCh) ? Set : Reset;
 }
 
 /**
@@ -613,11 +634,11 @@ void INTC_EKeyCmd(uint8_t u8EKey, en_functional_state_t enNewState)
     INTC_Unlock();
     if (Enable == enNewState)
     {
-        SET_BIT(M0P_INTC->EKEYCR, u8EKey);
+        SET_REG8_BIT(M0P_INTC->EKEYCR, u8EKey);
     }
     else
     {
-        CLEAR_BIT(M0P_INTC->EKEYCR, u8EKey);
+        CLEAR_REG8_BIT(M0P_INTC->EKEYCR, u8EKey);
     }
     INTC_Lock();
 }
@@ -679,7 +700,7 @@ void SysTick_Handler(void)
  */
 void IRQ008_Handler(void)
 {
-    pfnIrqHandler[Int008_IRQn-8]();
+    pfnIrqHandler[Int008_IRQn-8u]();
 }
 
 /**
@@ -689,7 +710,7 @@ void IRQ008_Handler(void)
  */
 void IRQ009_Handler(void)
 {
-    pfnIrqHandler[Int009_IRQn-8]();
+    pfnIrqHandler[Int009_IRQn-8u]();
 }
 
 /**
@@ -699,7 +720,7 @@ void IRQ009_Handler(void)
  */
 void IRQ010_Handler(void)
 {
-    pfnIrqHandler[Int010_IRQn-8]();
+    pfnIrqHandler[Int010_IRQn-8u]();
 }
 
 
@@ -710,7 +731,7 @@ void IRQ010_Handler(void)
  */
 void IRQ011_Handler(void)
 {
-    pfnIrqHandler[Int011_IRQn-8]();
+    pfnIrqHandler[Int011_IRQn-8u]();
 }
 
 /**
@@ -720,7 +741,7 @@ void IRQ011_Handler(void)
  */
 void IRQ012_Handler(void)
 {
-    pfnIrqHandler[Int012_IRQn-8]();
+    pfnIrqHandler[Int012_IRQn-8u]();
 }
 
 /**
@@ -730,7 +751,7 @@ void IRQ012_Handler(void)
  */
 void IRQ013_Handler(void)
 {
-    pfnIrqHandler[Int013_IRQn-8]();
+    pfnIrqHandler[Int013_IRQn-8u]();
 }
 
 /**
@@ -740,7 +761,7 @@ void IRQ013_Handler(void)
  */
 void IRQ014_Handler(void)
 {
-    pfnIrqHandler[Int014_IRQn-8]();
+    pfnIrqHandler[Int014_IRQn-8u]();
 }
 
 /**
@@ -750,7 +771,7 @@ void IRQ014_Handler(void)
  */
 void IRQ015_Handler(void)
 {
-    pfnIrqHandler[Int015_IRQn-8]();
+    pfnIrqHandler[Int015_IRQn-8u]();
 }
 
 /**
@@ -760,7 +781,7 @@ void IRQ015_Handler(void)
  */
 void IRQ016_Handler(void)
 {
-    pfnIrqHandler[Int016_IRQn-8]();
+    pfnIrqHandler[Int016_IRQn-8u]();
 }
 
 /**
@@ -770,7 +791,7 @@ void IRQ016_Handler(void)
  */
 void IRQ017_Handler(void)
 {
-    pfnIrqHandler[Int017_IRQn-8]();
+    pfnIrqHandler[Int017_IRQn-8u]();
 }
 
 /**
@@ -780,7 +801,7 @@ void IRQ017_Handler(void)
  */
 void IRQ018_Handler(void)
 {
-    pfnIrqHandler[Int018_IRQn-8]();
+    pfnIrqHandler[Int018_IRQn-8u]();
 }
 
 /**
@@ -790,7 +811,7 @@ void IRQ018_Handler(void)
  */
 void IRQ019_Handler(void)
 {
-    pfnIrqHandler[Int019_IRQn-8]();
+    pfnIrqHandler[Int019_IRQn-8u]();
 }
 
 /**
@@ -800,7 +821,7 @@ void IRQ019_Handler(void)
  */
 void IRQ020_Handler(void)
 {
-    pfnIrqHandler[Int020_IRQn-8]();
+    pfnIrqHandler[Int020_IRQn-8u]();
 }
 
 /**
@@ -810,7 +831,7 @@ void IRQ020_Handler(void)
  */
 void IRQ021_Handler(void)
 {
-    pfnIrqHandler[Int021_IRQn-8]();
+    pfnIrqHandler[Int021_IRQn-8u]();
 }
 
 /**
@@ -820,7 +841,7 @@ void IRQ021_Handler(void)
  */
 void IRQ022_Handler(void)
 {
-    pfnIrqHandler[Int022_IRQn-8]();
+    pfnIrqHandler[Int022_IRQn-8u]();
 }
 
 /**
@@ -830,7 +851,7 @@ void IRQ022_Handler(void)
  */
 void IRQ023_Handler(void)
 {
-    pfnIrqHandler[Int023_IRQn-8]();
+    pfnIrqHandler[Int023_IRQn-8u]();
 }
 
 /**
@@ -840,74 +861,103 @@ void IRQ023_Handler(void)
  */
 void IRQ024_Handler(void)
 {
+    uint32_t u32Tmp1 = 0ul;
+    uint32_t u32Tmp2 = 0ul;
+    uint32_t ISELBR24 = M0P_INTC->ISELBR24;
     /* External interrupt 08 */
-    if ((Set == bM0P_INTC->ISELBR24_b.ISEL1) && (Set == bM0P_INTC->EIRQFR_b.EIRQF8))
+    u32Tmp1 = bM0P_INTC->EIRQFR_b.EIRQF8;
+    if ((ISELBR24 & BIT_MASK_01) && (u32Tmp1))
     {
         Extint08_IrqHandler();
     }
     /* EFM program/erase error */
-    if ((Set == bM0P_INTC->ISELBR24_b.ISEL4) &&                                 \
-        (Set == !!(M0P_EFM->FSR & (EFM_FSR_PEWERR | EFM_FSR_PEPRTERR | EFM_FSR_PGMISMTCH))))
+    if (bM0P_EFM->FITE_b.PEERRITE)
     {
-        EfmPgmEraseErr_IrqHandler();
+        u32Tmp1 = M0P_EFM->FSR & (EFM_FSR_PEWERR | EFM_FSR_PEPRTERR | EFM_FSR_PGMISMTCH);
+        if ((ISELBR24 & BIT_MASK_04) && (u32Tmp1))
+        {
+            EfmPgmEraseErr_IrqHandler();
+        }
     }
     /* EFM read collision */
-    if ((Set == bM0P_INTC->ISELBR24_b.ISEL5) && (Set == bM0P_EFM->FSR_b.RDCOLERR))
+    if (bM0P_EFM->FITE_b.RDCOLERRITE)
     {
-        EfmColErr_IrqHandler();
+        u32Tmp1 = bM0P_EFM->FSR_b.RDCOLERR;
+        if ((ISELBR24 & BIT_MASK_05) && (u32Tmp1))
+        {
+            EfmColErr_IrqHandler();
+        }
     }
     /* XTAL stop */
-    if ((Set == bM0P_INTC->ISELBR24_b.ISEL6) && (Set == bM0P_CMU->XTALSTDSR_b.XTALSTDF))
+    if (bM0P_CMU->XTALSTDCR_b.XTALSTDIE)
     {
-        XtalStop_IrqHandler();
+        u32Tmp1 = bM0P_CMU->XTALSTDSR_b.XTALSTDF;
+        if ((ISELBR24 & BIT_MASK_06) && (u32Tmp1))
+        {
+            XtalStop_IrqHandler();
+        }
     }
     /* SWDT underflow or fresh error */
-    if ((Set == bM0P_INTC->ISELBR24_b.ISEL7) &&                                 \
-        (Set == !!(M0P_SWDT->SR & (SWDT_SR_UDF | SWDT_SR_REF))))
+    u32Tmp1 = M0P_SWDT->SR & (SWDT_SR_UDF | SWDT_SR_REF);
+    if ((ISELBR24 & BIT_MASK_07) &&  (u32Tmp1))
     {
         Swdt_IrqHandler();
     }
     /* TimerB7 overflow */
-    if ((Set == bM0P_INTC->ISELBR24_b.ISEL8) && (Set == bM0P_TMRB7->BCSTR_b.OVFF))
+    u32Tmp1 = bM0P_TMRB7->BCSTR_b.OVFF;
+    u32Tmp2 = bM0P_TMRB7->BCSTR_b.INENOVF;
+    if ((ISELBR24 & BIT_MASK_08) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB7OF_IrqHandler();
     }
     /* TimerB7 underflow */
-    if ((Set == bM0P_INTC->ISELBR24_b.ISEL9) && (Set == bM0P_TMRB7->BCSTR_b.UDFF))
+    u32Tmp1 = bM0P_TMRB7->BCSTR_b.UDFF;
+    u32Tmp2 = bM0P_TMRB7->BCSTR_b.INENUDF;
+    if ((ISELBR24 & BIT_MASK_09) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB7UF_IrqHandler();
     }
     /* TimerB8 compare match */
-    if ((Set == bM0P_INTC->ISELBR24_b.ISEL10) && (Set == bM0P_TMRB8->STFLR_b.CMPF1))
+    u32Tmp1 = bM0P_TMRB8->STFLR_b.CMPF1;
+    u32Tmp2 = bM0P_TMRB8->ICONR_b.ITEN1;
+    if ((ISELBR24 & BIT_MASK_10) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB8Cmp_IrqHandler();
     }
     /* USART1 Rx ORE/FE/PE error */
-    if ((Set == bM0P_INTC->ISELBR24_b.ISEL12) &&                                \
-        (Set == !!(M0P_USART1->SR & (USART_SR_PE | USART_SR_FE | USART_SR_ORE))))
+    u32Tmp1 = M0P_USART1->SR & (USART_SR_PE | USART_SR_FE | USART_SR_ORE);
+    u32Tmp2 = bM0P_USART1->CR1_b.RIE;
+    if ((ISELBR24 & BIT_MASK_12) && (u32Tmp1) && (u32Tmp2))
     {
         Usart1RxErr_IrqHandler();
     }
     /* I2c error */
-    if ((Set == bM0P_INTC->ISELBR24_b.ISEL13) &&                                \
-        (Set == !!(M0P_I2C->SR & (I2C_SR_STARTF   | I2C_SR_SLADDR0F     |       \
-                                  I2C_SR_SLADDR1F | I2C_SR_STOPF        |       \
-                                  I2C_SR_ARLOF    | I2C_SR_NACKF        |       \
-                                  I2C_SR_GENCALLF | I2C_SR_SMBDEFAULTF  |       \
-                                  I2C_SR_SMBHOSTF | I2C_SR_SMBALRTF))))
+    u32Tmp1 = M0P_I2C->SR & (I2C_SR_STARTF   | I2C_SR_SLADDR0F     |            \
+                             I2C_SR_SLADDR1F | I2C_SR_STOPF        |            \
+                             I2C_SR_ARLOF    | I2C_SR_NACKF        |            \
+                             I2C_SR_GENCALLF | I2C_SR_SMBDEFAULTF  |            \
+                             I2C_SR_SMBHOSTF | I2C_SR_SMBALRTF);
+
+    u32Tmp2 = M0P_I2C->CR2& (I2C_CR2_STARTIE   | I2C_CR2_SLADDR0IE     |        \
+                             I2C_CR2_SLADDR1IE | I2C_CR2_STOPIE        |        \
+                             I2C_CR2_ARLOIE    | I2C_CR2_NACKIE        |        \
+                             I2C_CR2_GENCALLIE | I2C_CR2_SMBDEFAULTIE  |        \
+                             I2C_CR2_SMBHOSTIE | I2C_CR2_SMBALRTIE);
+    if ((ISELBR24 & BIT_MASK_13) && (u32Tmp1 & u32Tmp2))
     {
         I2cErr_IrqHandler();
     }
     /* SPI parity/overflow/underflow/mode error */
-    if ((Set == bM0P_INTC->ISELBR24_b.ISEL14) &&                                \
-        (Set == !!(M0P_SWDT->SR & (SPI_SR_UDRERF | SPI_SR_PERF |                \
-                                   SPI_SR_MODFERF | SPI_SR_OVRERF))))
+    u32Tmp1 = M0P_SPI->SR & (SPI_SR_UDRERF | SPI_SR_PERF | SPI_SR_MODFERF | SPI_SR_OVRERF);
+    u32Tmp2 = bM0P_SPI->CR1_b.EIE;
+    if ((ISELBR24 & BIT_MASK_14) && (u32Tmp1) && (u32Tmp2))
     {
         SpiErr_IrqHandler();
     }
     /* USART4 Rx ORE/FE/PE error */
-    if ((Set == bM0P_INTC->ISELBR24_b.ISEL15) &&                                \
-        (Set == !!(M0P_USART4->SR & (USART_SR_PE | USART_SR_FE | USART_SR_ORE))))
+    u32Tmp1 = M0P_USART4->SR & (USART_SR_PE | USART_SR_FE | USART_SR_ORE);
+    u32Tmp2 = bM0P_USART4->CR1_b.RIE;
+    if ((ISELBR24 & BIT_MASK_15) &&  (u32Tmp1) && (u32Tmp2))
     {
         Usart4RxErr_IrqHandler();
     }
@@ -920,39 +970,55 @@ void IRQ024_Handler(void)
  */
 void IRQ025_Handler(void)
 {
+    uint32_t u32Tmp1 = 0ul;
+    uint32_t u32Tmp2 = 0ul;
+    uint32_t ISELBR25 = M0P_INTC->ISELBR25;
+
     /* External interrupt 09 */
-    if ((Set == bM0P_INTC->ISELBR25_b.ISEL1) && (Set == bM0P_INTC->EIRQFR_b.EIRQF9))
+    u32Tmp1 = bM0P_INTC->EIRQFR_b.EIRQF9;
+    if ((ISELBR25 & BIT_MASK_01) && (u32Tmp1))
     {
         Extint09_IrqHandler();
     }
     /* Clock trimming error */
-    if ((Set == bM0P_INTC->ISELBR25_b.ISEL4) &&                                 \
-        (Set == !!(M0P_CTC->STR & (CTC_STR_TRMOVF | CTC_STR_TRMUDF))))
+    u32Tmp1 = M0P_CTC->STR & (CTC_STR_TRMOVF | CTC_STR_TRMUDF);
+    u32Tmp2 = bM0P_CTC->CR1_b.ERRIE;
+    if ((ISELBR25 & BIT_MASK_04) && (u32Tmp1) && (u32Tmp2))
     {
         ClockTrimErr_IrqHandler();
     }
     /* TimerB8 overflow */
-    if ((Set == bM0P_INTC->ISELBR25_b.ISEL8) && (Set == bM0P_TMRB8->BCSTR_b.OVFF))
+    u32Tmp1 = bM0P_TMRB8->BCSTR_b.OVFF;
+    u32Tmp2 = bM0P_TMRB8->BCSTR_b.INENOVF;
+    if ((ISELBR25 & BIT_MASK_08) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB8OF_IrqHandler();
     }
     /* TimerB8 underflow */
-    if ((Set == bM0P_INTC->ISELBR25_b.ISEL9) && (Set == bM0P_TMRB8->BCSTR_b.UDFF))
+    u32Tmp1 = bM0P_TMRB8->BCSTR_b.UDFF;
+    u32Tmp2 = bM0P_TMRB8->BCSTR_b.INENUDF;
+    if ((ISELBR25 & BIT_MASK_09) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB8UF_IrqHandler();
     }
     /* TimerB7 compare match */
-    if ((Set == bM0P_INTC->ISELBR25_b.ISEL10) && (Set == bM0P_TMRB7->STFLR_b.CMPF1))
+    u32Tmp1 = bM0P_TMRB7->STFLR_b.CMPF1;
+    u32Tmp2 = bM0P_TMRB7->ICONR_b.ITEN1;
+    if ((ISELBR25 & BIT_MASK_10) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB7Cmp_IrqHandler();
     }
     /* USART1 Rx end */
-    if ((Set == bM0P_INTC->ISELBR25_b.ISEL11) && (Set == bM0P_USART1->SR_b.RXNE))
+    u32Tmp1 = bM0P_USART1->SR_b.RXNE;
+    u32Tmp2 = bM0P_USART1->CR1_b.RIE;
+    if ((ISELBR25 & BIT_MASK_12) && (u32Tmp1) && (u32Tmp2))
     {
         Usart1RxEnd_IrqHandler();
     }
     /* USART4 Rx end */
-    if ((Set == bM0P_INTC->ISELBR25_b.ISEL15) && (Set == bM0P_USART4->SR_b.RXNE))
+    u32Tmp1 = bM0P_USART4->SR_b.RXNE;
+    u32Tmp2 = bM0P_USART4->CR1_b.RIE;
+    if ((ISELBR25 & BIT_MASK_15) && (u32Tmp1) && (u32Tmp2))
     {
         Usart4RxEnd_IrqHandler();
     }
@@ -965,29 +1031,41 @@ void IRQ025_Handler(void)
  */
 void IRQ026_Handler(void)
 {
+    uint32_t u32Tmp1 = 0ul;
+    uint32_t u32Tmp2 = 0ul;
+    uint32_t ISELBR26 = M0P_INTC->ISELBR26;
     /* TimerB5 overflow */
-    if ((Set == bM0P_INTC->ISELBR26_b.ISEL8) && (Set == bM0P_TMRB5->BCSTR_b.OVFF))
+    u32Tmp1 = bM0P_TMRB5->BCSTR_b.OVFF;
+    u32Tmp2 = bM0P_TMRB5->BCSTR_b.INENOVF;
+    if ((ISELBR26 & BIT_MASK_08) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB5OF_IrqHandler();
     }
     /* TimerB5 underflow */
-    if ((Set == bM0P_INTC->ISELBR26_b.ISEL9) && (Set == bM0P_TMRB5->BCSTR_b.UDFF))
+    u32Tmp1 = bM0P_TMRB5->BCSTR_b.UDFF;
+    u32Tmp2 = bM0P_TMRB5->BCSTR_b.INENUDF;
+    if ((ISELBR26 & BIT_MASK_09) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB5UF_IrqHandler();
     }
     /* TimerB6 compare match */
-    if ((Set == bM0P_INTC->ISELBR26_b.ISEL10) && (Set == bM0P_TMRB6->STFLR_b.CMPF1))
+    u32Tmp1 = bM0P_TMRB6->STFLR_b.CMPF1;
+    u32Tmp2 = bM0P_TMRB6->ICONR_b.ITEN1;
+    if ((ISELBR26 & BIT_MASK_10) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB6Cmp_IrqHandler();
     }
     /* USART1 Tx buffer empty */
-    if ((Set == bM0P_INTC->ISELBR26_b.ISEL12) && (Set == bM0P_USART1->SR_b.TXE))
+    u32Tmp1 = bM0P_USART1->SR_b.TXE;
+    u32Tmp2 = bM0P_USART1->CR1_b.TXEIE;
+    if ((ISELBR26 & BIT_MASK_12) && (u32Tmp1) && (u32Tmp2))
     {
         Usart1TxEmpt_IrqHandler();
     }
     /* USART3 Rx ORE/FE/PE error */
-    if ((Set == bM0P_INTC->ISELBR26_b.ISEL13) &&                                \
-        (Set == !!(M0P_USART3->SR & (USART_SR_PE | USART_SR_FE | USART_SR_ORE))))
+    u32Tmp1 = M0P_USART3->SR & (USART_SR_PE | USART_SR_FE | USART_SR_ORE);
+    u32Tmp2 = bM0P_USART3->CR1_b.RIE;
+    if ((ISELBR26 & BIT_MASK_13) && (u32Tmp1) && (u32Tmp2))
     {
         Usart3RxErr_IrqHandler();
     }
@@ -1000,45 +1078,63 @@ void IRQ026_Handler(void)
  */
 void IRQ027_Handler(void)
 {
+    uint32_t u32Tmp1 = 0ul;
+    uint32_t u32Tmp2 = 0ul;
+    uint32_t ISELBR27 = M0P_INTC->ISELBR27;
+
     /* EKEY and other Interrupt source are exclusive */
-    if ((INTC_ISELBR_ISEL_1) == M0P_INTC->ISELBR27)
+    if (ISELBR27 & BIT_MASK_01)
     {
         EKey_IrqHandler();
     }
     else
     {
         /* Timer 0 compare match */
-        if ((Set == bM0P_INTC->ISELBR27_b.ISEL2) && (Set == bM0P_TMR0->STFLR_b.CMFA))
+        u32Tmp1 = bM0P_TMR0->STFLR_b.CMFA;
+        u32Tmp2 = bM0P_TMR0->BCONR_b.INTENA;
+        if ((ISELBR27 & BIT_MASK_02) && (u32Tmp1) && (u32Tmp2))
         {
             Timer0GCmp_IrqHandler();
         }
         /* TimerB6 overflow */
-        if ((Set == bM0P_INTC->ISELBR27_b.ISEL8) && (Set == bM0P_TMRB6->BCSTR_b.OVFF))
+        u32Tmp1 = bM0P_TMRB6->BCSTR_b.OVFF;
+        u32Tmp2 = bM0P_TMRB6->BCSTR_b.INENOVF;
+        if ((ISELBR27 & BIT_MASK_08) && (u32Tmp1) && (u32Tmp2))
         {
             TimerB6OF_IrqHandler();
         }
         /* TimerB6 underflow */
-        if ((Set == bM0P_INTC->ISELBR27_b.ISEL9) && (Set == bM0P_TMRB6->BCSTR_b.UDFF))
+        u32Tmp1 = bM0P_TMRB6->BCSTR_b.UDFF;
+        u32Tmp2 = bM0P_TMRB6->BCSTR_b.INENUDF;
+        if ((ISELBR27 & BIT_MASK_09) && (u32Tmp1) && (u32Tmp2))
         {
             TimerB6UF_IrqHandler();
         }
         /* TimerB5 compare match */
-        if ((Set == bM0P_INTC->ISELBR27_b.ISEL10) && (Set == bM0P_TMRB5->STFLR_b.CMPF1))
+        u32Tmp1 = bM0P_TMRB5->STFLR_b.CMPF1;
+        u32Tmp2 = bM0P_TMRB5->ICONR_b.ITEN1;
+        if ((ISELBR27 & BIT_MASK_10) && (u32Tmp1) && (u32Tmp2))
         {
             TimerB5Cmp_IrqHandler();
         }
         /* USART1 Tx end */
-        if ((Set == bM0P_INTC->ISELBR27_b.ISEL12) && (Set == bM0P_USART1->SR_b.TC))
+        u32Tmp1 = bM0P_USART1->SR_b.TC;
+        u32Tmp2 = bM0P_USART1->CR1_b.TCIE;
+        if ((ISELBR27 & BIT_MASK_12) && (u32Tmp1) && (u32Tmp2))
         {
             Usart1TxEnd_IrqHandler();
         }
         /* USART3 Rx end */
-        if ((Set == bM0P_INTC->ISELBR27_b.ISEL13) && (Set == bM0P_USART1->SR_b.RXNE))
+        u32Tmp1 = bM0P_USART3->SR_b.RXNE;
+        u32Tmp2 = bM0P_USART3->CR1_b.RIE;
+        if ((ISELBR27 & BIT_MASK_13) && (u32Tmp1) && (u32Tmp2))
         {
             Usart3RxEnd_IrqHandler();
         }
         /* SPI Rx end */
-        if ((Set == bM0P_INTC->ISELBR27_b.ISEL14) && (Set == bM0P_SPI->SR_b.RDFF))
+        u32Tmp1 = bM0P_SPI->SR_b.RDFF;
+        u32Tmp2 = bM0P_SPI->CR1_b.RXIE;
+        if ((ISELBR27 & BIT_MASK_14) && (u32Tmp1) && (u32Tmp2))
         {
             SpiRxEnd_IrqHandler();
         }
@@ -1052,44 +1148,63 @@ void IRQ027_Handler(void)
  */
 void IRQ028_Handler(void)
 {
+    uint32_t u32Tmp1 = 0ul;
+    uint32_t u32Tmp2 = 0ul;
+    uint32_t ISELBR28 = M0P_INTC->ISELBR28;
+
     /* TimerB3 overflow */
-    if ((Set == bM0P_INTC->ISELBR28_b.ISEL8) && (Set == bM0P_TMRB3->BCSTR_b.OVFF))
+    u32Tmp1 = bM0P_TMRB3->BCSTR_b.OVFF;
+    u32Tmp2 = bM0P_TMRB3->BCSTR_b.INENOVF;
+    if ((ISELBR28 & BIT_MASK_08) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB3OF_IrqHandler();
     }
     /* TimerB3 underflow */
-    if ((Set == bM0P_INTC->ISELBR28_b.ISEL9) && (Set == bM0P_TMRB3->BCSTR_b.UDFF))
+    u32Tmp1 = bM0P_TMRB3->BCSTR_b.UDFF;
+    u32Tmp2 = bM0P_TMRB3->BCSTR_b.INENUDF;
+    if ((ISELBR28 & BIT_MASK_09) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB3UF_IrqHandler();
     }
     /* TimerB4 compare match */
-    if ((Set == bM0P_INTC->ISELBR28_b.ISEL10) && (Set == bM0P_TMRB4->STFLR_b.CMPF1))
+    u32Tmp1 = bM0P_TMRB4->STFLR_b.CMPF1;
+    u32Tmp2 = bM0P_TMRB4->ICONR_b.ITEN1;
+    if ((ISELBR28 & BIT_MASK_10) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB4Cmp_IrqHandler();
     }
     /* ADC seq.A convert complete */
-    if ((Set == bM0P_INTC->ISELBR28_b.ISEL11) && (Set == bM0P_ADC->ISR_b.EOCAF))
+    u32Tmp1 = bM0P_ADC->ISR_b.EOCAF;
+    u32Tmp2 = bM0P_ADC->ICR_b.EOCAIEN;
+    if ((ISELBR28 & BIT_MASK_11) && (u32Tmp1) && (u32Tmp2))
     {
         AdcSeqA_IrqHandler();
     }
     /* USART2 Rx ORE/FE/PE error */
-    if ((Set == bM0P_INTC->ISELBR28_b.ISEL12) &&                                 \
-        (Set == !!(M0P_USART2->SR & (USART_SR_PE | USART_SR_FE | USART_SR_ORE))))
+    u32Tmp1 = M0P_USART2->SR & (USART_SR_PE | USART_SR_FE | USART_SR_ORE);
+    u32Tmp2 = bM0P_USART2->CR1_b.RIE;
+    if ((ISELBR28 & BIT_MASK_12) && (u32Tmp1) && (u32Tmp2))
     {
         Usart2RxErr_IrqHandler();
     }
     /* USART3 Tx buffer empty */
-    if ((Set == bM0P_INTC->ISELBR28_b.ISEL13) && (Set == bM0P_USART3->SR_b.TXE))
+    u32Tmp1 = bM0P_USART3->SR_b.TXE;
+    u32Tmp2 = bM0P_USART3->CR1_b.TXEIE;
+    if ((ISELBR28 & BIT_MASK_13) && (u32Tmp1) && (u32Tmp2))
     {
         Usart3TxEmpt_IrqHandler();
     }
     /* I2c Tx buffer empty */
-    if ((Set == bM0P_INTC->ISELBR28_b.ISEL14) && (Set == bM0P_I2C->SR_b.TEMPTYF))
+    u32Tmp1 = bM0P_I2C->SR_b.TEMPTYF;
+    u32Tmp2 = bM0P_I2C->CR2_b.TEMPTYIE;
+    if ((ISELBR28 & BIT_MASK_14) && (u32Tmp1) && (u32Tmp2))
     {
         I2cTxEmpt_IrqHandler();
     }
     /* SPI bus idle */
-    if ((Set == bM0P_INTC->ISELBR28_b.ISEL15) && (Set == bM0P_SPI->SR_b.IDLNF))
+    u32Tmp1 = bM0P_SPI->SR_b.IDLNF;
+    u32Tmp2 = bM0P_SPI->CR1_b.IDIE;
+    if ((ISELBR28 & BIT_MASK_15) && (u32Tmp1) && (u32Tmp2))
     {
         SpiIdle_IrqHandler();
     }
@@ -1102,38 +1217,56 @@ void IRQ028_Handler(void)
  */
 void IRQ029_Handler(void)
 {
+    uint32_t u32Tmp1 = 0ul;
+    uint32_t u32Tmp2 = 0ul;
+    uint32_t ISELBR29 = M0P_INTC->ISELBR29;
+
     /* TimerB4 overflow */
-    if ((Set == bM0P_INTC->ISELBR29_b.ISEL8) && (Set == bM0P_TMRB4->BCSTR_b.OVFF))
+    u32Tmp1 = bM0P_TMRB4->BCSTR_b.OVFF;
+    u32Tmp2 = bM0P_TMRB4->BCSTR_b.INENOVF;
+    if ((ISELBR29 & BIT_MASK_08) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB4OF_IrqHandler();
     }
     /* TimerB4 underflow */
-    if ((Set == bM0P_INTC->ISELBR29_b.ISEL9) && (Set == bM0P_TMRB4->BCSTR_b.UDFF))
+    u32Tmp1 = bM0P_TMRB4->BCSTR_b.UDFF;
+    u32Tmp2 = bM0P_TMRB4->BCSTR_b.INENUDF;
+    if ((ISELBR29 & BIT_MASK_09) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB4UF_IrqHandler();
     }
     /* TimerB3 compare match */
-    if ((Set == bM0P_INTC->ISELBR29_b.ISEL10) && (Set == bM0P_TMRB3->STFLR_b.CMPF1))
+    u32Tmp1 = bM0P_TMRB3->STFLR_b.CMPF1;
+    u32Tmp2 = bM0P_TMRB3->ICONR_b.ITEN1;
+    if ((ISELBR29 & BIT_MASK_10) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB3Cmp_IrqHandler();
     }
     /* ADC seq.B convert complete */
-    if ((Set == bM0P_INTC->ISELBR29_b.ISEL11) && (Set == bM0P_ADC->ISR_b.EOCBF))
+    u32Tmp1 = bM0P_ADC->ISR_b.EOCBF;
+    u32Tmp2 = bM0P_ADC->ICR_b.EOCBIEN;
+    if ((ISELBR29 & BIT_MASK_11) && (u32Tmp1) && (u32Tmp2))
     {
         AdcSeqB_IrqHandler();
     }
     /* USART2 Rx end */
-    if ((Set == bM0P_INTC->ISELBR29_b.ISEL12) && (Set == bM0P_USART3->SR_b.RXNE))
+    u32Tmp1 = bM0P_USART2->SR_b.RXNE;
+    u32Tmp2 = bM0P_USART2->CR1_b.RIE;
+    if ((ISELBR29 & BIT_MASK_12) && (u32Tmp1) && (u32Tmp2))
     {
         Usart2RxEnd_IrqHandler();
     }
     /* USART3 Tx end */
-    if ((Set == bM0P_INTC->ISELBR29_b.ISEL13) && (Set == bM0P_USART3->SR_b.TC))
+    u32Tmp1 = bM0P_USART3->SR_b.TC;
+    u32Tmp2 = bM0P_USART3->CR1_b.TCIE;
+    if ((ISELBR29 & BIT_MASK_13) && (u32Tmp1) && (u32Tmp2))
     {
         Usart3TxEnd_IrqHandler();
     }
     /* I2c Rx end */
-    if ((Set == bM0P_INTC->ISELBR29_b.ISEL14) && (Set == bM0P_I2C->SR_b.RFULLF))
+    u32Tmp1 = bM0P_I2C->SR_b.RFULLF;
+    u32Tmp2 = bM0P_I2C->CR2_b.RFULLIE;
+    if ((ISELBR29 & BIT_MASK_14) && (u32Tmp1) && (u32Tmp2))
     {
         I2cRxEnd_IrqHandler();
     }
@@ -1146,38 +1279,56 @@ void IRQ029_Handler(void)
  */
 void IRQ030_Handler(void)
 {
+    uint32_t u32Tmp1 = 0ul;
+    uint32_t u32Tmp2 = 0ul;
+    uint32_t ISELBR30 = M0P_INTC->ISELBR30;
+
     /* TimerB1 overflow */
-    if ((Set == bM0P_INTC->ISELBR30_b.ISEL8) && (Set == bM0P_TMRB1->BCSTR_b.OVFF))
+    u32Tmp1 = bM0P_TMRB1->BCSTR_b.OVFF;
+    u32Tmp2 = bM0P_TMRB1->BCSTR_b.INENOVF;
+    if ((ISELBR30 & BIT_MASK_08) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB1OF_IrqHandler();
     }
     /* TimerB1 underflow */
-    if ((Set == bM0P_INTC->ISELBR30_b.ISEL9) && (Set == bM0P_TMRB1->BCSTR_b.UDFF))
+    u32Tmp1 = bM0P_TMRB1->BCSTR_b.UDFF;
+    u32Tmp2 = bM0P_TMRB1->BCSTR_b.INENUDF;
+    if ((ISELBR30 & BIT_MASK_09) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB1UF_IrqHandler();
     }
     /* TimerB2 compare match */
-    if ((Set == bM0P_INTC->ISELBR30_b.ISEL10) && (Set == bM0P_TMRB2->STFLR_b.CMPF1))
+    u32Tmp1 = bM0P_TMRB2->STFLR_b.CMPF1;
+    u32Tmp2 = bM0P_TMRB2->ICONR_b.ITEN1;
+    if ((ISELBR30 & BIT_MASK_10) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB2Cmp_IrqHandler();
     }
     /* ADC convert result in range of window 0 setting */
-    if ((Set == bM0P_INTC->ISELBR30_b.ISEL11) && (Set == bM0P_ADC->AWDSR_b.AWD0F))
+    u32Tmp1 = bM0P_ADC->AWDSR_b.AWD0F;
+    u32Tmp2 = bM0P_ADC->AWDCR_b.AWD0IEN;
+    if ((ISELBR30 & BIT_MASK_11) && (u32Tmp1) && (u32Tmp2))
     {
         AdcCmp0_IrqHandler();
     }
     /* USART2 Tx buffer empty */
-    if ((Set == bM0P_INTC->ISELBR30_b.ISEL12) && (Set == bM0P_USART2->SR_b.TXE))
+    u32Tmp1 = bM0P_USART2->SR_b.TXE;
+    u32Tmp2 = bM0P_USART2->CR1_b.TXEIE;
+    if ((ISELBR30 & BIT_MASK_12) && (u32Tmp1) && (u32Tmp2))
     {
         Usart2TxEmpt_IrqHandler();
     }
     /* I2c Tx end */
-    if ((Set == bM0P_INTC->ISELBR30_b.ISEL13) && (Set == bM0P_I2C->SR_b.TENDF))
+    u32Tmp1 = bM0P_I2C->SR_b.TENDF;
+    u32Tmp2 = bM0P_I2C->CR2_b.TENDIE;
+    if ((ISELBR30 & BIT_MASK_13) && (u32Tmp1) && (u32Tmp2))
     {
         I2cTxEnd_IrqHandler();
     }
     /* USART4 Tx buffer empty */
-    if ((Set == bM0P_INTC->ISELBR30_b.ISEL15) && (Set == bM0P_USART4->SR_b.TXE))
+    u32Tmp1 = bM0P_USART4->SR_b.TXE;
+    u32Tmp2 = bM0P_USART4->CR1_b.TXEIE;
+    if ((ISELBR30 & BIT_MASK_15) && (u32Tmp1) && (u32Tmp2))
     {
         Usart4TxEmpt_IrqHandler();
     }
@@ -1190,63 +1341,97 @@ void IRQ030_Handler(void)
  */
 void IRQ031_Handler(void)
 {
+    uint32_t u32Tmp1 = 0ul;
+    uint32_t u32Tmp2 = 0ul;
+    uint32_t ISELBR31 = M0P_INTC->ISELBR31;
+
     /* LVD detected */
-    if ((Set == bM0P_INTC->ISELBR31_b.ISEL2) && (Set == bM0P_PWC->LVDCSR_b.DETF))
+    if (0u == M0P_ICG->ICG1_f.IRDIS)
     {
-        Lvd_IrqHandler();
+        u32Tmp1 = bM0P_PWC->LVDCSR_b.DETF;
+        if ((ISELBR31 & BIT_MASK_02) && (u32Tmp1))
+        {
+            Lvd_IrqHandler();
+        }
     }
     /* EFM operate end */
-    if ((Set == bM0P_INTC->ISELBR31_b.ISEL4) && (Set == bM0P_EFM->FSR_b.OPTEND))
+    if (bM0P_EFM->FITE_b.OPTENDITE)
     {
-        EfmOpEnd_IrqHandler();
+        u32Tmp1 = bM0P_EFM->FSR_b.OPTEND;
+        if ((ISELBR31 & BIT_MASK_04) && (u32Tmp1))
+        {
+            EfmOpEnd_IrqHandler();
+        }
     }
     /* RTC alarm */
-    if ((Set == bM0P_INTC->ISELBR31_b.ISEL5) && (Set == bM0P_RTC->CR2_b.ALMF))
+    u32Tmp1 = bM0P_RTC->CR2_b.ALMF;
+    u32Tmp2 = bM0P_RTC->CR2_b.ALMIE;
+    if ((ISELBR31 & BIT_MASK_05) && (u32Tmp1) && (u32Tmp2))
     {
         RtcAlarm_IrqHandler();
     }
     /* RTC period */
-    if ((Set == bM0P_INTC->ISELBR31_b.ISEL6) && (Set == bM0P_RTC->CR2_b.PRDF))
+    u32Tmp1 = bM0P_RTC->CR2_b.PRDF;
+    u32Tmp2 = bM0P_RTC->CR2_b.PRDIE;
+    if ((ISELBR31 & BIT_MASK_06) && (u32Tmp1) && (u32Tmp2))
     {
         RtcPeriod_IrqHandler();
     }
     /* TimerB2 overflow */
-    if ((Set == bM0P_INTC->ISELBR31_b.ISEL8) && (Set == bM0P_TMRB2->BCSTR_b.OVFF))
+    u32Tmp1 = bM0P_TMRB2->BCSTR_b.OVFF;
+    u32Tmp2 = bM0P_TMRB2->BCSTR_b.INENOVF;
+    if ((ISELBR31 & BIT_MASK_08) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB2OF_IrqHandler();
     }
     /* TimerB2 underflow */
-    if ((Set == bM0P_INTC->ISELBR31_b.ISEL9) && (Set == bM0P_TMRB2->BCSTR_b.UDFF))
+    u32Tmp1 = bM0P_TMRB2->BCSTR_b.UDFF;
+    u32Tmp2 = bM0P_TMRB2->BCSTR_b.INENUDF;
+    if ((ISELBR31 & BIT_MASK_09) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB2UF_IrqHandler();
     }
     /* TimerB1 compare match */
-    if ((Set == bM0P_INTC->ISELBR31_b.ISEL10) && (Set == bM0P_TMRB1->STFLR_b.CMPF1))
+    u32Tmp1 = bM0P_TMRB1->STFLR_b.CMPF1;
+    u32Tmp2 = bM0P_TMRB1->ICONR_b.ITEN1;
+    if ((ISELBR31 & BIT_MASK_10) && (u32Tmp1) && (u32Tmp2))
     {
         TimerB1Cmp_IrqHandler();
     }
-    /* ADC convert result in range of window 1 if dependence use */
-    if ((Set == bM0P_INTC->ISELBR31_b.ISEL11) && (Set == bM0P_ADC->AWDSR_b.AWD1F) && (0 == M0P_ADC->AWDCR_f.AWDCM))
+    if (Set == bM0P_ADC->AWDCR_b.AWD1IEN)
     {
-        AdcCmp1_IrqHandler();
-    }
-    /* ADC convert result combination use of window 0 & 1 */
-    if ((Set == bM0P_INTC->ISELBR31_b.ISEL11) && (Set == bM0P_ADC->AWDSR_b.AWDCMF) && (0 != M0P_ADC->AWDCR_f.AWDCM))
-    {
-        AdcCmp1_IrqHandler();
+        /* ADC convert result in range of window 1 if dependence use */
+        u32Tmp1 = bM0P_ADC->AWDSR_b.AWD1F;
+        u32Tmp2 = M0P_ADC->AWDCR_f.AWDCM;
+        if ((ISELBR31 & BIT_MASK_11) && (u32Tmp1) && (Reset == u32Tmp2))
+        {
+            AdcCmp1_IrqHandler();
+        }
+        /* ADC convert result combination use of window 0 & 1 */
+        u32Tmp1 = bM0P_ADC->AWDSR_b.AWDCMF;
+        if ((ISELBR31 & BIT_MASK_11) && (u32Tmp1) && (Reset != u32Tmp2))
+        {
+            AdcCmp1_IrqHandler();
+        }
     }
     /* USART2 Tx end */
-    if ((Set == bM0P_INTC->ISELBR31_b.ISEL12) && (Set == bM0P_USART2->SR_b.TC))
+    u32Tmp1 = bM0P_USART2->SR_b.TC;
+    u32Tmp2 = bM0P_USART2->CR1_b.TCIE;
+    if ((ISELBR31 & BIT_MASK_12) && (u32Tmp1) && (u32Tmp2))
     {
         Usart2TxEnd_IrqHandler();
     }
-        /* SPI Tx buffer empty */
-    if ((Set == bM0P_INTC->ISELBR31_b.ISEL13) && (Set == bM0P_SPI->SR_b.TDEF))
+    /* SPI Tx buffer empty */
+    u32Tmp1 = bM0P_SPI->SR_b.TDEF;
+    u32Tmp2 = bM0P_SPI->CR1_b.TXIE;
+    if ((ISELBR31 & BIT_MASK_13) && (u32Tmp1) && (u32Tmp2))
     {
         SpiTxEmpt_IrqHandler();
     }
     /* USART4 Tx end */
-    if ((Set == bM0P_INTC->ISELBR31_b.ISEL15) && (Set == bM0P_USART4->SR_b.TC))
+    u32Tmp1 = bM0P_USART4->SR_b.TC;
+    u32Tmp2 = bM0P_USART4->CR1_b.TCIE;
+    if ((ISELBR31 & BIT_MASK_15) && (u32Tmp1) && (u32Tmp2))
     {
         Usart4TxEnd_IrqHandler();
     }
@@ -1256,7 +1441,7 @@ void IRQ031_Handler(void)
  * @}
  */
 
-#endif /* DDL_INTERRUPTS_ENABLE */  
+#endif /* DDL_INTERRUPTS_ENABLE */
 
 /**
  * @}

@@ -74,25 +74,25 @@
  ******************************************************************************/
 
 /* Define for RGB LED */
-#define LED_RGB_PORT    GPIO_PORT_2
-#define LED_R_PORT      GPIO_PORT_2
-#define LED_G_PORT      GPIO_PORT_2
-#define LED_B_PORT      GPIO_PORT_2
-#define LED_R_PIN       GPIO_PIN_5
-#define LED_G_PIN       GPIO_PIN_6
-#define LED_B_PIN       GPIO_PIN_7
-#define LED_G_TOGGLE()  GPIO_TogglePins(LED_G_PORT, LED_G_PIN)
+#define LED_RGB_PORT    (GPIO_PORT_2)
+#define LED_R_PORT      (GPIO_PORT_2)
+#define LED_G_PORT      (GPIO_PORT_2)
+#define LED_B_PORT      (GPIO_PORT_2)
+#define LED_R_PIN       (GPIO_PIN_5)
+#define LED_G_PIN       (GPIO_PIN_6)
+#define LED_B_PIN       (GPIO_PIN_7)
+#define LED_G_TOGGLE()  (GPIO_TogglePins(LED_G_PORT, LED_G_PIN))
 
 /* TIMER0 interrupt source and number define */
-#define TIMER0_IRQn     Int014_IRQn
-#define TIMER0_SOURCE   INT_TMR0_GCMP
+#define TIMER0_IRQn     (Int014_IRQn)
+#define TIMER0_SOURCE   (INT_TMR0_GCMP)
 
-#define LRC_FRQ         32768
+#define LRC_FRQ         (32768ul)
 
-#define SW1_PORT        GPIO_PORT_6
-#define SW1_PIN         GPIO_PIN_2
+#define SW1_PORT        (GPIO_PORT_6)
+#define SW1_PIN         (GPIO_PIN_2)
 
-#define CAPTURE_CNT_MAX 2
+#define CAPTURE_CNT_MAX (2u)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -108,7 +108,7 @@ static void LedConfig(void);
  * Local variable definitions ('static')
  ******************************************************************************/
 __IO static uint16_t CaptureData[CAPTURE_CNT_MAX] = {0};
-__IO static uint16_t CaptureCnt = 0;
+__IO static uint16_t CaptureCnt = 0u;
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -123,7 +123,8 @@ static void Timer0CompareIrqCallback(void)
 {
     if(CaptureCnt != CAPTURE_CNT_MAX)
     {
-        CaptureData[CaptureCnt++] = TIMER0_GetCmpReg();
+        CaptureData[CaptureCnt] = TIMER0_GetCmpReg();
+        CaptureCnt++;
     }
     else
     {
@@ -183,7 +184,7 @@ int32_t main(void)
     /* Register IRQ handler && configure NVIC. */
     stcIrqRegiCfg.enIRQn = TIMER0_IRQn;
     stcIrqRegiCfg.enIntSrc = TIMER0_SOURCE;
-    stcIrqRegiCfg.pfnCallback = Timer0CompareIrqCallback;
+    stcIrqRegiCfg.pfnCallback = &Timer0CompareIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiCfg);
     NVIC_ClearPendingIRQ(stcIrqRegiCfg.enIRQn);
     NVIC_SetPriority(stcIrqRegiCfg.enIRQn, DDL_IRQ_PRIORITY_02);
@@ -194,10 +195,16 @@ int32_t main(void)
     /* Timer function kick start */
     TIMER0_Cmd(Enable);
 
-    while(CAPTURE_CNT_MAX != CaptureCnt);
+    while(CAPTURE_CNT_MAX != CaptureCnt)
+    {
+        ;
+    }
 
     LED_G_TOGGLE();
-    while(1);
+    while(1)
+    {
+        ;
+    }
 }
 
 /**

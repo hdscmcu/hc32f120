@@ -72,45 +72,39 @@
 /*******************************************************************************
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
-/* Enable SPI peripheral. */
-#define ENABLE_SPI()                CLK_FcgPeriphClockCmd(CLK_FCG_SPI, Enable)
-
-/* Disable SPI peripheral. */
-#define DISABLE_SPI()               CLK_FcgPeriphClockCmd(CLK_FCG_SPI, Disable)
-
 /* SPI pin group definition. */
-#define SPI_PIN_GROUP_A             1u
-#define SPI_PIN_GROUP_B             2u
-#define SPI_PIN_GROUP_C             3u
-#define SPI_PIN_GROUP               SPI_PIN_GROUP_B
+#define SPI_PIN_GROUP_A             (1u)
+#define SPI_PIN_GROUP_B             (2u)
+#define SPI_PIN_GROUP_C             (3u)
+#define SPI_PIN_GROUP               (SPI_PIN_GROUP_B)
 
 #if (SPI_PIN_GROUP == SPI_PIN_GROUP_A)
-    #define SPI_NSS_PORT            GPIO_PORT_1
-    #define SPI_NSS_PIN             GPIO_PIN_7
-    #define SPI_SCK_PORT            GPIO_PORT_5
-    #define SPI_SCK_PIN             GPIO_PIN_1
-    #define SPI_MOSI_PORT           GPIO_PORT_1
-    #define SPI_MOSI_PIN            GPIO_PIN_5
-    #define SPI_MISO_PORT           GPIO_PORT_1
-    #define SPI_MISO_PIN            GPIO_PIN_6
+    #define SPI_NSS_PORT            (GPIO_PORT_1)
+    #define SPI_NSS_PIN             (GPIO_PIN_7)
+    #define SPI_SCK_PORT            (GPIO_PORT_5)
+    #define SPI_SCK_PIN             (GPIO_PIN_1)
+    #define SPI_MOSI_PORT           (GPIO_PORT_1)
+    #define SPI_MOSI_PIN            (GPIO_PIN_5)
+    #define SPI_MISO_PORT           (GPIO_PORT_1)
+    #define SPI_MISO_PIN            (GPIO_PIN_6)
 #elif (SPI_PIN_GROUP == SPI_PIN_GROUP_B)
-    #define SPI_NSS_PORT            GPIO_PORT_2
-    #define SPI_NSS_PIN             GPIO_PIN_2
-    #define SPI_SCK_PORT            GPIO_PORT_2
-    #define SPI_SCK_PIN             GPIO_PIN_3
-    #define SPI_MOSI_PORT           GPIO_PORT_2
-    #define SPI_MOSI_PIN            GPIO_PIN_0
-    #define SPI_MISO_PORT           GPIO_PORT_2
-    #define SPI_MISO_PIN            GPIO_PIN_1
+    #define SPI_NSS_PORT            (GPIO_PORT_2)
+    #define SPI_NSS_PIN             (GPIO_PIN_2)
+    #define SPI_SCK_PORT            (GPIO_PORT_2)
+    #define SPI_SCK_PIN             (GPIO_PIN_3)
+    #define SPI_MOSI_PORT           (GPIO_PORT_2)
+    #define SPI_MOSI_PIN            (GPIO_PIN_0)
+    #define SPI_MISO_PORT           (GPIO_PORT_2)
+    #define SPI_MISO_PIN            (GPIO_PIN_1)
 #else
-    #define SPI_NSS_PORT            GPIO_PORT_6
-    #define SPI_NSS_PIN             GPIO_PIN_3
-    #define SPI_SCK_PORT            GPIO_PORT_7
-    #define SPI_SCK_PIN             GPIO_PIN_3
-    #define SPI_MOSI_PORT           GPIO_PORT_7
-    #define SPI_MOSI_PIN            GPIO_PIN_1
-    #define SPI_MISO_PORT           GPIO_PORT_7
-    #define SPI_MISO_PIN            GPIO_PIN_2
+    #define SPI_NSS_PORT            (GPIO_PORT_6)
+    #define SPI_NSS_PIN             (GPIO_PIN_3)
+    #define SPI_SCK_PORT            (GPIO_PORT_7)
+    #define SPI_SCK_PIN             (GPIO_PIN_3)
+    #define SPI_MOSI_PORT           (GPIO_PORT_7)
+    #define SPI_MOSI_PIN            (GPIO_PIN_1)
+    #define SPI_MISO_PORT           (GPIO_PORT_7)
+    #define SPI_MISO_PIN            (GPIO_PIN_2)
 #endif
 
 /* Interrupt flag bit mask. */
@@ -155,44 +149,53 @@ int32_t main(void)
 
     while (1u)
     {
-        while (1u)
+        m_stcInit.u32Pate = SPI_PATE_ENABLE;
+        SpiConfig();
+        SpiParityTx(0x56u);
+        if (u32SpiIrqFlag & SPI_IRQ_PARITY_ERROR_OCCURRED)
         {
-            m_stcInit.u32Pate = SPI_PATE_ENABLE;
-            SpiConfig();
-            SpiParityTx(0x56);
-            if (u32SpiIrqFlag & SPI_IRQ_PARITY_ERROR_OCCURRED)
+            // !!!SPI parity check function exception.
+            while (1u)
             {
-                // !!!SPI parity check function exception.
-                break;
+                ;
             }
-
-            SpiParityTx(0x57);
-            if ((u32SpiIrqFlag & SPI_IRQ_PARITY_ERROR_OCCURRED) == 0U)
-            {
-                // !!!SPI parity check function exception.
-                break;
-            }
-
-            /* Disable parity check self diagnosis. */
-            m_stcInit.u32Pate = SPI_PATE_DISABLE;
-            SpiConfig();
-            SpiParityTx(0x56);
-            if (u32SpiIrqFlag & SPI_IRQ_PARITY_ERROR_OCCURRED)
-            {
-                // !!!SPI parity check function exception.
-                break;
-            }
-
-            u8Temp = (uint8_t)SPI_ReadDataReg();
-            if (u8Temp == (uint8_t)0x57)
-            {
-                // !!!SPI parity check function exception.
-                break;
-            }
-
-            /* Parity check is fine. The following statement is only used for breakpoint. */
-            SpiParityTx(0x56);
         }
+
+        SpiParityTx(0x57u);
+        if ((u32SpiIrqFlag & SPI_IRQ_PARITY_ERROR_OCCURRED) == 0U)
+        {
+            // !!!SPI parity check function exception.
+            while (1u)
+            {
+                ;
+            }
+        }
+
+        /* Disable parity check self diagnosis. */
+        m_stcInit.u32Pate = SPI_PATE_DISABLE;
+        SpiConfig();
+        SpiParityTx(0x56u);
+        if (u32SpiIrqFlag & SPI_IRQ_PARITY_ERROR_OCCURRED)
+        {
+            // !!!SPI parity check function exception.
+            while (1u)
+            {
+                ;
+            }
+        }
+
+        u8Temp = (uint8_t)SPI_ReadDataReg();
+        if (u8Temp == (uint8_t)0x57u)
+        {
+            // !!!SPI parity check function exception.
+            while (1u)
+            {
+                ;
+            }
+        }
+
+        /* Parity check is success. The following statement is only used for breakpoint. */
+        SpiParityTx(0x56u);
     }
 }
 
@@ -205,7 +208,7 @@ int32_t main(void)
 static void SpiConfig(void)
 {
     /* The SPI register can be written only after the SPI peripheral is enabled. */
-    ENABLE_SPI();
+    CLK_FcgPeriphClockCmd(CLK_FCG_SPI, Enable);
 
     SPI_StructInit(&m_stcInit);
     m_stcInit.u32Splpbk = SPI_SPLPBK_MOSI;
@@ -216,10 +219,10 @@ static void SpiConfig(void)
     SPI_Init(&m_stcInit);
 
     /* Set the pins to SPI function. */
-    GPIO_SetFunc(SPI_NSS_PORT, SPI_NSS_PIN, GPIO_FUNC_SPI);
-    GPIO_SetFunc(SPI_SCK_PORT, SPI_SCK_PIN, GPIO_FUNC_SPI);
-    GPIO_SetFunc(SPI_MOSI_PORT, SPI_MOSI_PIN, GPIO_FUNC_SPI);
-    GPIO_SetFunc(SPI_MISO_PORT, SPI_MISO_PIN, GPIO_FUNC_SPI);
+    GPIO_SetFunc(SPI_NSS_PORT, SPI_NSS_PIN, GPIO_FUNC_4_SPI);
+    GPIO_SetFunc(SPI_SCK_PORT, SPI_SCK_PIN, GPIO_FUNC_4_SPI);
+    GPIO_SetFunc(SPI_MOSI_PORT, SPI_MOSI_PIN, GPIO_FUNC_4_SPI);
+    GPIO_SetFunc(SPI_MISO_PORT, SPI_MISO_PIN, GPIO_FUNC_4_SPI);
 
     /* SPI interrupt configuration. */
     SpiIrqConfig();
@@ -253,7 +256,7 @@ static void SpiIrqConfig(void)
     /* Configures error interrupt. */
     stcIrqRegiConf.enIntSrc    = INT_SPI_SPEI;
     stcIrqRegiConf.enIRQn      = Int008_IRQn;
-    stcIrqRegiConf.pfnCallback = SpiErr_IrqHandler;
+    stcIrqRegiConf.pfnCallback = &SpiErr_IrqHandler;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);

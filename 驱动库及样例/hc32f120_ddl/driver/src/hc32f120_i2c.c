@@ -82,19 +82,25 @@
  * @{
  */
 
-#define I2C_BAUDRATE_MAX                400000ul
+#define I2C_BAUDRATE_MAX    (400000ul)
 
-#define I2C_CLR_MASK                   (uint32_t)0x00F012DF
+#define I2C_CLR_MASK        (I2C_CLR_STARTFCLR | I2C_CLR_SLADDR0FCLR \
+                              |I2C_CLR_SLADDR1FCLR | I2C_CLR_TENDFCLR \
+                                |I2C_CLR_STOPFCLR | I2C_CLR_RFULLFCLR \
+                                  |I2C_CLR_TEMPTYFCLR | I2C_CLR_ARLOFCLR \
+                                    |I2C_CLR_NACKFCLR | I2C_CLR_GENCALLFCLR \
+                                      |I2C_CLR_SMBDEFAULTFCLR | I2C_CLR_SMBHOSTFCLR \
+                                        |I2C_CLR_SMBALRTFCLR)
 
 /**
  * @defgroup I2C_Check_Parameters_Validity I2C Check Parameters Validity
  * @{
  */
-#define IS_VALID_CLEARBIT(x)            (0 == (x & (~I2C_CLR_MASK)))
+#define IS_VALID_CLEARBIT(x)            (0u == ((x) & (~I2C_CLR_MASK)))
 
-#define IS_VALID_SPEED(speed)           (speed <= (I2C_BAUDRATE_MAX))
+#define IS_VALID_SPEED(speed)           ((speed) <= (I2C_BAUDRATE_MAX))
 
-#define IS_VALID_DIGITAL_FILTER(x)             ((x) <= I2C_DIG_FILTMODE_4CYCLE)
+#define IS_VALID_DIGITAL_FILTER(x)      ((x) <= I2C_DIG_FILTMODE_4CYCLE)
 
 #define IS_VALID_RD_STATUS_BIT(x)                                              \
 (   ((x) == I2C_SR_STARTF)                         ||                          \
@@ -119,13 +125,13 @@
 (   ((x) == I2C_SR_MSL)                            ||                          \
     ((x) == I2C_SR_TRA))
 
-#define IS_VALID_SMBUS_CONFIG(x)       ( 0 == (x & I2C_SMBUS_CONFIG_CLEARMASK))
+#define IS_VALID_SMBUS_CONFIG(x)       ( 0u == ((x) & I2C_SMBUS_CONFIG_CLEARMASK))
 
 #define IS_VALID_ADRCONFIG(x)                                                  \
-    (0 == (x & ~(I2C_SLR0_ADDRMOD0 | I2C_SLR0_SLADDR0EN)))
+    (0u == ((x) & ~(I2C_SLR0_ADDRMOD0 | I2C_SLR0_SLADDR0EN)))
 
-#define IS_VALID_7BIT_ADR(x)           (x <= 0x7F)
-#define IS_VALIDE_10BIT_ADR(x)          (x <= 0x3FF)
+#define IS_VALID_7BIT_ADR(x)           ((x) <= 0x7Fu)
+#define IS_VALIDE_10BIT_ADR(x)         ((x) <= 0x3FFu)
 
 #define IS_VALID_ADR_NUM(x)                                                    \
 (   ((x) == I2C_ADR_0)                             ||                          \
@@ -172,15 +178,16 @@
 
 /**
  * @brief  Set the baudrate for I2C peripheral.
+ * @note   Calculate for duty ratio 1/2 (High voltage 50%, Low voltage 50%)
  * @param  [in] pstcI2C_InitStruct   Pointer to I2C configuration structure
  *                                   @ref stc_i2c_init_t
  *         @arg pstcI2C_InitStruct->u32I2cClkDiv: Division of Hclk, reference as:
- *              step1: calculate div = (Hclk/Baudrate/(68+2*dnfsum+SclTime)
+ *              step1: calculate div = (Hclk/Baudrate/(68+2*DnfSum+SclTime)
  *                     Hclk -- system clock
  *                     Baudrate -- baudrate of i2c
  *                     SclTime -- =(SCL rising time + SCL falling time)/period of i2cclok
  *                                according to i2c bus hardware parameter.
- *                     dnfsum -- 0 if digital filter off;
+ *                     DnfSum -- 0 if digital filter off;
  *                               Filter capacity if digital filter on(1 ~ 4)
  *              step2: chose a division item which is similar and bigger than div
  *                     from @ref I2C_Clock_division.
@@ -192,72 +199,79 @@
  */
 en_result_t I2C_BaudrateConfig(const stc_i2c_init_t* pstcI2C_InitStruct, float32_t *pf32Err)
 {
-    float32_t Hclk, I2cDivClk, SclCnt, Baudrate;
-    float32_t dnfsum = 0, divsum = 0;
+    en_result_t enRet = Ok;
+    uint32_t Hclk, I2cDivClk, SclCnt, Baudrate;
+    uint32_t DnfSum = 0ul, DivSum = 0ul;
     float32_t WidthTotal, SumTotal;
     float32_t WidthHL;
+    float32_t fErr = 0.0f;
 
-    if (NULL == pstcI2C_InitStruct)
+    if ((NULL == pstcI2C_InitStruct)||(NULL == pf32Err))
     {
-        return ErrorInvalidParameter;
-    }
-
-    /* Check parameters */
-    DDL_ASSERT(IS_VALID_SPEED(pstcI2C_InitStruct->u32Baudrate));
-    DDL_ASSERT(IS_VALID_CLK_DIV(pstcI2C_InitStruct->u32I2cClkDiv));
-
-    if (pf32Err)
-    {
-        *pf32Err = 0.0;
-    }
-
-    /* Get configuration for i2c */
-    Hclk = SystemCoreClock;
-    I2cDivClk = 1 << pstcI2C_InitStruct->u32I2cClkDiv;
-    SclCnt = pstcI2C_InitStruct->u32SclTime;
-    Baudrate = pstcI2C_InitStruct->u32Baudrate;
-
-    /* Judge digital filter status*/
-    if(0 != READ_BIT(M0P_I2C->FLTR, I2C_FLTR_DNFEN))
-    {
-        dnfsum = ((M0P_I2C->FLTR & I2C_FLTR_DNF) >> I2C_FLTR_DNF_POS) +1;
+        enRet = ErrorInvalidParameter;
     }
     else
     {
-        dnfsum = 0;
-    }
+        /* Check parameters */
+        DDL_ASSERT(IS_VALID_SPEED(pstcI2C_InitStruct->u32Baudrate));
+        DDL_ASSERT(IS_VALID_CLK_DIV(pstcI2C_InitStruct->u32I2cClkDiv));
 
-    /* Judge if clock divider on*/
-    if(I2C_CLK_DIV1 == I2cDivClk)
+        /* Get configuration for i2c */
+        Hclk = SystemCoreClock;
+        I2cDivClk = 1ul << pstcI2C_InitStruct->u32I2cClkDiv;
+        SclCnt = pstcI2C_InitStruct->u32SclTime;
+        Baudrate = pstcI2C_InitStruct->u32Baudrate;
+
+        /* Judge digital filter status*/
+        if(0u != READ_BIT(M0P_I2C->FLTR, I2C_FLTR_DNFEN))
+        {
+            DnfSum = ((M0P_I2C->FLTR & I2C_FLTR_DNF) >> I2C_FLTR_DNF_POS) + 1u;
+        }
+        else
+        {
+            DnfSum = 0ul;
+        }
+
+        /* Judge if clock divider on*/
+        if(I2C_CLK_DIV1 == I2cDivClk)
+        {
+            DivSum = 3ul;
+        }
+        else
+        {
+            DivSum = 2ul;
+        }
+
+        WidthTotal = (float32_t)Hclk/(float32_t)Baudrate/(float32_t)I2cDivClk;
+        SumTotal = 2.0f*(float32_t)DivSum + 2.0f*(float32_t)DnfSum + (float32_t)SclCnt;
+        WidthHL = WidthTotal - SumTotal;
+
+        if(WidthTotal <= SumTotal)
+        {
+            /* Err, Should set a smaller division value for pstcI2C_InitStruct->u32I2cClkDiv */
+            //DDL_ASSERT(NULL);
+            enRet = ErrorInvalidParameter;
+        }
+        else if(WidthHL > ((float32_t)0x1F*(float32_t)2))
+        {
+            /* Err, Should set a bigger division value for pstcI2C_InitStruct->u32I2cClkDiv */
+            //DDL_ASSERT(NULL);
+            enRet = ErrorInvalidParameter;
+        }
+        else
+        {
+            fErr =(WidthHL - (float32_t)((uint32_t)WidthHL)) / WidthHL;
+
+            M0P_I2C->CCR = (pstcI2C_InitStruct->u32I2cClkDiv << I2C_CCR_CKDIV_POS)     \
+                           | (((uint32_t)WidthHL/2u) << I2C_CCR_SLOWW_POS)              \
+                           | (((uint32_t)WidthHL - (uint32_t)WidthHL/2u) << I2C_CCR_SHIGHW_POS);
+        }
+    }
+    if((NULL != pf32Err)&&(Ok == enRet))
     {
-        divsum = 3;
+        *pf32Err = fErr;
     }
-    else
-    {
-        divsum = 2;
-    }
-
-    WidthTotal = Hclk/Baudrate/I2cDivClk;
-    SumTotal = 2*divsum + 2*dnfsum + SclCnt;
-    WidthHL = WidthTotal - SumTotal;
-
-    if(WidthTotal <= SumTotal)
-    {
-        /* Err, Should set a smaller division value for pstcI2C_InitStruct->u32I2cClkDiv */
-        DDL_ASSERT(NULL);
-    }
-    if(WidthHL > (float32_t)0x1F*2)
-    {
-        /* Err, Should set a bigger division value for pstcI2C_InitStruct->u32I2cClkDiv */
-        DDL_ASSERT(NULL);
-    }
-
-    *pf32Err =(WidthHL - (uint32_t)WidthHL) / WidthHL;
-
-    M0P_I2C->CCR = (pstcI2C_InitStruct->u32I2cClkDiv << I2C_CCR_CKDIV_POS)     \
-                   | (((uint32_t)WidthHL/2) << I2C_CCR_SLOWW_POS)              \
-                   | (((uint32_t)WidthHL - (uint32_t)WidthHL/2) << I2C_CCR_SHIGHW_POS);
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -268,8 +282,8 @@ en_result_t I2C_BaudrateConfig(const stc_i2c_init_t* pstcI2C_InitStruct, float32
 void I2C_DeInit(void)
 {
     /* Reset peripheral register and internal status*/
-    bM0P_I2C->CR1_b.PE = 0;
-    bM0P_I2C->CR1_b.SWRST = 1;
+    bM0P_I2C->CR1_b.PE = 0u;
+    bM0P_I2C->CR1_b.SWRST = 1u;
 }
 
 /**
@@ -277,12 +291,12 @@ void I2C_DeInit(void)
  * @param  [in] pstcI2C_InitStruct   Pointer to I2C configuration structure
  *                                   @ref stc_i2c_init_t
  *         @arg pstcI2C_InitStruct->u32I2cClkDiv: Division of Hclk, reference as:
- *              step1: calculate div = (Hclk/Baudrate/(68+2*dnfsum+SclTime)
+ *              step1: calculate div = (Hclk/Baudrate/(68+2*DnfSum+SclTime)
  *                     Hclk -- system clock
  *                     Baudrate -- baudrate of i2c
  *                     SclTime -- =(SCL rising time + SCL falling time)/period of i2cclok
  *                                according to i2c bus hardware parameter.
- *                     dnfsum -- 0 if ditital filter off;
+ *                     DnfSum -- 0 if ditital filter off;
  *                               Filter capacity if ditital filter on(1 ~ 4)
  *              step2: chose a division item which is similar and bigger than div
  *                     from @ref I2C_Clock_division.
@@ -294,31 +308,33 @@ void I2C_DeInit(void)
  */
 en_result_t I2C_Init(const stc_i2c_init_t* pstcI2C_InitStruct, float32_t *pf32Err)
 {
-    if (pstcI2C_InitStruct == NULL)
+    en_result_t enRet = Ok;
+    if (NULL == pstcI2C_InitStruct )
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
     }
+    else
+    {
+        DDL_ASSERT(IS_VALID_SPEED(pstcI2C_InitStruct->u32Baudrate));
+        DDL_ASSERT(IS_VALID_CLK_DIV(pstcI2C_InitStruct->u32I2cClkDiv));
 
-    DDL_ASSERT(IS_VALID_SPEED(pstcI2C_InitStruct->u32Baudrate));
-    DDL_ASSERT(IS_VALID_CLK_DIV(pstcI2C_InitStruct->u32I2cClkDiv));
+        /* Register and internal status reset */
+        bM0P_I2C->CR1_b.PE = 0u;
+        bM0P_I2C->CR1_b.SWRST = 1u;
+        bM0P_I2C->CR1_b.PE = 1u;
 
-    /* Register and internal status reset */
-    bM0P_I2C->CR1_b.PE = 0;
-    bM0P_I2C->CR1_b.SWRST = 1;
-    bM0P_I2C->CR1_b.PE = 1;
+        /* I2C baudrate config */
+        I2C_BaudrateConfig(pstcI2C_InitStruct, pf32Err);
 
-    /* I2C baudrate config */
-    I2C_BaudrateConfig(pstcI2C_InitStruct, pf32Err);
+        /* Disable global broadcast address function */
+        bM0P_I2C->CR1_b.GCEN = 1u;
 
-    /* Disable global broadcast address function */
-    bM0P_I2C->CR1_b.GCEN = 1;
-
-    /* Release software reset */
-    bM0P_I2C->CR1_b.SWRST = 0;
-    /* Disable I2C peripheral */
-    bM0P_I2C->CR1_b.PE = 0;
-
-    return Ok;
+        /* Release software reset */
+        bM0P_I2C->CR1_b.SWRST = 0u;
+        /* Disable I2C peripheral */
+        bM0P_I2C->CR1_b.PE = 0u;
+    }
+    return enRet;
 }
 
 /**
@@ -448,13 +464,13 @@ void I2C_SlaveAdrConfig(uint32_t u32AdrNum, uint32_t u32AdrConfig, uint32_t u32A
     {
         /* if 10 bit address mode */
         DDL_ASSERT(IS_VALIDE_10BIT_ADR(u32Adr));
-        *(uint32_t*)(&M0P_I2C->SLR0 + u32AdrNum) = u32AdrConfig + u32Adr;
+        *(__IO uint32_t*)(&M0P_I2C->SLR0 + u32AdrNum) = u32AdrConfig + u32Adr;
     }
-    else if(I2C_ADR_CONFIG_7BIT == u32AdrConfig)
+    else
     {
         /* if 7 bit address mode */
         DDL_ASSERT(IS_VALID_7BIT_ADR(u32Adr));
-        *(uint32_t*)(&M0P_I2C->SLR0 + u32AdrNum) = u32AdrConfig + (u32Adr << 1);
+        *(__IO uint32_t*)(&M0P_I2C->SLR0 + u32AdrNum) = u32AdrConfig + (u32Adr << 1);
     }
 }
 
@@ -489,7 +505,7 @@ void I2C_IntCmd(uint32_t u32IntEn, en_functional_state_t enNewState)
     }
     else
     {
-        M0P_I2C->CR2 &= (uint32_t)~u32IntEn;
+        M0P_I2C->CR2 &= ~u32IntEn;
     }
 }
 
@@ -629,15 +645,18 @@ void I2C_FastAckConfig(en_functional_state_t enNewState)
  */
 en_result_t I2C_StructInit(stc_i2c_init_t* pstcI2C_InitStruct)
 {
+    en_result_t enRet = Ok;
     if (pstcI2C_InitStruct == NULL)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
+    }
+    else
+    {
+        pstcI2C_InitStruct->u32Baudrate = 50000ul;
+        pstcI2C_InitStruct->u32SclTime = 0ul;
     }
 
-    pstcI2C_InitStruct->u32Baudrate = 50000u;
-    pstcI2C_InitStruct->u32SclTime = 0u;
-
-    return Ok;
+    return enRet;
 }
 
 /**

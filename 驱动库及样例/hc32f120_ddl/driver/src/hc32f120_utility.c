@@ -96,8 +96,8 @@ static en_result_t SetUartBaudrate(M0P_USART_TypeDef *USARTx,
  * @{
  */
 
-static uint32_t u32TickStep = 0u;
-__IO static uint32_t u32TickCount = 0u;
+static uint32_t u32TickStep = 0ul;
+__IO static uint32_t u32TickCount = 0ul;
 
 /**
  * @}
@@ -118,15 +118,15 @@ __IO static uint32_t u32TickCount = 0u;
  */
 void DDL_Delay1ms(uint32_t u32Cnt)
 {
-    volatile uint32_t i = 0;
-    uint32_t u32Cyc = 0;
+    __IO uint32_t i = 0ul;
+    uint32_t u32Cyc = 0ul;
 
     u32Cyc = SystemCoreClock;
-    u32Cyc = u32Cyc / 10000;
-    while (u32Cnt-- > 0)
+    u32Cyc = u32Cyc / 10000ul;
+    while (u32Cnt-- > 0ul)
     {
         i = u32Cyc;
-        while (i-- > 0)
+        while (i-- > 0ul)
         {
             ;
         }
@@ -142,13 +142,16 @@ void DDL_Delay1ms(uint32_t u32Cnt)
  */
 __WEAKDEF en_result_t SysTick_Init(uint32_t u32Freq)
 {
-    en_result_t enRet = Ok;
+    en_result_t enRet = Error;
 
-    u32TickStep = 1000u / u32Freq;
-    /* Configure the SysTick interrupt */
-    if (SysTick_Config(SystemCoreClock / u32Freq) > 0u)
+    if (u32Freq)
     {
-        enRet = Error;
+        u32TickStep = 1000ul / u32Freq;
+        /* Configure the SysTick interrupt */
+        if (0ul == SysTick_Config(SystemCoreClock / u32Freq))
+        {
+            enRet = Ok;
+        }
     }
 
     return enRet;
@@ -165,7 +168,7 @@ __WEAKDEF void SysTick_Delay(uint32_t u32Delay)
     uint32_t tickEnd = u32Delay;
 
     /* Add a freq to guarantee minimum wait */
-    if (tickEnd < 0xFFFFFFFFu)
+    if (tickEnd < 0xFFFFFFFFul)
     {
         tickEnd += u32TickStep;
     }
@@ -225,11 +228,17 @@ __WEAKDEF void SysTick_Resume(void)
  * @param [in] line                     Point line assert the wrong file in the current.
  * @retval None
  */
-__WEAKDEF void DDL_AssertHandler(uint8_t *file, uint32_t line)
+__WEAKDEF void DDL_AssertHandler(const uint8_t *file, int16_t line)
 {
     /* Users can re-implement this function to print information */
-//    printf("Wrong parameters value: file %s on line %d\r\n", file, line);
-    while (1);
+#if (DDL_PRINT_ENABLE == DDL_ON)
+    printf("Wrong parameters value: file %s on line %d\r\n", file, line);
+#endif
+
+    while (1)
+    {
+        ;
+    }
 }
 #endif /* __DEBUG */
 
@@ -243,9 +252,12 @@ __WEAKDEF void DDL_AssertHandler(uint8_t *file, uint32_t line)
 int32_t fputc(int32_t ch, FILE *f)
 {
     /* Wait TX data register empty */
-    while (!READ_BIT(M0P_USART1->SR, USART_SR_TXE));
+    while (!READ_REG32_BIT(M0P_USART1->SR, USART_SR_TXE))
+    {
+        ;
+    }
 
-    WRITE_REG(M0P_USART1->DR,  (ch & (uint16_t)0x01FF));
+    WRITE_REG32(M0P_USART1->DR,  ((uint32_t)ch & 0x01FFul));
 
     return (ch);
 }
@@ -259,18 +271,20 @@ int32_t fputc(int32_t ch, FILE *f)
  */
 en_result_t DDL_UartInit(void)
 {
+    en_result_t enRet = Error;
+
     /* Configure USART TX pin. */
-    WRITE_REG(M0P_PORT->PWPR, 0xA501UL);  /* Unlock */
-    MODIFY_REG(M0P_PORT->PCR12, PORT_PCR_FSEL, (0x03UL << PORT_PCR_FSEL_POS));  /* P12: USART1_TX_A */
-    WRITE_REG(M0P_PORT->PWPR, 0xA500UL);  /* Lock */
+    WRITE_REG16(M0P_PORT->PWPR, 0xA501u);  /* Unlock */
+    MODIFY_REG16(M0P_PORT->PCR12, PORT_PCR_FSEL, (0x03ul << PORT_PCR_FSEL_POS));  /* P12: USART1_TX_A */
+    WRITE_REG16(M0P_PORT->PWPR, 0xA500u);  /* Lock */
 
     /* Enable USART1 function clock gate */
-    WRITE_REG(M0P_PWC->FPRC, 0xA501UL);  /* Unlock */
-    CLEAR_BIT(M0P_CMU->FCG, CMU_FCG_UART1);
-    WRITE_REG(M0P_PWC->FPRC, 0xA500UL);  /* Lock */
+    WRITE_REG16(M0P_PWC->FPRC, 0xA501u);  /* Unlock */
+    CLEAR_REG32_BIT(M0P_CMU->FCG, CMU_FCG_UART1);
+    WRITE_REG16(M0P_PWC->FPRC, 0xA500u);  /* Lock */
 
     /* Disbale TX/RX && clear interrupt flag */
-    CLEAR_BIT(M0P_USART1->CR1, (USART_CR1_TE | USART_CR1_RE));
+    CLEAR_REG32_BIT(M0P_USART1->CR1, (USART_CR1_TE | USART_CR1_RE));
 
     /***************************************************************************
      * Configure UART
@@ -284,28 +298,27 @@ en_result_t DDL_UartInit(void)
      **************************************************************************/
 
     /* Set CR1 */
-    MODIFY_REG(M0P_USART1->CR1,
-               (USART_CR1_SLME | USART_CR1_PS | USART_CR1_PCE |                \
-                USART_CR1_M | USART_CR1_OVER8 | USART_CR1_MS  |                \
-                USART_CR1_ML | USART_CR1_NFE | USART_CR1_SBS),                 \
-               USART_CR1_OVER8);
+    MODIFY_REG32(M0P_USART1->CR1,
+                 (USART_CR1_SLME | USART_CR1_PS | USART_CR1_PCE |                \
+                  USART_CR1_M | USART_CR1_OVER8 | USART_CR1_MS  |                \
+                  USART_CR1_ML | USART_CR1_NFE | USART_CR1_SBS),                 \
+                 USART_CR1_OVER8);
 
     /* Set CR2: reset value */
-    WRITE_REG(M0P_USART1->CR2, 0x00UL);
+    WRITE_REG32(M0P_USART1->CR2, 0x00ul);
 
     /* Set CR3: reset value */
-    WRITE_REG(M0P_USART1->CR3, 0x00UL);
+    WRITE_REG32(M0P_USART1->CR3, 0x00ul);
 
     /* Set baudrate */
-    if (Ok != SetUartBaudrate(M0P_USART1, 115200))
+    if (Ok == SetUartBaudrate(M0P_USART1, 115200ul))
     {
-        return Error;
+        /* Enable TX function */
+        SET_REG32_BIT(M0P_USART1->CR1, USART_CR1_TE);
+        enRet = Ok;
     }
 
-    /* Enable TX function */
-    SET_BIT(M0P_USART1->CR1, USART_CR1_TE);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -325,66 +338,58 @@ en_result_t DDL_UartInit(void)
 static en_result_t SetUartBaudrate(M0P_USART_TypeDef *USARTx,
                                         uint32_t u32Baudrate)
 {
-    uint32_t B;
-    uint32_t C;
-    uint32_t OVER8;
-    uint32_t DIV_Integer;
-    uint32_t u32Prescaler;
-    uint32_t u32CR1 = READ_REG(USARTx->CR1);
+    uint32_t B = 0ul;
+    uint32_t C = 0ul;
+    uint32_t OVER8 = 0ul;
+    uint32_t DIV_Integer = 0ul;
+    uint32_t u32Prescaler = 0ul;
+    uint32_t u32CR1 = 0ul;
+    en_result_t enRet = ErrorInvalidParameter;
 
-    if ((0UL == u32Baudrate) ||
-        ((M0P_USART1 != USARTx) && (M0P_USART2 != USARTx) && 
-         (M0P_USART3 != USARTx) && (M0P_USART4 != USARTx)))
+    if (u32Baudrate)
     {
-        return ErrorInvalidParameter;
-    }
-
-    if (u32CR1 & USART_CR1_MS)
-    {
-        return ErrorInvalidMode;
-    }
-
-    B = u32Baudrate;
-    OVER8 = (u32CR1 & USART_CR1_OVER8) ? 1u : 0u;
-
-    for (u32Prescaler = 0; u32Prescaler <= USART_PR_PSC; u32Prescaler++)
-    {
-        C = (SystemCoreClock / (1 << (u32Prescaler * 2)));
-
-        /* UART Mode Calculation Formula */
-        /* B = C / (8 * (2 - OVER8) * (DIV_Integer + 1)) */
-        DIV_Integer = (C * 10) / (B * 8 * (2 - OVER8));
-
-        /* Calibrate rounding error */
-        if (DIV_Integer % 10 < 5)
+        enRet = ErrorInvalidMode;
+        u32CR1 = READ_REG32(USARTx->CR1);
+        if (!(u32CR1 & USART_CR1_MS))
         {
-            DIV_Integer -= 10;
+            B = u32Baudrate;
+            OVER8 = (u32CR1 & USART_CR1_OVER8) ? 1ul : 0ul;
+
+            for (u32Prescaler = 0ul; u32Prescaler <= USART_PR_PSC; u32Prescaler++)
+            {
+                C = (SystemCoreClock / (1ul << (u32Prescaler * 2ul)));
+
+                /* UART Mode Calculation Formula */
+                /* B = C / (8 * (2 - OVER8) * (DIV_Integer + 1)) */
+                DIV_Integer = (C * 10ul) / (B * 8ul * (2ul - OVER8));
+
+                /* Calibrate rounding error */
+                if (DIV_Integer % 10ul < 5ul)
+                {
+                    DIV_Integer -= 10ul;
+                }
+
+                if (DIV_Integer <= 2550ul)    /* 2550 = 0xFF * 10 */
+                {
+                    break;
+                }
+            }
+
+            /* Check validation : DIV_Integer */
+            if (DIV_Integer <= 2550ul)         /* 2550 = 0xFF * 10 */
+            {
+                DIV_Integer /= 10ul;
+                /* Set clock prescaler */
+                WRITE_REG32(USARTx->PR, u32Prescaler);
+
+                /* Set USART_BRR register bits:DIV_Integer */
+                WRITE_REG32(USARTx->BRR, (DIV_Integer << USART_BRR_DIV_INTEGER_POS));
+                enRet = Ok;
+            }
         }
-
-        if (DIV_Integer <= 2550)    /* 2550 = 0xFF * 10 */
-        {
-            break;
-        }
     }
 
-    /* Check validation : DIV_Integer */
-    if (DIV_Integer > 2550)         /* 2550 = 0xFF * 10 */
-    {
-        DDL_ASSERT(NULL);
-        return ErrorInvalidParameter;
-    }
-    else
-    {
-        DIV_Integer /= 10;
-    }
-
-    /* Set clock prescaler */
-    WRITE_REG(USARTx->PR, u32Prescaler);
-
-    /* Set USART_BRR register bits:DIV_Integer */
-    WRITE_REG(USARTx->BRR, (DIV_Integer << USART_BRR_DIV_INTEGER_POS));
-
-    return Ok;
+    return enRet;
 }
 
 #endif /* DDL_PRINT_ENABLE */

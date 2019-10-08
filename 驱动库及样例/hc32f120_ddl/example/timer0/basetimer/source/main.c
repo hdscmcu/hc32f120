@@ -74,23 +74,23 @@
  ******************************************************************************/
 
 /* Define for RGB LED */
-#define LED_RGB_PORT    GPIO_PORT_2
-#define LED_R_PORT      GPIO_PORT_2
-#define LED_G_PORT      GPIO_PORT_2
-#define LED_B_PORT      GPIO_PORT_2
-#define LED_R_PIN       GPIO_PIN_5
-#define LED_G_PIN       GPIO_PIN_6
-#define LED_B_PIN       GPIO_PIN_7
-#define LED_G_TOGGLE()  GPIO_TogglePins(LED_G_PORT, LED_G_PIN)
+#define LED_RGB_PORT    (GPIO_PORT_2)
+#define LED_R_PORT      (GPIO_PORT_2)
+#define LED_G_PORT      (GPIO_PORT_2)
+#define LED_B_PORT      (GPIO_PORT_2)
+#define LED_R_PIN       (GPIO_PIN_5)
+#define LED_G_PIN       (GPIO_PIN_6)
+#define LED_B_PIN       (GPIO_PIN_7)
+#define LED_G_TOGGLE()  (GPIO_TogglePins(LED_G_PORT, LED_G_PIN))
 
 /* TIMER0 interrupt source and number define */
-#define TIMER0_IRQn     Int014_IRQn
-#define TIMER0_SOURCE   INT_TMR0_GCMP
+#define TIMER0_IRQn     (Int014_IRQn)
+#define TIMER0_SOURCE   (INT_TMR0_GCMP)
 
-#define LRC_FRQ         32768
+#define LRC_FRQ         (32768ul)
 
-#define SW1_PORT        GPIO_PORT_6
-#define SW1_PIN         GPIO_PIN_2
+#define SW1_PORT        (GPIO_PORT_6)
+#define SW1_PIN         (GPIO_PIN_2)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -163,7 +163,7 @@ int32_t main(void)
     stcTimer0Ini.u32ClockSource = TIMER0_CLK_SRC_LRC; /* Chose clock source */
     stcTimer0Ini.u32Tmr0Fun = TIMER0_FUNC_CMP;        /* Timer0 compare mode */
     stcTimer0Ini.u32HwTrigFunc = TIMER0_BT_HWTRG_FUNC_STOP; /* Config Hardware trigger function */
-    stcTimer0Ini.u16CmpValue =  LRC_FRQ / 2 / 256;    /* Set compara register data */
+    stcTimer0Ini.u16CmpValue =  (uint16_t)(LRC_FRQ / 2ul / 256ul);    /* Set compara register data */
     TIMER0_Init(&stcTimer0Ini);
 
     /* Set internal hardware capture source */
@@ -172,7 +172,7 @@ int32_t main(void)
     /* Register IRQ handler && configure NVIC. */
     stcIrqRegiCfg.enIRQn = TIMER0_IRQn;
     stcIrqRegiCfg.enIntSrc = TIMER0_SOURCE;
-    stcIrqRegiCfg.pfnCallback = Timer0CompareIrqCallback;
+    stcIrqRegiCfg.pfnCallback = &Timer0CompareIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiCfg);
     NVIC_ClearPendingIRQ(stcIrqRegiCfg.enIRQn);
     NVIC_SetPriority(stcIrqRegiCfg.enIRQn, DDL_IRQ_PRIORITY_02);
@@ -183,7 +183,10 @@ int32_t main(void)
     /* Timer function kick start */
     TIMER0_Cmd(Enable);
 
-    while(1);
+    while(1)
+    {
+        ;
+    }
 }
 
 /**

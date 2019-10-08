@@ -85,9 +85,9 @@
  * @defgroup GPIO_Registers_Reset_Value GPIO Registers Reset Value
  * @{
  */
-#define GPIO_PSPCR_RESET_VALUE          ((uint16_t)0x0003)
-#define GPIO_PCCR_RESET_VALUE           ((uint16_t)0x4000)
-#define GPIO_PINAER_RESET_VALUE         ((uint16_t)0x0000)
+#define GPIO_PSPCR_RESET_VALUE          ((uint16_t)0x0003u)
+#define GPIO_PCCR_RESET_VALUE           ((uint16_t)0x4000u)
+#define GPIO_PINAER_RESET_VALUE         ((uint16_t)0x0000u)
 /**
  * @}
  */
@@ -97,98 +97,98 @@
  * @{
  */
 /*  Parameter validity check for pin state. */
-#define IS_GPIO_PIN_STATE(STATE)                                                \
-(   ((STATE) == PIN_STATE_RESET)                ||                              \
-    ((STATE) == PIN_STATE_SET))
+#define IS_GPIO_PIN_STATE(state)                                                \
+(   ((state) == PIN_STATE_RESET)                ||                              \
+    ((state) == PIN_STATE_SET))
 
 /*  Parameter validity check for pin mode. */
-#define IS_GPIO_MODE(MODE)                                                      \
-(   ((MODE) == PIN_MODE_IN)                     ||                              \
-    ((MODE) == PIN_MODE_OUT))
+#define IS_GPIO_MODE(mode)                                                      \
+(   ((mode) == PIN_MODE_IN)                     ||                              \
+    ((mode) == PIN_MODE_OUT))
 
 /*  Parameter validity check for pin output type. */
-#define IS_GPIO_OTYPE(OTYPE)                                                    \
-(   ((OTYPE) == PIN_OTYPE_CMOS)                 ||                              \
-    ((OTYPE) == PIN_OTYPE_NMOS))
+#define IS_GPIO_OTYPE(otype)                                                    \
+(   ((otype) == PIN_OTYPE_CMOS)                 ||                              \
+    ((otype) == PIN_OTYPE_NMOS))
 
 /*  Parameter validity check for pin driver capacity. */
-#define IS_GPIO_PIN_DRV(DRV)                                                    \
-(   ((DRV) == PIN_NORMAL_DRV)                   ||                              \
-    ((DRV) == PIN_HIGH_DRV))
+#define IS_GPIO_PIN_DRV(drv)                                                    \
+(   ((drv) == PIN_NORMAL_DRV)                   ||                              \
+    ((drv) == PIN_HIGH_DRV))
 
 /*  Parameter validity check for pin latch function. */
-#define IS_GPIO_LATCH(LATCH)                                                    \
-(   ((LATCH) == PIN_LATCH_OFF)                  ||                              \
-    ((LATCH) == PIN_LATCH_ON))
+#define IS_GPIO_LATCH(latch)                                                    \
+(   ((latch) == PIN_LATCH_OFF)                  ||                              \
+    ((latch) == PIN_LATCH_ON))
 
 /*  Parameter validity check for internal pull-up resistor. */
-#define IS_GPIO_PIN_PU(PU)                                                      \
-(   ((PU) == PIN_PU_OFF)                        ||                              \
-    ((PU) == PIN_PU_ON))
+#define IS_GPIO_PIN_PU(pu)                                                      \
+(   ((pu) == PIN_PU_OFF)                        ||                              \
+    ((pu) == PIN_PU_ON))
 
 /*  Parameter validity check for pin state invert. */
-#define IS_GPIO_PIN_INVERT(INVERT)                                              \
-(   ((INVERT) == PIN_INVERT_OFF)                ||                              \
-    ((INVERT) == PIN_INVERT_ON))
+#define IS_GPIO_PIN_INVERT(invert)                                              \
+(   ((invert) == PIN_INVERT_OFF)                ||                              \
+    ((invert) == PIN_INVERT_ON))
 
 /*  Parameter validity check for pin input type. */
-#define IS_GPIO_ITYPE(ITYPE)                                                    \
-(   ((ITYPE) == PIN_ITYPE_SMT)                  ||                              \
-    ((ITYPE) == PIN_ITYPE_CMOS))
+#define IS_GPIO_ITYPE(itype)                                                    \
+(   ((itype) == PIN_ITYPE_SMT)                  ||                              \
+    ((itype) == PIN_ITYPE_CMOS))
 
 /*  Parameter validity check for external interrupt function. */
-#define IS_GPIO_EXINT(EXINT)                                                    \
-(   ((EXINT) == PIN_EXINT_OFF)                  ||                              \
-    ((EXINT) == PIN_EXINT_ON))
+#define IS_GPIO_EXINT(exint)                                                    \
+(   ((exint) == PIN_EXINT_OFF)                  ||                              \
+    ((exint) == PIN_EXINT_ON))
 
 /*  Parameter validity check for pin number. */
-#define IS_GPIO_PIN(PIN)    (((PIN) & GPIO_PIN_MASK ) != (uint8_t)0x00)
+#define IS_GPIO_PIN(pin)    (((pin) & GPIO_PIN_MASK ) != (uint8_t)0x00u)
 
 /*  Parameter validity check for get pin index. */
-#define IS_GET_GPIO_PIN(PIN)                                                    \
-(   ((PIN) == GPIO_PIN_0)                       ||                              \
-    ((PIN) == GPIO_PIN_1)                       ||                              \
-    ((PIN) == GPIO_PIN_2)                       ||                              \
-    ((PIN) == GPIO_PIN_3)                       ||                              \
-    ((PIN) == GPIO_PIN_4)                       ||                              \
-    ((PIN) == GPIO_PIN_5)                       ||                              \
-    ((PIN) == GPIO_PIN_6)                       ||                              \
-    ((PIN) == GPIO_PIN_7))
+#define IS_GET_GPIO_PIN(pin)                                                    \
+(   ((pin) == GPIO_PIN_0)                       ||                              \
+    ((pin) == GPIO_PIN_1)                       ||                              \
+    ((pin) == GPIO_PIN_2)                       ||                              \
+    ((pin) == GPIO_PIN_3)                       ||                              \
+    ((pin) == GPIO_PIN_4)                       ||                              \
+    ((pin) == GPIO_PIN_5)                       ||                              \
+    ((pin) == GPIO_PIN_6)                       ||                              \
+    ((pin) == GPIO_PIN_7))
 
 /*  Parameter validity check for port source. */
-#define IS_GPIO_PORT(PORT)  (((PORT) &= GPIO_PORT_MASK) != (uint16_t)0x0000)
+#define IS_GPIO_PORT(port)  (((port) & GPIO_PORT_MASK) != (uint16_t)0x0000u)
 
 /*  Parameter validity check for port source. */
-#define IS_GPIO_PORT_SOURCE(PORT)                                               \
-(   ((PORT) == GPIO_PORT_0)                     ||                              \
-    ((PORT) == GPIO_PORT_1)                     ||                              \
-    ((PORT) == GPIO_PORT_2)                     ||                              \
-    ((PORT) == GPIO_PORT_3)                     ||                              \
-    ((PORT) == GPIO_PORT_4)                     ||                              \
-    ((PORT) == GPIO_PORT_5)                     ||                              \
-    ((PORT) == GPIO_PORT_6)                     ||                              \
-    ((PORT) == GPIO_PORT_7)                     ||                              \
-    ((PORT) == GPIO_PORT_12)                    ||                              \
-    ((PORT) == GPIO_PORT_13)                    ||                              \
-    ((PORT) == GPIO_PORT_14))
+#define IS_GPIO_PORT_SOURCE(port)                                               \
+(   ((port) == GPIO_PORT_0)                     ||                              \
+    ((port) == GPIO_PORT_1)                     ||                              \
+    ((port) == GPIO_PORT_2)                     ||                              \
+    ((port) == GPIO_PORT_3)                     ||                              \
+    ((port) == GPIO_PORT_4)                     ||                              \
+    ((port) == GPIO_PORT_5)                     ||                              \
+    ((port) == GPIO_PORT_6)                     ||                              \
+    ((port) == GPIO_PORT_7)                     ||                              \
+    ((port) == GPIO_PORT_12)                    ||                              \
+    ((port) == GPIO_PORT_13)                    ||                              \
+    ((port) == GPIO_PORT_14))
 
-#define IS_GPIO_FUNC(FUNC)                                                      \
-(   ((FUNC) == GPIO_FUNC_0)                     ||                              \
-    ((FUNC) == GPIO_FUNC_1)                     ||                              \
-    ((FUNC) == GPIO_FUNC_2)                     ||                              \
-    ((FUNC) == GPIO_FUNC_3)                     ||                              \
-    ((FUNC) == GPIO_FUNC_4)                     ||                              \
-    ((FUNC) == GPIO_FUNC_5))
+#define IS_GPIO_FUNC(func)                                                      \
+(   ((func) == GPIO_FUNC_0)                     ||                              \
+    ((func) == GPIO_FUNC_1)                     ||                              \
+    ((func) == GPIO_FUNC_2)                     ||                              \
+    ((func) == GPIO_FUNC_3)                     ||                              \
+    ((func) == GPIO_FUNC_4)                     ||                              \
+    ((func) == GPIO_FUNC_5))
 
 /*  Parameter validity check for debug pin definition. */
-#define IS_GPIO_DEBUG_PORT(PORT)    (((PORT) & GPIO_PIN_DEBUG) != (uint8_t)0x00)
+#define IS_GPIO_DEBUG_PORT(port)    (((port) & GPIO_PIN_DEBUG) != (uint8_t)0x00u)
 
 /*  Parameter validity check for pin read wait cycle. */
-#define IS_GPIO_READ_WAIT(WAIT)                                                 \
-(   ((WAIT) == GPIO_READ_WAIT_0)                ||                              \
-    ((WAIT) == GPIO_READ_WAIT_1)                ||                              \
-    ((WAIT) == GPIO_READ_WAIT_2)                ||                              \
-    ((WAIT) == GPIO_READ_WAIT_3))
+#define IS_GPIO_READ_WAIT(wait)                                                 \
+(   ((wait) == GPIO_READ_WAIT_0)                ||                              \
+    ((wait) == GPIO_READ_WAIT_1)                ||                              \
+    ((wait) == GPIO_READ_WAIT_2)                ||                              \
+    ((wait) == GPIO_READ_WAIT_3))
 
 /**
  * @}
@@ -229,54 +229,52 @@
  */
 en_result_t GPIO_Init(uint8_t u8Port, uint8_t u8Pin, const stc_gpio_init_t *pstcGpioInit)
 {
-    __IO stc_port_pcr_field_t *PCRx;
-    uint8_t u8PinPos = 0;
+    uint16_t *PCRx;
+    uint8_t u8PinPos = 0u;
     uint16_t u16PCRVal;
+    en_result_t enRet = Ok;
 
     /* Check if pointer is NULL */
     if (NULL == pstcGpioInit)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
     }
-
-    /* Parameter validity checking */
-    DDL_ASSERT(IS_GPIO_PORT_SOURCE(u8Port));
-    DDL_ASSERT(IS_GPIO_PIN(u8Pin));
-    DDL_ASSERT(IS_GPIO_PIN_STATE(pstcGpioInit->u16PinState));
-    DDL_ASSERT(IS_GPIO_MODE(pstcGpioInit->u16PinMode));
-    DDL_ASSERT(IS_GPIO_OTYPE(pstcGpioInit->u16PinOType));
-    DDL_ASSERT(IS_GPIO_PIN_DRV(pstcGpioInit->u16PinDrv));
-    DDL_ASSERT(IS_GPIO_LATCH(pstcGpioInit->u16Latch));
-    DDL_ASSERT(IS_GPIO_PIN_PU(pstcGpioInit->u16PullUp));
-    DDL_ASSERT(IS_GPIO_PIN_INVERT(pstcGpioInit->u16Invert));
-    DDL_ASSERT(IS_GPIO_ITYPE(pstcGpioInit->u16PinIType));
-    DDL_ASSERT(IS_GPIO_EXINT(pstcGpioInit->u16ExInt));
-
-    GPIO_Unlock();
-
-    for (u8PinPos = 0; u8PinPos < 8; u8PinPos++)
+    else
     {
-        if (u8Pin & (1<<u8PinPos))
+        /* Parameter validity checking */
+        DDL_ASSERT(IS_GPIO_PORT_SOURCE(u8Port));
+        DDL_ASSERT(IS_GPIO_PIN(u8Pin));
+        DDL_ASSERT(IS_GPIO_PIN_STATE(pstcGpioInit->u16PinState));
+        DDL_ASSERT(IS_GPIO_MODE(pstcGpioInit->u16PinMode));
+        DDL_ASSERT(IS_GPIO_OTYPE(pstcGpioInit->u16PinOType));
+        DDL_ASSERT(IS_GPIO_PIN_DRV(pstcGpioInit->u16PinDrv));
+        DDL_ASSERT(IS_GPIO_LATCH(pstcGpioInit->u16Latch));
+        DDL_ASSERT(IS_GPIO_PIN_PU(pstcGpioInit->u16PullUp));
+        DDL_ASSERT(IS_GPIO_PIN_INVERT(pstcGpioInit->u16Invert));
+        DDL_ASSERT(IS_GPIO_ITYPE(pstcGpioInit->u16PinIType));
+        DDL_ASSERT(IS_GPIO_EXINT(pstcGpioInit->u16ExInt));
+
+        GPIO_Unlock();
+
+        for (u8PinPos = 0u; u8PinPos < 8u; u8PinPos++)
         {
-            PCRx = (stc_port_pcr_field_t *)((uint32_t)(&M0P_PORT->PCR00) +      \
-                                              u8Port * 0x10 + u8PinPos * 2);
+            if (u8Pin & (1ul<<u8PinPos))
+            {
+                PCRx = (uint16_t *)((uint32_t)(&M0P_PORT->PCR00) +                  \
+                                  u8Port * 0x10ul + u8PinPos * 2ul);
 
-            u16PCRVal = pstcGpioInit->u16ExInt  | pstcGpioInit->u16PinIType |   \
-                        pstcGpioInit->u16Invert | pstcGpioInit->u16PullUp   |   \
-                        pstcGpioInit->u16Latch  | pstcGpioInit->u16PinDrv   |   \
-                        pstcGpioInit->u16PinOType | pstcGpioInit->u16PinState | \
-                        pstcGpioInit->u16PinMode;
-            MODIFY_REG(*(uint16_t *)PCRx,                                       \
-                       (PORT_PCR_FSEL   | PORT_PCR_INTE | PORT_PCR_CINSEL   |   \
-                        PORT_PCR_INVE   | PORT_PCR_PUU  | PORT_PCR_LTE      |   \
-                        PORT_PCR_DRV    | PORT_PCR_NOD  | PORT_PCR_POUTE    |   \
-                        PORT_PCR_POUT) , u16PCRVal);
+                u16PCRVal = pstcGpioInit->u16ExInt  | pstcGpioInit->u16PinIType |   \
+                            pstcGpioInit->u16Invert | pstcGpioInit->u16PullUp   |   \
+                            pstcGpioInit->u16Latch  | pstcGpioInit->u16PinDrv   |   \
+                            pstcGpioInit->u16PinOType | pstcGpioInit->u16PinState | \
+                            pstcGpioInit->u16PinMode;
+                WRITE_REG16(*PCRx, u16PCRVal);
+            }
         }
+
+        GPIO_Lock();
     }
-
-    GPIO_Lock();
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -290,7 +288,7 @@ void GPIO_DeInit(void)
     GPIO_StructInit(&stcGpioInit);
 
     /* PORT register unprotect */
-    WRITE_REG(M0P_PORT->PWPR, GPIO_REG_UNPROTECT);
+    WRITE_REG16(M0P_PORT->PWPR, GPIO_REG_UNPROTECT);
 
     /* PORT0 reset */
     GPIO_Init(GPIO_PORT_0, (GPIO_PIN_0 | GPIO_PIN_1), &stcGpioInit);
@@ -320,12 +318,12 @@ void GPIO_DeInit(void)
     GPIO_Init(GPIO_PORT_14, (GPIO_PIN_6 | GPIO_PIN_7), &stcGpioInit);
 
     /* PORT global register reset */
-    WRITE_REG(M0P_PORT->PSPCR, GPIO_PSPCR_RESET_VALUE);
-    WRITE_REG(M0P_PORT->PCCR, GPIO_PCCR_RESET_VALUE);
-    WRITE_REG(M0P_PORT->PINAER, GPIO_PINAER_RESET_VALUE);
+    WRITE_REG16(M0P_PORT->PSPCR, GPIO_PSPCR_RESET_VALUE);
+    WRITE_REG16(M0P_PORT->PCCR, GPIO_PCCR_RESET_VALUE);
+    WRITE_REG16(M0P_PORT->PINAER, GPIO_PINAER_RESET_VALUE);
 
     /* PORT registers protected */
-    WRITE_REG(M0P_PORT->PWPR, GPIO_REG_PROTECT);
+    WRITE_REG16(M0P_PORT->PWPR, GPIO_REG_PROTECT);
 }
 
 /**
@@ -337,23 +335,26 @@ void GPIO_DeInit(void)
  */
 en_result_t GPIO_StructInit(stc_gpio_init_t *pstcGpioInit)
 {
+    en_result_t enRet = Ok;
     /* Check if pointer is NULL */
     if (NULL == pstcGpioInit)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
     }
-    /* Reset GPIO init structure parameters values */
-    pstcGpioInit->u16PinState   = PIN_STATE_RESET;
-    pstcGpioInit->u16PinMode    = PIN_MODE_IN;
-    pstcGpioInit->u16PinOType   = PIN_OTYPE_CMOS;
-    pstcGpioInit->u16PinDrv     = PIN_NORMAL_DRV;
-    pstcGpioInit->u16Latch      = PIN_LATCH_OFF;
-    pstcGpioInit->u16PullUp     = PIN_PU_OFF;
-    pstcGpioInit->u16Invert     = PIN_INVERT_OFF;
-    pstcGpioInit->u16PinIType   = PIN_ITYPE_SMT;
-    pstcGpioInit->u16ExInt      = PIN_EXINT_OFF;
-
-    return Ok;
+    else
+    {
+        /* Reset GPIO init structure parameters values */
+        pstcGpioInit->u16PinState   = PIN_STATE_RESET;
+        pstcGpioInit->u16PinMode    = PIN_MODE_IN;
+        pstcGpioInit->u16PinOType   = PIN_OTYPE_CMOS;
+        pstcGpioInit->u16PinDrv     = PIN_NORMAL_DRV;
+        pstcGpioInit->u16Latch      = PIN_LATCH_OFF;
+        pstcGpioInit->u16PullUp     = PIN_PU_OFF;
+        pstcGpioInit->u16Invert     = PIN_INVERT_OFF;
+        pstcGpioInit->u16PinIType   = PIN_ITYPE_SMT;
+        pstcGpioInit->u16ExInt      = PIN_EXINT_OFF;
+    }
+    return enRet;
 }
 
 /**
@@ -376,11 +377,11 @@ void GPIO_DebugPortSetting(uint8_t u8DebugPort, en_functional_state_t enNewState
 
     if (Enable == enNewState)
     {
-        M0P_PORT->PSPCR |= (u8DebugPort & 0x03);
+        M0P_PORT->PSPCR |= (uint16_t)((uint16_t)u8DebugPort & 0x03u);
     }
     else
     {
-        M0P_PORT->PSPCR &= ~(u8DebugPort & 0x03);
+        M0P_PORT->PSPCR &= (uint16_t)(~((uint16_t)u8DebugPort & 0x03u));
     }
 
     GPIO_Lock();
@@ -396,7 +397,7 @@ void GPIO_DebugPortSetting(uint8_t u8DebugPort, en_functional_state_t enNewState
 void GPIO_SetFunc(uint8_t u8Port, uint8_t u8Pin, uint8_t u8Func)
 {
     __IO stc_port_pcr_field_t *PCRx;
-    uint8_t u8PinPos = 0;
+    uint8_t u8PinPos = 0u;
 
     /* Parameter validity checking */
     DDL_ASSERT(IS_GPIO_PORT_SOURCE(u8Port));
@@ -405,12 +406,12 @@ void GPIO_SetFunc(uint8_t u8Port, uint8_t u8Pin, uint8_t u8Func)
 
     GPIO_Unlock();
 
-    for (u8PinPos = 0; u8PinPos < 8; u8PinPos ++)
+    for (u8PinPos = 0u; u8PinPos < 8u; u8PinPos ++)
     {
-        if (u8Pin & (1<<u8PinPos))
+        if (u8Pin & (1ul<<u8PinPos))
         {
             PCRx = (stc_port_pcr_field_t *)((uint32_t)(&M0P_PORT->PCR00) + \
-                                              u8Port * 0x10 + u8PinPos * 2);
+                                              u8Port * 0x10ul + u8PinPos * 2ul);
             PCRx->FSEL = u8Func;
         }
     }
@@ -443,7 +444,7 @@ void GPIO_OE(uint8_t u8Port, uint8_t u8Pin, en_functional_state_t enNewState)
     }
     else
     {
-        *POERx &= (~u8Pin) & 0xFF;
+        *POERx &= ((~u8Pin) & 0xFFu);
     }
 }
 
@@ -500,7 +501,7 @@ void GPIO_AlwaysOn(uint16_t u16PortIdx, en_functional_state_t enNewState)
     }
     else
     {
-        M0P_PORT->PINAER &= ~u16PortIdx;
+        M0P_PORT->PINAER &= (uint16_t)(~u16PortIdx);
     }
 
     GPIO_Lock();
@@ -522,7 +523,7 @@ en_pin_state_t GPIO_ReadInputPortPin(uint8_t u8Port, uint8_t u8Pin)
 
     PIDx = (uint8_t *)((uint32_t)(&M0P_PORT->PIDR0) + u8Port);
 
-    return (en_pin_state_t)(!!(*PIDx & (u8Pin)));
+    return (*PIDx & (u8Pin)) ? Pin_Set : Pin_Reset;
 }
 
 /**
@@ -558,7 +559,7 @@ en_pin_state_t GPIO_ReadOutputPortPin(uint8_t u8Port, uint8_t u8Pin)
 
     PODx = (uint8_t *)((uint32_t)(&M0P_PORT->PODR0) + u8Port);
 
-    return (en_pin_state_t)(!!(*PODx & (u8Pin)));
+    return (*PODx & (u8Pin)) ? Pin_Set : Pin_Reset;
 }
 
 /**
@@ -574,7 +575,7 @@ uint8_t GPIO_ReadOutputPort(uint8_t u8Port)
     DDL_ASSERT(IS_GPIO_PORT_SOURCE(u8Port));
 
     PODRx = (uint8_t *)((uint32_t)(&M0P_PORT->PODR0) + u8Port);
-    
+
     return *PODRx;
 }
 

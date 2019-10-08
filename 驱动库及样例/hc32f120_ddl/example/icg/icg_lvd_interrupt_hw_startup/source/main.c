@@ -73,20 +73,20 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* LED_R Port/Pin definition */
-#define LED_R_PORT                      GPIO_PORT_2
-#define LED_R_PIN                       GPIO_PIN_5
+#define LED_R_PORT                      (GPIO_PORT_2)
+#define LED_R_PIN                       (GPIO_PIN_5)
 
-#define LED_R_ON()                      GPIO_ResetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_OFF()                     GPIO_SetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_TOGGLE()                  GPIO_TogglePins(LED_R_PORT, LED_R_PIN)
+#define LED_R_ON()                      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_OFF()                     (GPIO_SetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_TOGGLE()                  (GPIO_TogglePins(LED_R_PORT, LED_R_PIN))
 
 /* LED_G Port/Pin definition */
-#define LED_G_PORT                      GPIO_PORT_2
-#define LED_G_PIN                       GPIO_PIN_6
+#define LED_G_PORT                      (GPIO_PORT_2)
+#define LED_G_PIN                       (GPIO_PIN_6)
 
-#define LED_G_ON()                      GPIO_ResetPins(LED_G_PORT, LED_G_PIN)
-#define LED_G_OFF()                     GPIO_SetPins(LED_G_PORT, LED_G_PIN)
-#define LED_G_TOGGLE()                  GPIO_TogglePins(LED_G_PORT, LED_G_PIN)
+#define LED_G_ON()                      (GPIO_ResetPins(LED_G_PORT, LED_G_PIN))
+#define LED_G_OFF()                     (GPIO_SetPins(LED_G_PORT, LED_G_PIN))
+#define LED_G_TOGGLE()                  (GPIO_TogglePins(LED_G_PORT, LED_G_PIN))
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -108,7 +108,7 @@
  * @param  None
  * @retval None
  */
-void LVD_IrqCallback(void)
+static void LVD_IrqCallback(void)
 {
     if (Set == PWC_GetLvdFlag(PWC_LVD_FLAG_DET))
     {
@@ -131,7 +131,7 @@ void LVD_IrqCallback(void)
  * @param  None
  * @retval None
  */
-void LVD_Config(void)
+static void LVD_Config(void)
 {
     uint8_t u8Ret;
     stc_irq_regi_config_t stcIrqRegister;
@@ -139,12 +139,14 @@ void LVD_Config(void)
     /* NVIC configure of LVD */
     stcIrqRegister.enIntSrc = INT_PVD_DET;
     stcIrqRegister.enIRQn = Int022_IRQn;
-    stcIrqRegister.pfnCallback = LVD_IrqCallback;
+    stcIrqRegister.pfnCallback = &LVD_IrqCallback;
     u8Ret = INTC_IrqRegistration(&stcIrqRegister);
     if (Ok != u8Ret)
     {
-        // check parameter
-        while (1);
+        /* check parameter */
+        while (1)
+        {
+        }
     }
 
     /* Clear pending */

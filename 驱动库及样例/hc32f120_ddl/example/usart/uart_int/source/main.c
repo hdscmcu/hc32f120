@@ -85,34 +85,34 @@ typedef struct
  ******************************************************************************/
 
 /* UART RX/TX Port/Pin definition */
-#define UART_RX_PORT                    GPIO_PORT_1
-#define UART_RX_PIN                     GPIO_PIN_1      /* P11: USART1_RX_A */
+#define UART_RX_PORT                    (GPIO_PORT_1)
+#define UART_RX_PIN                     (GPIO_PIN_1)      /* P11: USART1_RX_A */
 
-#define UART_TX_PORT                    GPIO_PORT_1
-#define UART_TX_PIN                     GPIO_PIN_2      /* P12: USART1_TX_A */
+#define UART_TX_PORT                    (GPIO_PORT_1)
+#define UART_TX_PIN                     (GPIO_PIN_2)      /* P12: USART1_TX_A */
 
 /* UART unit definition */
-#define UART_UNIT                       M0P_USART1
+#define UART_UNIT                       (M0P_USART1)
 
 /* UART unit interrupt definition */
-#define UART_UNIT_ERR_INT               INT_USART_1_EI
-#define UART_UNIT_ERR_IRQn              Int008_IRQn
+#define UART_UNIT_ERR_INT               (INT_USART_1_EI)
+#define UART_UNIT_ERR_IRQn              (Int008_IRQn)
 
-#define UART_UNIT_RX_INT                INT_USART_1_RI
-#define UART_UNIT_RX_IRQn               Int010_IRQn
+#define UART_UNIT_RX_INT                (INT_USART_1_RI)
+#define UART_UNIT_RX_IRQn               (Int010_IRQn)
 
-#define UART_UNIT_TX_INT                INT_USART_1_TI
-#define UART_UNIT_TX_IRQn               Int012_IRQn
+#define UART_UNIT_TX_INT                (INT_USART_1_TI)
+#define UART_UNIT_TX_IRQn               (Int012_IRQn)
 
-#define UART_UNIT_TCI_INT               INT_USART_1_TCI
-#define UART_UNIT_TCI_IRQn              Int014_IRQn
+#define UART_UNIT_TCI_INT               (INT_USART_1_TCI)
+#define UART_UNIT_TCI_IRQn              (Int014_IRQn)
 
 /* Ring buffer size */
-#define RING_BUFFER_SIZE                (500)
-#define IS_RING_BUFFER_EMPYT(x)         (0 == ((x)->u16UsedSize))
+#define RING_BUFFER_SIZE                (500u)
+#define IS_RING_BUFFER_EMPYT(x)         (0u == ((x)->u16UsedSize))
 
 /* Function clock gate definition  */
-#define FUNCTION_CLK_GATE               CLK_FCG_UART1
+#define FUNCTION_CLK_GATE               (CLK_FCG_UART1)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -137,18 +137,6 @@ static stc_ring_buffer_t m_stcRingBuf = {
     .u16OutIdx = 0,
     .u16UsedSize = 0,
     .u16Capacity = RING_BUFFER_SIZE,
-};
-
-static const stc_uart_init_t m_stcUartInit = {
-    .u32Baudrate = 115200,
-    .u32BitDirection = USART_LSB,
-    .u32StopBit = USART_STOP_BITS_1,
-    .u32Parity = USART_PARITY_NONE,
-    .u32DataWidth = USART_DATA_WIDTH_BITS_8,
-    .u32ClkMode = USART_INTCLK_NONE_OUTPUT,
-    .u32OversamplingBits = USART_OVERSAMPLING_BITS_8,
-    .u32NoiseFilterState = USART_NOISE_FILTER_DISABLE,
-    .u32SbDetectPolarity = USART_SB_DETECT_FALLING,
 };
 
 /*******************************************************************************
@@ -187,7 +175,7 @@ static void UartRxIrqCallback(void)
 {
     uint16_t u16Data = USART_RecData(UART_UNIT);
 
-    RingBufWrite(&m_stcRingBuf, u16Data);
+    RingBufWrite(&m_stcRingBuf, (uint8_t)u16Data);
 }
 
 /**
@@ -197,11 +185,11 @@ static void UartRxIrqCallback(void)
  */
 static void UartTxIrqCallback(void)
 {
-    uint8_t u8Data;
+    uint8_t u8Data = 0u;
 
     if (Ok == RingBufRead(&m_stcRingBuf, &u8Data))
     {
-        USART_SendData(UART_UNIT, u8Data);
+        USART_SendData(UART_UNIT, (uint16_t)u8Data);
     }
 
     if (IS_RING_BUFFER_EMPYT(&m_stcRingBuf))
@@ -240,16 +228,20 @@ static void UartErrIrqCallback(void)
  */
 static en_result_t RingBufWrite(stc_ring_buffer_t *pstcBuffer, uint8_t u8Data)
 {
+    en_result_t enRet = Ok;
+
     if (pstcBuffer->u16UsedSize >= pstcBuffer->u16Capacity)
     {
-        return ErrorBufferFull;
+        enRet = ErrorBufferFull;
+    }
+    else
+    {
+        pstcBuffer->au8Buf[pstcBuffer->u16InIdx++] = u8Data;
+        pstcBuffer->u16InIdx %= pstcBuffer->u16Capacity;
+        pstcBuffer->u16UsedSize++;
     }
 
-    pstcBuffer->au8Buf[pstcBuffer->u16InIdx++] = u8Data;
-    pstcBuffer->u16InIdx %= pstcBuffer->u16Capacity;
-    pstcBuffer->u16UsedSize++;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -262,16 +254,20 @@ static en_result_t RingBufWrite(stc_ring_buffer_t *pstcBuffer, uint8_t u8Data)
  */
 static en_result_t RingBufRead(stc_ring_buffer_t *pstcBuffer, uint8_t *pu8Data)
 {
+    en_result_t enRet = Ok;
+
     if (!pstcBuffer->u16UsedSize)
     {
-        return ErrorNotReady;
+        enRet = ErrorNotReady;
+    }
+    else
+    {
+        *pu8Data = pstcBuffer->au8Buf[pstcBuffer->u16OutIdx++];
+        pstcBuffer->u16OutIdx %= pstcBuffer->u16Capacity;
+        pstcBuffer->u16UsedSize--;
     }
 
-    *pu8Data = pstcBuffer->au8Buf[pstcBuffer->u16OutIdx++];
-    pstcBuffer->u16OutIdx %= pstcBuffer->u16Capacity;
-    pstcBuffer->u16UsedSize--;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -282,24 +278,35 @@ static en_result_t RingBufRead(stc_ring_buffer_t *pstcBuffer, uint8_t *pu8Data)
 int32_t main(void)
 {
     stc_irq_regi_config_t stcIrqRegiConf;
+    const stc_uart_init_t stcUartInit = {
+        .u32Baudrate = 115200ul,
+        .u32BitDirection = USART_LSB,
+        .u32StopBit = USART_STOP_BITS_1,
+        .u32Parity = USART_PARITY_NONE,
+        .u32DataWidth = USART_DATA_WIDTH_BITS_8,
+        .u32ClkMode = USART_INTCLK_NONE_OUTPUT,
+        .u32OversamplingBits = USART_OVERSAMPLING_BITS_8,
+        .u32NoiseFilterState = USART_NOISE_FILTER_DISABLE,
+        .u32SbDetectPolarity = USART_SB_DETECT_FALLING,
+    };
 
     /* Configure system clock. */
     SystemClockConfig();
 
     /* Configure USART RX/TX pin. */
-    GPIO_SetFunc(UART_RX_PORT, UART_RX_PIN, GPIO_FUNC_USART);
-    GPIO_SetFunc(UART_TX_PORT, UART_TX_PIN, GPIO_FUNC_USART);
+    GPIO_SetFunc(UART_RX_PORT, UART_RX_PIN, GPIO_FUNC_3_USART);
+    GPIO_SetFunc(UART_TX_PORT, UART_TX_PIN, GPIO_FUNC_3_USART);
 
     /* Enable peripheral clock */
     CLK_FcgPeriphClockCmd(FUNCTION_CLK_GATE, Enable);
 
     /* Initialize UART function. */
-    USART_UartInit(UART_UNIT, &m_stcUartInit);
+    USART_UartInit(UART_UNIT, &stcUartInit);
 
     /* Register error IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = UART_UNIT_ERR_IRQn;
     stcIrqRegiConf.enIntSrc = UART_UNIT_ERR_INT;
-    stcIrqRegiConf.pfnCallback = UartErrIrqCallback;
+    stcIrqRegiConf.pfnCallback = &UartErrIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -308,7 +315,7 @@ int32_t main(void)
     /* Register RX IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = UART_UNIT_RX_IRQn;
     stcIrqRegiConf.enIntSrc = UART_UNIT_RX_INT;
-    stcIrqRegiConf.pfnCallback = UartRxIrqCallback;
+    stcIrqRegiConf.pfnCallback = &UartRxIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -317,7 +324,7 @@ int32_t main(void)
     /* Register TX IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = UART_UNIT_TX_IRQn;
     stcIrqRegiConf.enIntSrc = UART_UNIT_TX_INT;
-    stcIrqRegiConf.pfnCallback = UartTxIrqCallback;
+    stcIrqRegiConf.pfnCallback = &UartTxIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);
@@ -326,7 +333,7 @@ int32_t main(void)
     /* Register TC IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = UART_UNIT_TCI_IRQn;
     stcIrqRegiConf.enIntSrc = UART_UNIT_TCI_INT;
-    stcIrqRegiConf.pfnCallback = UartTcIrqCallback;
+    stcIrqRegiConf.pfnCallback = &UartTcIrqCallback;
     INTC_IrqRegistration(&stcIrqRegiConf);
     NVIC_ClearPendingIRQ(stcIrqRegiConf.enIRQn);
     NVIC_SetPriority(stcIrqRegiConf.enIRQn, DDL_IRQ_PRIORITY_03);

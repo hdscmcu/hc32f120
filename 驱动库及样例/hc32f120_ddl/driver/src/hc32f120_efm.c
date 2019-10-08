@@ -90,9 +90,9 @@
 #define IS_VALID_POINTER(x)                     (NULL != (x))
 
 /*  Parameter validity check for flash latency. */
-#define IS_VALID_EFM_LATENCY(LATENCY)                                          \
-(       ((LATENCY) == EFM_LATENCY_0)            ||                             \
-        ((LATENCY) == EFM_LATENCY_1))
+#define IS_VALID_EFM_LATENCY(latency)                                          \
+(       ((latency) == EFM_LATENCY_0)            ||                             \
+        ((latency) == EFM_LATENCY_1))
 
 /*  Parameter validity check for operate mode. */
 #define IS_VALID_EFM_OPERATE_MD(MD)                                            \
@@ -181,7 +181,7 @@ void EFM_Unlock(void)
  */
 void EFM_Lock(void)
 {
-    M0P_EFM->FAPRT = 0x00001111;
+    M0P_EFM->FAPRT = 0x00001111U;
 }
 
 /**
@@ -209,38 +209,57 @@ void EFM_Cmd(en_functional_state_t enNewState)
  */
 en_result_t EFM_StrucInit(stc_efm_cfg_t *pstcEfmCfg)
 {
+    en_result_t enRet = Ok;
+
     /* Check if pointer is NULL */
     if (NULL == pstcEfmCfg)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
     }
-    /* Configure to default value */
-    pstcEfmCfg->u32Latency  = EFM_LATENCY_1;
-    pstcEfmCfg->u32InsCache = EFM_INSCACHE_OFF;
-    pstcEfmCfg->u32BusState = EFM_BUS_BUSY;
+    else
+    {
+        /* Configure to default value */
+        pstcEfmCfg->u32Latency  = EFM_LATENCY_1;
+        pstcEfmCfg->u32InsCache = EFM_INSCACHE_OFF;
+        pstcEfmCfg->u32BusState = EFM_BUS_BUSY;
+    }
 
-    return Ok;
+    return enRet;
 }
 
-en_result_t EFM_Config(stc_efm_cfg_t *pstcEfmCfg)
+/**
+ * @brief  Config efm.
+ * @param  [in] pstcEfmCfg         The pointer of efm config structure.
+ *   @arg u32Latency    Specifies the efm latency.
+ *   @arg u32InsCache   Specifies the instruction cache on or off.
+ *   @arg u32BusState   Specifies the bus state busy or release while program & erase.
+ * @retval An en_result_t enumeration value:
+ *           - Ok: Configure success
+ *           - ErrorInvalidParameter: Invalid parameter
+ */
+en_result_t EFM_Config(const stc_efm_cfg_t *pstcEfmCfg)
 {
+    en_result_t enRet = Ok;
+
     /* Check if pointer is NULL */
     if (NULL == pstcEfmCfg)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
+    }
+    else
+    {
+        /* Param valid check */
+        DDL_ASSERT(IS_VALID_EFM_LATENCY(pstcEfmCfg->u32Latency));
+        DDL_ASSERT(IS_VALID_EFM_BUS_STATE(pstcEfmCfg->u32BusState));
+        DDL_ASSERT(IS_VALID_EFM_INSCACHE_STATE(pstcEfmCfg->u32InsCache));
+
+        /* Config efm. */
+        MODIFY_REG(M0P_EFM->FRMC, EFM_FRMC_FLWT | EFM_FRMC_PREFETE,
+                pstcEfmCfg->u32Latency | pstcEfmCfg->u32InsCache);
+        MODIFY_REG(M0P_EFM->FWMC, EFM_FWMC_BUSHLDCTL, pstcEfmCfg->u32BusState);
     }
 
-    /* Param valid check */
-    DDL_ASSERT(IS_VALID_EFM_LATENCY(pstcEfmCfg->u32Latency));
-    DDL_ASSERT(IS_VALID_EFM_BUS_STATE(pstcEfmCfg->u32BusState));
-    DDL_ASSERT(IS_VALID_EFM_INSCACHE_STATE(pstcEfmCfg->u32InsCache));
-
-    /* Config efm. */
-    MODIFY_REG(M0P_EFM->FRMC, EFM_FRMC_FLWT | EFM_FRMC_PREFETE,
-               pstcEfmCfg->u32Latency | pstcEfmCfg->u32InsCache);
-    MODIFY_REG(M0P_EFM->FWMC, EFM_FWMC_BUSHLDCTL, pstcEfmCfg->u32BusState);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -324,7 +343,7 @@ void EFM_InterruptCmd(uint32_t u32EfmInt, en_functional_state_t enNewState)
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
     DDL_ASSERT(IS_VALID_EFM_INT_SEL(u32EfmInt));
 
-    u8state = ((Enable == enNewState) ? 1 : 0);
+    u8state = ((Enable == enNewState) ? 1u : 0u);
 
     switch(u32EfmInt)
     {
@@ -336,6 +355,9 @@ void EFM_InterruptCmd(uint32_t u32EfmInt, en_functional_state_t enNewState)
             break;
         case EFM_INT_RDCOLERR:
             MODIFY_REG(M0P_EFM->FITE, EFM_FITE_RDCOLERRITE, u8state);
+            break;
+        default:
+            break;
     }
 }
 
@@ -357,7 +379,7 @@ en_flag_status_t EFM_GetFlagStatus(uint32_t u32flag)
 {
     DDL_ASSERT(IS_VALID_EFM_FLAG(u32flag));
 
-    return ((0 == (M0P_EFM->FSR & u32flag)) ? Reset :Set);
+    return ((0ul == (M0P_EFM->FSR & u32flag)) ? Reset :Set);
 }
 
 /**
@@ -418,7 +440,7 @@ void EFM_SetBusState(uint32_t u32State)
 en_result_t EFM_ProgramWord(uint32_t u32Addr, uint32_t u32Data)
 {
     en_result_t enRet = Ok;
-    uint16_t u16tmp = 0;
+    uint16_t u16tmp = 0u;
 
     DDL_ASSERT(IS_VALID_EFM_ADDR(u32Addr));
 
@@ -465,7 +487,7 @@ en_result_t EFM_ProgramWord(uint32_t u32Addr, uint32_t u32Data)
 en_result_t EFM_ProgramHalfWord(uint32_t u32Addr, uint16_t u16Data)
 {
     en_result_t enRet = Ok;
-    uint16_t u16tmp = 0;
+    uint16_t u16tmp = 0u;
 
     DDL_ASSERT(IS_VALID_EFM_ADDR(u32Addr));
 
@@ -512,7 +534,7 @@ en_result_t EFM_ProgramHalfWord(uint32_t u32Addr, uint16_t u16Data)
 en_result_t EFM_ProgramByte(uint32_t u32Addr, uint8_t u8Data)
 {
     en_result_t enRet = Ok;
-    uint16_t u16tmp = 0;
+    uint16_t u16tmp = 0u;
 
     DDL_ASSERT(IS_VALID_EFM_ADDR(u32Addr));
 
@@ -559,7 +581,7 @@ en_result_t EFM_ProgramByte(uint32_t u32Addr, uint8_t u8Data)
 en_result_t EFM_ProgramWordRB(uint32_t u32Addr, uint32_t u32Data)
 {
     en_result_t enRet = Ok;
-    uint16_t u16tmp = 0;
+    uint16_t u16tmp = 0u;
 
     DDL_ASSERT(IS_VALID_EFM_ADDR(u32Addr));
 
@@ -608,7 +630,7 @@ en_result_t EFM_ProgramWordRB(uint32_t u32Addr, uint32_t u32Data)
 en_result_t EFM_ProgramHalfWordRB(uint32_t u32Addr, uint16_t u16Data)
 {
     en_result_t enRet = Ok;
-    uint16_t u16tmp = 0;
+    uint16_t u16tmp = 0u;
 
     DDL_ASSERT(IS_VALID_EFM_ADDR(u32Addr));
 
@@ -657,7 +679,7 @@ en_result_t EFM_ProgramHalfWordRB(uint32_t u32Addr, uint16_t u16Data)
 en_result_t EFM_ProgramByteRB(uint32_t u32Addr, uint8_t u8Data)
 {
     en_result_t enRet = Ok;
-    uint16_t u16tmp = 0;
+    uint16_t u16tmp = 0u;
 
     DDL_ASSERT(IS_VALID_EFM_ADDR(u32Addr));
 
@@ -706,11 +728,11 @@ en_result_t EFM_ProgramByteRB(uint32_t u32Addr, uint8_t u8Data)
 en_result_t EFM_SequenceProgram(uint32_t u32Addr, uint32_t u32Len, void *pBuf)
 {
     en_result_t enRet = Ok;
-    uint16_t u16tmp = 0;
+    uint16_t u16tmp = 0u;
     uint32_t *u32pSrc = pBuf;
     uint32_t *u32pDest = (uint32_t *)u32Addr;
-    uint32_t u32LoopWords = u32Len >> 2;
-    uint32_t u32RemainBytes = u32Len % 4;
+    uint32_t u32LoopWords = u32Len >> 2ul;
+    uint32_t u32RemainBytes = u32Len % 4ul;
 
     DDL_ASSERT(IS_VALID_EFM_ADDR(u32Addr));
     DDL_ASSERT(IS_VALID_POINTER(pBuf));
@@ -752,7 +774,7 @@ en_result_t EFM_SequenceProgram(uint32_t u32Addr, uint32_t u32Len, void *pBuf)
     /* Set read only mode. */
     EFM_SetOperateMode(EFM_MODE_READONLY);
 
-    u16tmp = 0;
+    u16tmp = 0u;
     while(Set != EFM_GetFlagStatus(EFM_FLAG_RDY))
     {
         u16tmp ++;
@@ -778,7 +800,7 @@ en_result_t EFM_SequenceProgram(uint32_t u32Addr, uint32_t u32Len, void *pBuf)
 en_result_t EFM_SectorErase(uint32_t u32Addr)
 {
     en_result_t enRet = Ok;
-    uint16_t u16tmp = 0;
+    uint16_t u16tmp = 0u;
 
     DDL_ASSERT(IS_VALID_EFM_ADDR(u32Addr));
 
@@ -790,7 +812,7 @@ en_result_t EFM_SectorErase(uint32_t u32Addr)
     /* Set sector erase mode. */
     EFM_SetOperateMode(EFM_MODE_ERASESECTOR);
 
-    *(uint32_t*)u32Addr = 0;
+    *(uint32_t*)u32Addr = 0ul;
 
     while(Set != EFM_GetFlagStatus(EFM_FLAG_RDY))
     {
@@ -819,7 +841,7 @@ en_result_t EFM_SectorErase(uint32_t u32Addr)
 en_result_t EFM_ChipErase(void)
 {
     en_result_t enRet = Ok;
-    uint16_t u16tmp = 0;
+    uint16_t u16tmp = 0u;
 
     /* CLear the error flag. */
     EFM_ClearFlag(EFM_FLAG_CLR_PEWERRCLR    | EFM_FLAG_CLR_PEPRTERRCLR |
@@ -829,7 +851,7 @@ en_result_t EFM_ChipErase(void)
     /* Set sector erase mode. */
     EFM_SetOperateMode(EFM_MODE_ERASECHIP);
 
-    *(uint32_t*)0 = 0;
+    *(uint32_t*)0 = 0ul;
 
     while(Set != EFM_GetFlagStatus(EFM_FLAG_RDY))
     {

@@ -70,8 +70,8 @@ extern "C"
  * Global pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* Chip module on-off define */
-#define DDL_ON                                      1u
-#define DDL_OFF                                     0u
+#define DDL_ON                                      (1u)
+#define DDL_OFF                                     (0u)
 
 /**
  * @brief This is the list of modules to be used in the Device Driver Library.
@@ -83,38 +83,38 @@ extern "C"
  * @note DDL_UTILITY_ENABLE must be turned on(DDL_ON) if using Device Driver
  * Library.
  */
-#define DDL_ICG_ENABLE                              DDL_ON
-#define DDL_UTILITY_ENABLE                          DDL_ON
-#define DDL_PRINT_ENABLE                            DDL_ON
-#define DDL_ADC_ENABLE                              DDL_OFF
-#define DDL_CLK_ENABLE                              DDL_ON
-#define DDL_CRC_ENABLE                              DDL_OFF
-#define DDL_CTC_ENABLE                              DDL_OFF
-#define DDL_EFM_ENABLE                              DDL_OFF
-#define DDL_EKEY_ENABLE                             DDL_OFF
-#define DDL_EXINT_NMI_ENABLE                        DDL_OFF
-#define DDL_GPIO_ENABLE                             DDL_ON
-#define DDL_I2C_ENABLE                              DDL_OFF
-#define DDL_INTERRUPTS_ENABLE                       DDL_OFF
-#define DDL_PWC_ENABLE                              DDL_ON
-#define DDL_RMU_ENABLE                              DDL_ON
-#define DDL_RTC_ENABLE                              DDL_OFF
-#define DDL_SPI_ENABLE                              DDL_OFF
-#define DDL_SWDT_ENABLE                             DDL_ON
-#define DDL_TIMER0_ENABLE                           DDL_OFF
-#define DDL_TIMERB_ENABLE                           DDL_OFF
-#define DDL_USART_ENABLE                            DDL_ON
+#define DDL_ICG_ENABLE                              (DDL_ON)
+#define DDL_UTILITY_ENABLE                          (DDL_ON)
+#define DDL_PRINT_ENABLE                            (DDL_ON)
+#define DDL_ADC_ENABLE                              (DDL_OFF)
+#define DDL_CLK_ENABLE                              (DDL_ON)
+#define DDL_CRC_ENABLE                              (DDL_OFF)
+#define DDL_CTC_ENABLE                              (DDL_OFF)
+#define DDL_EFM_ENABLE                              (DDL_OFF)
+#define DDL_EKEY_ENABLE                             (DDL_OFF)
+#define DDL_EXINT_NMI_ENABLE                        (DDL_OFF)
+#define DDL_GPIO_ENABLE                             (DDL_ON)
+#define DDL_I2C_ENABLE                              (DDL_OFF)
+#define DDL_INTERRUPTS_ENABLE                       (DDL_OFF)
+#define DDL_PWC_ENABLE                              (DDL_ON)
+#define DDL_RMU_ENABLE                              (DDL_ON)
+#define DDL_RTC_ENABLE                              (DDL_OFF)
+#define DDL_SPI_ENABLE                              (DDL_OFF)
+#define DDL_SWDT_ENABLE                             (DDL_ON)
+#define DDL_TIMER0_ENABLE                           (DDL_OFF)
+#define DDL_TIMERB_ENABLE                           (DDL_OFF)
+#define DDL_USART_ENABLE                            (DDL_ON)
 
 /* Midware module on-off define */
-#define MW_ON                                       1u
-#define MW_OFF                                      0u
+#define MW_ON                                       (1u)
+#define MW_OFF                                      (0u)
 
 /**
  * @brief This is the list of midware modules to be used.
  * Select the modules you need to use to MW_ON.
  */
-#define MW_LIN_ENABLE                               MW_OFF
-#define MW_W25QXX_ENABLE                            MW_OFF
+#define MW_LIN_ENABLE                               (MW_OFF)
+#define MW_W25QXX_ENABLE                            (MW_OFF)
 
 /*******************************************************************************
  * Global variable definitions ('extern')

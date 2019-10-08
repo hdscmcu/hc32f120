@@ -72,12 +72,6 @@
 /*******************************************************************************
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
-/* Enable ADC peripheral. */
-#define ENABLE_ADC()                CLK_FcgPeriphClockCmd(CLK_FCG_ADC, Enable)
-
-/* Disable ADC peripheral. */
-#define DISABLE_ADC()               CLK_FcgPeriphClockCmd(CLK_FCG_ADC, Disable)
-
 /* ADC channels definition for this example. */
 #define ADC_SA_CHANNEL              (ADC_CH11)
 #define ADC_SA_CHANNEL_COUNT        (1u)
@@ -86,7 +80,7 @@
 #define ADC_SAMPLE_TIME             ((uint8_t)10)
 
 /* ADC resolution definition. */
-#define ADC_RESOLUTION              ADC_RESOLUTION_12B
+#define ADC_RESOLUTION              (ADC_RESOLUTION_12B)
 
 /* ADC accuracy. */
 #define ADC_ACCURACY                (1ul << 12u)
@@ -135,7 +129,7 @@ int32_t main(void)
 
     while (1u)
     {
-        ADC_SaPolling(m_au16AdcSaVal, TIMEOUT_MS);
+        ADC_PollingSa(m_au16AdcSaVal, ADC_SA_CHANNEL_COUNT, TIMEOUT_MS);
         m_f32Vol = ((float)m_au16AdcSaVal[0u] * ADC_VREF) / ((float)ADC_ACCURACY);
         (void)m_f32Vol;
     }
@@ -181,7 +175,7 @@ static void AdcInitConfig(void)
     stcInit.u8SampTime    = ADC_SAMPLE_TIME;
 
     /* 1. Enable ADC peripheral. */
-    ENABLE_ADC();
+    CLK_FcgPeriphClockCmd(CLK_FCG_ADC, Enable);
 
     /* 2. Initializes ADC. */
     ADC_Init(&stcInit);

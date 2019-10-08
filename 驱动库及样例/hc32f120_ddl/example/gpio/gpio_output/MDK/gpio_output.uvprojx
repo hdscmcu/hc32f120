@@ -20,7 +20,7 @@
           <Cpu>IROM(0x00000000,0x10000) IRAM(0x20000000,0x1000) CPUTYPE("Cortex-M0+") CLOCK(48000000) ESEL ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0HC32F120 -FS00 -FL080000 -FP0($$Device:HC32F120H8TA$Flash\HC32F120.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0HC32F120 -FS00 -FL080000 -FP0($$Device:HC32F120H8TA$FlashARM\HC32F120.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
           <RegisterFile>$$Device:HC32F120H8TA$Device\Include\HC32F120H8TA.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
@@ -453,11 +453,11 @@
 <FileName>hc32f120_gpio.c</FileName>
 <FileType>1</FileType><FilePath>..\..\..\..\driver\src\hc32f120_gpio.c</FilePath></File>
 <File>
-<FileName>hc32f120_utility.c</FileName>
-<FileType>1</FileType><FilePath>..\..\..\..\driver\src\hc32f120_utility.c</FilePath></File>
-<File>
 <FileName>hc32f120_icg.c</FileName>
 <FileType>1</FileType><FilePath>..\..\..\..\driver\src\hc32f120_icg.c</FilePath></File>
+<File>
+<FileName>hc32f120_utility.c</FileName>
+<FileType>1</FileType><FilePath>..\..\..\..\driver\src\hc32f120_utility.c</FilePath></File>
 
     </Files>
   </Group>
@@ -491,7 +491,7 @@
           <Cpu>IROM(0x00000000,0x10000) IRAM(0x20000000,0x1000) CPUTYPE("Cortex-M0+") CLOCK(48000000) ESEL ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0HC32F120 -FS00 -FL080000 -FP0($$Device:HC32F120H8TA$Flash\HC32F120.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0HC32F120 -FS00 -FL080000 -FP0($$Device:HC32F120H8TA$FlashARM\HC32F120.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
           <RegisterFile>$$Device:HC32F120H8TA$Device\Include\HC32F120H8TA.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
@@ -924,11 +924,11 @@
 <FileName>hc32f120_gpio.c</FileName>
 <FileType>1</FileType><FilePath>..\..\..\..\driver\src\hc32f120_gpio.c</FilePath></File>
 <File>
-<FileName>hc32f120_utility.c</FileName>
-<FileType>1</FileType><FilePath>..\..\..\..\driver\src\hc32f120_utility.c</FilePath></File>
-<File>
 <FileName>hc32f120_icg.c</FileName>
 <FileType>1</FileType><FilePath>..\..\..\..\driver\src\hc32f120_icg.c</FilePath></File>
+<File>
+<FileName>hc32f120_utility.c</FileName>
+<FileType>1</FileType><FilePath>..\..\..\..\driver\src\hc32f120_utility.c</FilePath></File>
 
     </Files>
   </Group>

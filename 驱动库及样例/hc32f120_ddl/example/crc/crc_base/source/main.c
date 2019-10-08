@@ -72,11 +72,8 @@
 /*******************************************************************************
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
-/* Enable CRC. */
-#define ENABLE_CRC()                CLK_FcgPeriphClockCmd(CLK_FCG_CRC, Enable)
-
-/* Disable CRC. */
-#define DISABLE_CRC()               CLK_FcgPeriphClockCmd(CLK_FCG_CRC, Disable)
+/* CRC initial value definition(depends on the application). */
+#define CRC_INIT_VAL            (0x12345679ul)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -118,40 +115,26 @@ int32_t main(void)
     while (1)
     {
         /* Calculates byte data's CRC16 checksum and CRC32 checksum. */
-        au8SrcData[0u]  = 0x12;
-        u16Checksum     = (uint16_t)CRC_Calculate(CRC_CRC16, (uint8_t *)&au8SrcData[0u], 1u, CRC_BW_8);
-        u32Checksum     = CRC_Calculate(CRC_CRC32, (uint8_t *)&au8SrcData[0u], 1u, CRC_BW_8);
+        au8SrcData[0u] = 0x12u;
+        u16Checksum = (uint16_t)CRC_Calculate(CRC_CRC16, (uint8_t *)&au8SrcData[0u], CRC_INIT_VAL, 1u, CRC_BW_8);
+        enCheckFlag = CRC_Check(CRC_CRC16, (uint32_t)u16Checksum, (uint8_t *)&au8SrcData[0u], CRC_INIT_VAL, 1u, CRC_BW_8);
+        u32Checksum = CRC_Calculate(CRC_CRC32, (uint8_t *)&au8SrcData[0u], CRC_INIT_VAL, 1u, CRC_BW_8);
+        enCheckFlag = CRC_Check(CRC_CRC32, u32Checksum, (uint8_t *)&au8SrcData[0u], CRC_INIT_VAL, 1u, CRC_BW_8);
 
         /* Calculates half word data's CRC16 checksum and CRC32 checksum. */
-        au16SrcData[0u] = 0xF000;
-        u16Checksum     = (uint16_t)CRC_Calculate(CRC_CRC16, (uint16_t *)&au16SrcData[0u], 1u, CRC_BW_16);
-        u32Checksum     = CRC_Calculate(CRC_CRC32, (uint16_t *)&au16SrcData[0u], 1u, CRC_BW_16);
+        au16SrcData[0u] = 0xF000u;
+        u16Checksum = (uint16_t)CRC_Calculate(CRC_CRC16, (uint16_t *)&au16SrcData[0u], CRC_INIT_VAL, 1u, CRC_BW_16);
+        enCheckFlag = CRC_Check(CRC_CRC16, (uint32_t)u16Checksum, (uint16_t *)&au16SrcData[0u], CRC_INIT_VAL, 1u, CRC_BW_16);
+        u32Checksum = CRC_Calculate(CRC_CRC32, (uint16_t *)&au16SrcData[0u], CRC_INIT_VAL, 1u, CRC_BW_16);
+        enCheckFlag = CRC_Check(CRC_CRC32, u32Checksum, (uint16_t *)&au16SrcData[0u], CRC_INIT_VAL, 1u, CRC_BW_16);
 
         /* Calculates word data's CRC16 checksum and CRC32 checksum. */
-        au32SrcData[0u] = 0xF0000000;
-        u16Checksum     = (uint16_t)CRC_Calculate(CRC_CRC16, (uint32_t *)&au32SrcData[0u], 1u, CRC_BW_32);
-        u32Checksum     = CRC_Calculate(CRC_CRC32, (uint32_t *)&au32SrcData[0u], 1u, CRC_BW_32);
+        au32SrcData[0u] = 0xF0000000u;
+        u16Checksum = (uint16_t)CRC_Calculate(CRC_CRC16, (uint32_t *)&au32SrcData[0u], CRC_INIT_VAL, 1u, CRC_BW_32);
+        enCheckFlag = CRC_Check(CRC_CRC16, (uint32_t)u16Checksum, (uint32_t *)&au32SrcData[0u], CRC_INIT_VAL, 1u, CRC_BW_32);
+        u32Checksum = CRC_Calculate(CRC_CRC32, (uint32_t *)&au32SrcData[0u], CRC_INIT_VAL, 1u, CRC_BW_32);
+        enCheckFlag = CRC_Check(CRC_CRC32, u32Checksum, (uint32_t *)&au32SrcData[0u], CRC_INIT_VAL, 1u, CRC_BW_32);
 
-        /* Checks byte data's CRC16 checksum and CRC32 checksum. */
-        au8SrcData[0u]  = 0xC8;
-        u16Checksum     = 0xBA3C;
-        enCheckFlag     = CRC_Check(CRC_CRC16, u16Checksum, (uint8_t *)&au8SrcData[0u], 1u, CRC_BW_8);
-        u32Checksum     = 0x47BDA50F;
-        enCheckFlag     = CRC_Check(CRC_CRC32, u32Checksum, (uint8_t *)&au8SrcData[0u], 1u, CRC_BW_8);
-
-        /* Checks half word data's CRC16 checksum and CRC32 checksum. */
-        au16SrcData[0u] = 0x1234;
-        u16Checksum     = 0xED16;
-        enCheckFlag     = CRC_Check(CRC_CRC16, u16Checksum, (uint16_t *)&au16SrcData[0u], 1u, CRC_BW_16);
-        u32Checksum     = 0x094A9040;
-        enCheckFlag     = CRC_Check(CRC_CRC32, u32Checksum, (uint16_t *)&au16SrcData[0u], 1u, CRC_BW_16);
-
-        /* Checks word data's CRC16 checksum and CRC32 checksum. */
-        au32SrcData[0u] = 0x12345678;
-        u16Checksum     = 0xF428;
-        enCheckFlag     = CRC_Check(CRC_CRC16, u16Checksum, (uint32_t *)&au32SrcData[0u], 1u, CRC_BW_32);
-        u32Checksum     = 0xAF6D87D2;
-        enCheckFlag     = CRC_Check(CRC_CRC32, u32Checksum, (uint32_t *)&au32SrcData[0u], 1u, CRC_BW_32);
         (void)enCheckFlag;
     }
 }
@@ -163,7 +146,7 @@ int32_t main(void)
  */
 static void CrcConfig(void)
 {
-    ENABLE_CRC();
+    CLK_FcgPeriphClockCmd(CLK_FCG_CRC, Enable);
 }
 
 /**

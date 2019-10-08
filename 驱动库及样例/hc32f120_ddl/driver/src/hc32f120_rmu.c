@@ -118,26 +118,29 @@
  */
 en_result_t RMU_GetResetCause(stc_rmu_rstcause_t *pstcData)
 {
-    uint16_t u16RstReg = 0;
+    en_result_t enRet = Ok;
+    uint16_t u16RstReg = 0u;
 
     if(NULL == pstcData)
     {
-        return ErrorInvalidParameter;
+        enRet = ErrorInvalidParameter;
     }
+    else
+    {
+        u16RstReg = M0P_RMU->RSTF0;
 
-    u16RstReg = M0P_RMU->RSTF0;
+        pstcData->MultiRst = u16RstReg & RMU_RSTF0_MULTIRF ? Set : Reset;
+        pstcData->XtalErrRst = u16RstReg & RMU_RSTF0_XTALERF ? Set : Reset;
+        pstcData->CpuLockErrRst = u16RstReg & RMU_RSTF0_CPULKUPRF ? Set : Reset;
+        pstcData->RamParityErrRst = u16RstReg & RMU_RSTF0_RAMPERF ? Set : Reset;
+        pstcData->SoftwareRst = u16RstReg & RMU_RSTF0_SWRF ? Set : Reset;
+        pstcData->WdtRst = u16RstReg & RMU_RSTF0_WDRF ? Set : Reset;
+        pstcData->LvdRst = u16RstReg & RMU_RSTF0_LVRF ? Set : Reset;
+        pstcData->RstPinRst = u16RstReg & RMU_RSTF0_PINRF ? Set : Reset;
+        pstcData->PowerOnRst = u16RstReg & RMU_RSTF0_PORF ? Set : Reset;
 
-    pstcData->MultiRst = u16RstReg & RMU_RSTF0_MULTIRF ? Set : Reset;
-    pstcData->XtalErrRst = u16RstReg & RMU_RSTF0_XTALERF ? Set : Reset;
-    pstcData->CpuLockErrRst = u16RstReg & RMU_RSTF0_CPULKUPRF ? Set : Reset;
-    pstcData->RamParityErrRst = u16RstReg & RMU_RSTF0_RAMPERF ? Set : Reset;
-    pstcData->SoftwareRst = u16RstReg & RMU_RSTF0_SWRF ? Set : Reset;
-    pstcData->WdtRst = u16RstReg & RMU_RSTF0_WDRF ? Set : Reset;
-    pstcData->LvdRst = u16RstReg & RMU_RSTF0_LVRF ? Set : Reset;
-    pstcData->RstPinRst = u16RstReg & RMU_RSTF0_PINRF ? Set : Reset;
-    pstcData->PowerOnRst = u16RstReg & RMU_RSTF0_PORF ? Set : Reset;
-
-    return Ok;
+    }
+    return enRet;
 }
 
 /**
@@ -148,8 +151,9 @@ en_result_t RMU_GetResetCause(stc_rmu_rstcause_t *pstcData)
  */
 en_result_t RMU_ClrResetFlag(void)
 {
-    uint16_t u16status = 0;
-    uint32_t u32timeout = 0;
+    en_result_t enRet = Ok;
+    uint16_t u16status = 0u;
+    uint32_t u32timeout = 0u;
 
     /* Enable RMU register write */
     RMU_REG_WRITE_ENABLE();
@@ -157,7 +161,7 @@ en_result_t RMU_ClrResetFlag(void)
     do
     {
         u32timeout++;
-        bM0P_RMU->RSTF0_b.CLRF = 1;
+        bM0P_RMU->RSTF0_b.CLRF = 1u;
         /* Wait for register clear */
         __NOP();
         __NOP();
@@ -173,10 +177,10 @@ en_result_t RMU_ClrResetFlag(void)
 
     if(u32timeout >= RMU_FLAG_TIM)
     {
-        return ErrorTimeout;
+        enRet = ErrorTimeout;
     }
 
-    return Ok;
+    return enRet;
 }
 
 /**

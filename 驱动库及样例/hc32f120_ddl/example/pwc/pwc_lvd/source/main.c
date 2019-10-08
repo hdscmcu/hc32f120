@@ -73,28 +73,28 @@
 /*******************************************************************************
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
-#define LVD_IRQn        Int031_IRQn
+#define LVD_IRQn        (Int031_IRQn)
 
 /* LED0 Port/Pin definition */
-#define LED_PORT        GPIO_PORT_2
-#define LED0_PORT       GPIO_PORT_2
-#define LED0_PIN        GPIO_PIN_5
+#define LED_PORT        (GPIO_PORT_2)
+#define LED0_PORT       (GPIO_PORT_2)
+#define LED0_PIN        (GPIO_PIN_5)
 
 /* LED1 Port/Pin definition */
-#define LED1_PORT       GPIO_PORT_2
-#define LED1_PIN        GPIO_PIN_6
+#define LED1_PORT       (GPIO_PORT_2)
+#define LED1_PIN        (GPIO_PIN_6)
 
 /* LED0~1 definition */
-#define LED0_ON()       GPIO_ResetPins(LED0_PORT, LED0_PIN)
-#define LED0_OFF()      GPIO_SetPins(LED0_PORT, LED0_PIN)
+#define LED0_ON()       (GPIO_ResetPins(LED0_PORT, LED0_PIN))
+#define LED0_OFF()      (GPIO_SetPins(LED0_PORT, LED0_PIN))
 
-#define LED1_ON()       GPIO_ResetPins(LED1_PORT, LED1_PIN)
-#define LED1_OFF()      GPIO_SetPins(LED1_PORT, LED1_PIN)
+#define LED1_ON()       (GPIO_ResetPins(LED1_PORT, LED1_PIN))
+#define LED1_OFF()      (GPIO_SetPins(LED1_PORT, LED1_PIN))
 
-#define LED_ON()        GPIO_ResetPins(LED_PORT, LED0_PIN | LED1_PIN)
-#define LED_OFF()       GPIO_SetPins(LED_PORT, LED0_PIN | LED1_PIN)
+#define LED_ON()        (GPIO_ResetPins(LED_PORT, LED0_PIN | LED1_PIN))
+#define LED_OFF()       (GPIO_SetPins(LED_PORT, LED0_PIN | LED1_PIN))
 
-#define DELAY_TIME      5000
+#define DELAY_TIME      (5000u)
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
  ******************************************************************************/

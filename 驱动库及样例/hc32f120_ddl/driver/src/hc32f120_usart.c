@@ -185,7 +185,7 @@
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
  ******************************************************************************/
-/** 
+/**
  * @defgroup USART_Global_Functions USART Global Functions
  * @{
  */
@@ -206,49 +206,47 @@
 en_result_t USART_UartInit(M0P_USART_TypeDef *USARTx,
                             const stc_uart_init_t *pstcInit)
 {
-    en_result_t enRet;
+    en_result_t enRet = ErrorInvalidParameter;
 
     /* Check USARTx instance and pstcInit */
-    if ((!IS_USART_INSTANCE(USARTx)) || (NULL == pstcInit))
+    if ((IS_USART_INSTANCE(USARTx)) && (NULL != pstcInit))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_USART_STOP_BITS(pstcInit->u32StopBit));
+        DDL_ASSERT(IS_USART_CLOCK_MODE(pstcInit->u32ClkMode));
+        DDL_ASSERT(IS_USART_DATA_WIDTH(pstcInit->u32DataWidth));
+        DDL_ASSERT(IS_USART_HWFLOWCTRL(pstcInit->u32HwFlowCtrl));
+        DDL_ASSERT(IS_USART_PARITY_CONTROL(pstcInit->u32Parity));
+        DDL_ASSERT(IS_USART_SIGNIFICANT_BIT(pstcInit->u32BitDirection));
+        DDL_ASSERT(IS_USART_NOISE_FILTER(pstcInit->u32NoiseFilterState));
+        DDL_ASSERT(IS_USART_CLOCK_PRESCALER_DIV(pstcInit->u32ClkPrescaler));
+        DDL_ASSERT(IS_USART_OVERSAMPLING_BITS(pstcInit->u32OversamplingBits));
+        DDL_ASSERT(IS_USART_SB_DETECT_POLARITY(pstcInit->u32SbDetectPolarity));
+
+        /* Disbale TX/RX && clear interrupt flag */
+        WRITE_REG32(USARTx->CR1, (USART_CR1_CPE | USART_CR1_CFE | USART_CR1_CORE));
+
+        /* Set CR1 */
+        MODIFY_REG32(USARTx->CR1,
+                     (USART_CR1_SLME | USART_CR1_PS | USART_CR1_PCE |          \
+                      USART_CR1_M | USART_CR1_OVER8 | USART_CR1_MS |           \
+                      USART_CR1_ML | USART_CR1_NFE | USART_CR1_SBS),           \
+                     (USART_MODE_UART | pstcInit->u32Parity | pstcInit->u32DataWidth | \
+                      pstcInit->u32OversamplingBits | pstcInit->u32BitDirection      | \
+                      pstcInit->u32NoiseFilterState | pstcInit->u32SbDetectPolarity));
+
+        /* Set CR2 */
+        WRITE_REG32(USARTx->CR2, (pstcInit->u32ClkMode | pstcInit->u32StopBit));
+
+        /* Set CR3 */
+        WRITE_REG32(USARTx->CR3, pstcInit->u32HwFlowCtrl);
+
+        /* Set PR */
+        WRITE_REG32(USARTx->PR, pstcInit->u32ClkPrescaler);
+
+        /* Set baudrate */
+        enRet = USART_SetBaudrate(USARTx, pstcInit->u32Baudrate, NULL);
     }
-
-    /* Check parameters */
-    DDL_ASSERT(IS_USART_STOP_BITS(pstcInit->u32StopBit));
-    DDL_ASSERT(IS_USART_CLOCK_MODE(pstcInit->u32ClkMode));
-    DDL_ASSERT(IS_USART_DATA_WIDTH(pstcInit->u32DataWidth));
-    DDL_ASSERT(IS_USART_HWFLOWCTRL(pstcInit->u32HwFlowCtrl));
-    DDL_ASSERT(IS_USART_PARITY_CONTROL(pstcInit->u32Parity));
-    DDL_ASSERT(IS_USART_SIGNIFICANT_BIT(pstcInit->u32BitDirection));
-    DDL_ASSERT(IS_USART_NOISE_FILTER(pstcInit->u32NoiseFilterState));
-    DDL_ASSERT(IS_USART_CLOCK_PRESCALER_DIV(pstcInit->u32ClkPrescaler));
-    DDL_ASSERT(IS_USART_OVERSAMPLING_BITS(pstcInit->u32OversamplingBits));
-    DDL_ASSERT(IS_USART_SB_DETECT_POLARITY(pstcInit->u32SbDetectPolarity));
-
-    /* Disbale TX/RX && clear interrupt flag */
-    WRITE_REG(USARTx->CR1, (USART_CR1_CPE | USART_CR1_CFE | USART_CR1_CORE));
-
-    /* Set CR1 */
-    MODIFY_REG(USARTx->CR1,
-            (USART_CR1_SLME | USART_CR1_PS | USART_CR1_PCE |                   \
-             USART_CR1_M | USART_CR1_OVER8 | USART_CR1_MS |                    \
-             USART_CR1_ML | USART_CR1_NFE | USART_CR1_SBS),                    \
-            (USART_MODE_UART | pstcInit->u32Parity | pstcInit->u32DataWidth |  \
-             pstcInit->u32OversamplingBits | pstcInit->u32BitDirection |       \
-             pstcInit->u32NoiseFilterState | pstcInit->u32SbDetectPolarity));
-
-    /* Set CR2 */
-    WRITE_REG(USARTx->CR2, (pstcInit->u32ClkMode | pstcInit->u32StopBit));
-
-    /* Set CR3 */
-    WRITE_REG(USARTx->CR3, pstcInit->u32HwFlowCtrl);
-
-    /* Set PR */
-    WRITE_REG(USARTx->PR, pstcInit->u32ClkPrescaler);
-
-    /* Set baudrate */
-    enRet = USART_SetBaudrate(USARTx, pstcInit->u32Baudrate, NULL);
 
     return enRet;
 }
@@ -269,49 +267,47 @@ en_result_t USART_UartInit(M0P_USART_TypeDef *USARTx,
 en_result_t USART_HalfDuplexInit(M0P_USART_TypeDef *USARTx,
                                             const stc_uart_init_t *pstcInit)
 {
-    en_result_t enRet;
+    en_result_t enRet = ErrorInvalidParameter;
 
     /* Check USARTx instance and pstcInit */
-    if ((!IS_USART_INSTANCE(USARTx)) || (NULL == pstcInit))
+    if ((IS_USART_INSTANCE(USARTx)) && (NULL != pstcInit))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_USART_STOP_BITS(pstcInit->u32StopBit));
+        DDL_ASSERT(IS_USART_CLOCK_MODE(pstcInit->u32ClkMode));
+        DDL_ASSERT(IS_USART_DATA_WIDTH(pstcInit->u32DataWidth));
+        DDL_ASSERT(IS_USART_HWFLOWCTRL(pstcInit->u32HwFlowCtrl));
+        DDL_ASSERT(IS_USART_PARITY_CONTROL(pstcInit->u32Parity));
+        DDL_ASSERT(IS_USART_SIGNIFICANT_BIT(pstcInit->u32BitDirection));
+        DDL_ASSERT(IS_USART_NOISE_FILTER(pstcInit->u32NoiseFilterState));
+        DDL_ASSERT(IS_USART_CLOCK_PRESCALER_DIV(pstcInit->u32ClkPrescaler));
+        DDL_ASSERT(IS_USART_OVERSAMPLING_BITS(pstcInit->u32OversamplingBits));
+        DDL_ASSERT(IS_USART_SB_DETECT_POLARITY(pstcInit->u32SbDetectPolarity));
+
+        /* Disbale TX/RX && clear interrupt flag */
+        WRITE_REG32(USARTx->CR1, (USART_CR1_CPE | USART_CR1_CFE | USART_CR1_CORE));
+
+        /* Set CR1 */
+        MODIFY_REG32(USARTx->CR1,
+                     (USART_CR1_SLME | USART_CR1_PS | USART_CR1_PCE |          \
+                      USART_CR1_M | USART_CR1_OVER8 | USART_CR1_MS |           \
+                      USART_CR1_ML | USART_CR1_NFE | USART_CR1_SBS),           \
+                     (USART_MODE_UART | pstcInit->u32Parity | pstcInit->u32DataWidth | \
+                      pstcInit->u32OversamplingBits | pstcInit->u32BitDirection      | \
+                      pstcInit->u32NoiseFilterState | pstcInit->u32SbDetectPolarity));
+
+        /* Set CR2 */
+        WRITE_REG32(USARTx->CR2, (pstcInit->u32ClkMode | pstcInit->u32StopBit));
+
+        /* Set CR3 */
+        WRITE_REG32(USARTx->CR3, (pstcInit->u32HwFlowCtrl | USART_CR3_HDSEL));
+
+        /* Set PR */
+        WRITE_REG32(USARTx->PR, pstcInit->u32ClkPrescaler);
+
+        /* Set baudrate */
+        enRet = USART_SetBaudrate(USARTx, pstcInit->u32Baudrate, NULL);
     }
-
-    /* Check parameters */
-    DDL_ASSERT(IS_USART_STOP_BITS(pstcInit->u32StopBit));
-    DDL_ASSERT(IS_USART_CLOCK_MODE(pstcInit->u32ClkMode));
-    DDL_ASSERT(IS_USART_DATA_WIDTH(pstcInit->u32DataWidth));
-    DDL_ASSERT(IS_USART_HWFLOWCTRL(pstcInit->u32HwFlowCtrl));
-    DDL_ASSERT(IS_USART_PARITY_CONTROL(pstcInit->u32Parity));
-    DDL_ASSERT(IS_USART_SIGNIFICANT_BIT(pstcInit->u32BitDirection));
-    DDL_ASSERT(IS_USART_NOISE_FILTER(pstcInit->u32NoiseFilterState));
-    DDL_ASSERT(IS_USART_CLOCK_PRESCALER_DIV(pstcInit->u32ClkPrescaler));
-    DDL_ASSERT(IS_USART_OVERSAMPLING_BITS(pstcInit->u32OversamplingBits));
-    DDL_ASSERT(IS_USART_SB_DETECT_POLARITY(pstcInit->u32SbDetectPolarity));
-
-    /* Disbale TX/RX && clear interrupt flag */
-    WRITE_REG(USARTx->CR1, (USART_CR1_CPE | USART_CR1_CFE | USART_CR1_CORE));
-
-    /* Set CR1 */
-    MODIFY_REG(USARTx->CR1,
-            (USART_CR1_SLME | USART_CR1_PS | USART_CR1_PCE |                   \
-             USART_CR1_M | USART_CR1_OVER8 | USART_CR1_MS |                    \
-             USART_CR1_ML | USART_CR1_NFE | USART_CR1_SBS),                    \
-            (USART_MODE_UART | pstcInit->u32Parity | pstcInit->u32DataWidth |  \
-             pstcInit->u32OversamplingBits | pstcInit->u32BitDirection |       \
-             pstcInit->u32NoiseFilterState | pstcInit->u32SbDetectPolarity));
-
-    /* Set CR2 */
-    WRITE_REG(USARTx->CR2, (pstcInit->u32ClkMode | pstcInit->u32StopBit));
-
-    /* Set CR3 */
-    WRITE_REG(USARTx->CR3, (pstcInit->u32HwFlowCtrl | USART_CR3_HDSEL));
-
-    /* Set PR */
-    WRITE_REG(USARTx->PR, pstcInit->u32ClkPrescaler);
-
-    /* Set baudrate */
-    enRet = USART_SetBaudrate(USARTx, pstcInit->u32Baudrate, NULL);
 
     return enRet;
 }
@@ -325,25 +321,26 @@ en_result_t USART_HalfDuplexInit(M0P_USART_TypeDef *USARTx,
  */
 en_result_t USART_UartStructInit(stc_uart_init_t *pstcInit)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check parameters */
-    if (NULL == pstcInit)
+    if (NULL != pstcInit)
     {
-        return ErrorInvalidParameter;
+        pstcInit->u32Baudrate = 9600ul;
+        pstcInit->u32BitDirection = USART_LSB;
+        pstcInit->u32Parity = USART_PARITY_NONE;
+        pstcInit->u32StopBit = USART_STOP_BITS_1;
+        pstcInit->u32HwFlowCtrl = USART_HWFLOWCTRL_RTS;
+        pstcInit->u32ClkMode = USART_INTCLK_NONE_OUTPUT;
+        pstcInit->u32ClkPrescaler = USART_CLK_PRESCALER_DIV1;
+        pstcInit->u32DataWidth = USART_DATA_WIDTH_BITS_8;
+        pstcInit->u32SbDetectPolarity = USART_SB_DETECT_FALLING;
+        pstcInit->u32NoiseFilterState = USART_NOISE_FILTER_DISABLE;
+        pstcInit->u32OversamplingBits = USART_OVERSAMPLING_BITS_16;
+        enRet = Ok;
     }
 
-    pstcInit->u32Baudrate = 9600ul;
-    pstcInit->u32BitDirection = USART_LSB;
-    pstcInit->u32Parity = USART_PARITY_NONE;
-    pstcInit->u32StopBit = USART_STOP_BITS_1;
-    pstcInit->u32HwFlowCtrl = USART_HWFLOWCTRL_RTS;
-    pstcInit->u32ClkMode = USART_INTCLK_NONE_OUTPUT;
-    pstcInit->u32ClkPrescaler = USART_CLK_PRESCALER_DIV1;
-    pstcInit->u32DataWidth = USART_DATA_WIDTH_BITS_8;
-    pstcInit->u32SbDetectPolarity = USART_SB_DETECT_FALLING;
-    pstcInit->u32NoiseFilterState = USART_NOISE_FILTER_DISABLE;
-    pstcInit->u32OversamplingBits = USART_OVERSAMPLING_BITS_16;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -362,48 +359,46 @@ en_result_t USART_UartStructInit(stc_uart_init_t *pstcInit)
 en_result_t USART_MultiProcessorInit(M0P_USART_TypeDef *USARTx,
                                 const stc_uart_multiprocessor_init_t *pstcInit)
 {
-    en_result_t enRet;
+    en_result_t enRet = ErrorInvalidParameter;
 
     /* Check USARTx instance and pstcInit */
-    if ((!IS_USART_INSTANCE(USARTx)) || (NULL == pstcInit))
+    if ((IS_USART_INSTANCE(USARTx)) && (NULL != pstcInit))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_USART_STOP_BITS(pstcInit->u32StopBit));
+        DDL_ASSERT(IS_USART_CLOCK_MODE(pstcInit->u32ClkMode));
+        DDL_ASSERT(IS_USART_DATA_WIDTH(pstcInit->u32DataWidth));
+        DDL_ASSERT(IS_USART_HWFLOWCTRL(pstcInit->u32HwFlowCtrl));
+        DDL_ASSERT(IS_USART_SIGNIFICANT_BIT(pstcInit->u32BitDirection));
+        DDL_ASSERT(IS_USART_NOISE_FILTER(pstcInit->u32NoiseFilterState));
+        DDL_ASSERT(IS_USART_CLOCK_PRESCALER_DIV(pstcInit->u32ClkPrescaler));
+        DDL_ASSERT(IS_USART_OVERSAMPLING_BITS(pstcInit->u32OversamplingBits));
+        DDL_ASSERT(IS_USART_SB_DETECT_POLARITY(pstcInit->u32SbDetectPolarity));
+
+        /* Disbale TX/RX && clear interrupt flag */
+        WRITE_REG32(USARTx->CR1, (USART_CR1_CPE | USART_CR1_CFE | USART_CR1_CORE));
+
+        /* Set CR1 */
+        MODIFY_REG32(USARTx->CR1, \
+                     (USART_CR1_SLME | USART_CR1_PS | USART_CR1_PCE |          \
+                      USART_CR1_M | USART_CR1_OVER8 | USART_CR1_MS  |          \
+                      USART_CR1_ML | USART_CR1_NFE | USART_CR1_SBS),           \
+                     (USART_MODE_UART | USART_CR1_SLME | pstcInit->u32DataWidth | \
+                      pstcInit->u32OversamplingBits | pstcInit->u32BitDirection | \
+                      pstcInit->u32NoiseFilterState | pstcInit->u32SbDetectPolarity));
+
+        /* Set CR2 */
+        WRITE_REG32(USARTx->CR2, (USART_CR2_MPE | pstcInit->u32ClkMode | pstcInit->u32StopBit));
+
+        /* Set CR3 */
+        WRITE_REG32(USARTx->CR3, pstcInit->u32HwFlowCtrl);
+
+        /* Set PR */
+        WRITE_REG32(USARTx->PR, pstcInit->u32ClkPrescaler);
+
+        /* Set baudrate */
+        enRet = USART_SetBaudrate(USARTx, pstcInit->u32Baudrate, NULL);
     }
-
-    /* Check parameters */
-    DDL_ASSERT(IS_USART_STOP_BITS(pstcInit->u32StopBit));
-    DDL_ASSERT(IS_USART_CLOCK_MODE(pstcInit->u32ClkMode));
-    DDL_ASSERT(IS_USART_DATA_WIDTH(pstcInit->u32DataWidth));
-    DDL_ASSERT(IS_USART_HWFLOWCTRL(pstcInit->u32HwFlowCtrl));
-    DDL_ASSERT(IS_USART_SIGNIFICANT_BIT(pstcInit->u32BitDirection));
-    DDL_ASSERT(IS_USART_NOISE_FILTER(pstcInit->u32NoiseFilterState));
-    DDL_ASSERT(IS_USART_CLOCK_PRESCALER_DIV(pstcInit->u32ClkPrescaler));
-    DDL_ASSERT(IS_USART_OVERSAMPLING_BITS(pstcInit->u32OversamplingBits));
-    DDL_ASSERT(IS_USART_SB_DETECT_POLARITY(pstcInit->u32SbDetectPolarity));
-
-    /* Disbale TX/RX && clear interrupt flag */
-    WRITE_REG(USARTx->CR1, (USART_CR1_CPE | USART_CR1_CFE | USART_CR1_CORE));
-
-    /* Set CR1 */
-    MODIFY_REG(USARTx->CR1, \
-               (USART_CR1_SLME | USART_CR1_PS | USART_CR1_PCE |                \
-                USART_CR1_M | USART_CR1_OVER8 | USART_CR1_MS  |                \
-                USART_CR1_ML | USART_CR1_NFE | USART_CR1_SBS),                 \
-               (USART_MODE_UART | USART_CR1_SLME | pstcInit->u32DataWidth |    \
-                pstcInit->u32OversamplingBits | pstcInit->u32BitDirection |    \
-                pstcInit->u32NoiseFilterState | pstcInit->u32SbDetectPolarity));
-
-    /* Set CR2 */
-    WRITE_REG(USARTx->CR2, (USART_CR2_MPE | pstcInit->u32ClkMode | pstcInit->u32StopBit));
-
-    /* Set CR3 */
-    WRITE_REG(USARTx->CR3, pstcInit->u32HwFlowCtrl);
-
-    /* Set PR */
-    WRITE_REG(USARTx->PR, pstcInit->u32ClkPrescaler);
-
-    /* Set baudrate */
-    enRet = USART_SetBaudrate(USARTx, pstcInit->u32Baudrate, NULL);
 
     return enRet;
 }
@@ -417,24 +412,25 @@ en_result_t USART_MultiProcessorInit(M0P_USART_TypeDef *USARTx,
  */
 en_result_t UART_MultiProcessorStructInit(stc_uart_multiprocessor_init_t *pstcInit)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check parameters */
-    if (NULL == pstcInit)
+    if (NULL != pstcInit)
     {
-        return ErrorInvalidParameter;
+        pstcInit->u32Baudrate = 9600ul;
+        pstcInit->u32BitDirection = USART_LSB;
+        pstcInit->u32StopBit = USART_STOP_BITS_1;
+        pstcInit->u32HwFlowCtrl = USART_HWFLOWCTRL_RTS;
+        pstcInit->u32ClkMode = USART_INTCLK_NONE_OUTPUT;
+        pstcInit->u32ClkPrescaler = USART_CLK_PRESCALER_DIV1;
+        pstcInit->u32DataWidth = USART_DATA_WIDTH_BITS_8;
+        pstcInit->u32SbDetectPolarity = USART_SB_DETECT_FALLING;
+        pstcInit->u32NoiseFilterState = USART_NOISE_FILTER_DISABLE;
+        pstcInit->u32OversamplingBits = USART_OVERSAMPLING_BITS_16;
+        enRet = Ok;
     }
 
-    pstcInit->u32Baudrate = 9600ul;
-    pstcInit->u32BitDirection = USART_LSB;
-    pstcInit->u32StopBit = USART_STOP_BITS_1;
-    pstcInit->u32HwFlowCtrl = USART_HWFLOWCTRL_RTS;
-    pstcInit->u32ClkMode = USART_INTCLK_NONE_OUTPUT;
-    pstcInit->u32ClkPrescaler = USART_CLK_PRESCALER_DIV1;
-    pstcInit->u32DataWidth = USART_DATA_WIDTH_BITS_8;
-    pstcInit->u32SbDetectPolarity = USART_SB_DETECT_FALLING;
-    pstcInit->u32NoiseFilterState = USART_NOISE_FILTER_DISABLE;
-    pstcInit->u32OversamplingBits = USART_OVERSAMPLING_BITS_16;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -453,43 +449,41 @@ en_result_t UART_MultiProcessorStructInit(stc_uart_multiprocessor_init_t *pstcIn
 en_result_t USART_LinInit(M0P_USART_TypeDef *USARTx,
                                 const stc_lin_init_t *pstcInit)
 {
-    en_result_t enRet;
+    en_result_t enRet = ErrorInvalidParameter;
 
     /* Check USARTx instance and pstcInit */
-    if ((!IS_USART_INSTANCE(USARTx)) || (NULL == pstcInit))
+    if ((IS_USART_INSTANCE(USARTx)) && (NULL != pstcInit))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_USART_CLOCK_MODE(pstcInit->u32ClkMode));
+        DDL_ASSERT(IS_USART_NOISE_FILTER(pstcInit->u32NoiseFilterState));
+        DDL_ASSERT(IS_USART_CLOCK_PRESCALER_DIV(pstcInit->u32ClkPrescaler));
+        DDL_ASSERT(IS_USART_OVERSAMPLING_BITS(pstcInit->u32OversamplingBits));
+        DDL_ASSERT(IS_USART_SB_DETECT_POLARITY(pstcInit->u32SbDetectPolarity));
+
+        /* Disbale TX/RX && clear interrupt flag */
+        WRITE_REG32(USARTx->CR1, (USART_CR1_CPE | USART_CR1_CFE | USART_CR1_CORE));
+
+        /* Set CR1 */
+        MODIFY_REG32(USARTx->CR1,
+                     (USART_CR1_SLME | USART_CR1_PS | USART_CR1_PCE |          \
+                      USART_CR1_M | USART_CR1_OVER8 | USART_CR1_MS  |          \
+                      USART_CR1_ML | USART_CR1_NFE | USART_CR1_SBS),           \
+                     (USART_MODE_UART | pstcInit->u32OversamplingBits |        \
+                      pstcInit->u32NoiseFilterState | pstcInit->u32SbDetectPolarity));
+
+        /* Set CR2 */
+        WRITE_REG32(USARTx->CR2, (pstcInit->u32ClkMode | USART_CR2_LINEN));
+
+        /* Set CR3 */
+        WRITE_REG32(USARTx->CR3, pstcInit->u32HwFlowCtrl);
+
+        /* Set PR */
+        WRITE_REG32(USARTx->PR, pstcInit->u32ClkPrescaler);
+
+        /* Set baudrate */
+        enRet = USART_SetBaudrate(USARTx, pstcInit->u32Baudrate, NULL);
     }
-
-    /* Check parameters */
-    DDL_ASSERT(IS_USART_CLOCK_MODE(pstcInit->u32ClkMode));
-    DDL_ASSERT(IS_USART_NOISE_FILTER(pstcInit->u32NoiseFilterState));
-    DDL_ASSERT(IS_USART_CLOCK_PRESCALER_DIV(pstcInit->u32ClkPrescaler));
-    DDL_ASSERT(IS_USART_OVERSAMPLING_BITS(pstcInit->u32OversamplingBits));
-    DDL_ASSERT(IS_USART_SB_DETECT_POLARITY(pstcInit->u32SbDetectPolarity));
-
-    /* Disbale TX/RX && clear interrupt flag */
-    WRITE_REG(USARTx->CR1, (USART_CR1_CPE | USART_CR1_CFE | USART_CR1_CORE));
-
-    /* Set CR1 */
-    MODIFY_REG(USARTx->CR1,
-               (USART_CR1_SLME | USART_CR1_PS | USART_CR1_PCE |                \
-                USART_CR1_M | USART_CR1_OVER8 | USART_CR1_MS  |                \
-                USART_CR1_ML | USART_CR1_NFE | USART_CR1_SBS),                 \
-               (USART_MODE_UART | pstcInit->u32OversamplingBits |              \
-                pstcInit->u32NoiseFilterState | pstcInit->u32SbDetectPolarity));
-
-    /* Set CR2 */
-    WRITE_REG(USARTx->CR2, (pstcInit->u32ClkMode | USART_CR2_LINEN));
-
-    /* Set CR3 */
-    WRITE_REG(USARTx->CR3, pstcInit->u32HwFlowCtrl);
-
-    /* Set PR */
-    WRITE_REG(USARTx->PR, pstcInit->u32ClkPrescaler);
-
-    /* Set baudrate */
-    enRet = USART_SetBaudrate(USARTx, pstcInit->u32Baudrate, NULL);
 
     return enRet;
 }
@@ -503,21 +497,22 @@ en_result_t USART_LinInit(M0P_USART_TypeDef *USARTx,
  */
 en_result_t USART_LinStructInit(stc_lin_init_t *pstcInit)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check parameters */
-    if (NULL == pstcInit)
+    if (NULL != pstcInit)
     {
-        return ErrorInvalidParameter;
+        pstcInit->u32Baudrate = 9600ul;
+        pstcInit->u32ClkMode = USART_INTCLK_NONE_OUTPUT;
+        pstcInit->u32ClkPrescaler = USART_CLK_PRESCALER_DIV1;
+        pstcInit->u32NoiseFilterState = USART_NOISE_FILTER_DISABLE;
+        pstcInit->u32OversamplingBits = USART_OVERSAMPLING_BITS_16;
+        pstcInit->u32SbDetectPolarity = USART_SB_DETECT_LOW;
+        pstcInit->u32HwFlowCtrl = USART_HWFLOWCTRL_RTS;
+        enRet = Ok;
     }
 
-    pstcInit->u32Baudrate = 9600;
-    pstcInit->u32ClkMode = USART_INTCLK_NONE_OUTPUT;
-    pstcInit->u32ClkPrescaler = USART_CLK_PRESCALER_DIV1;
-    pstcInit->u32NoiseFilterState = USART_NOISE_FILTER_DISABLE;
-    pstcInit->u32OversamplingBits = USART_OVERSAMPLING_BITS_16;
-    pstcInit->u32SbDetectPolarity = USART_SB_DETECT_LOW;
-    pstcInit->u32HwFlowCtrl = USART_HWFLOWCTRL_RTS;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -536,41 +531,39 @@ en_result_t USART_LinStructInit(stc_lin_init_t *pstcInit)
 en_result_t USART_ClkSyncInit(M0P_USART_TypeDef *USARTx,
                                         const stc_clksync_init_t *pstcInit)
 {
-    en_result_t enRet;
+    en_result_t enRet = ErrorInvalidParameter;
 
     /* Check TMRBx instance and pstcInit */
-    if ((!IS_USART_INSTANCE(USARTx)) || (NULL == pstcInit))
+    if ((IS_USART_INSTANCE(USARTx)) && (NULL != pstcInit))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_USART_CLOCK_MODE(pstcInit->u32ClkMode));
+        DDL_ASSERT(IS_USART_HWFLOWCTRL(pstcInit->u32HwFlowCtrl));
+        DDL_ASSERT(IS_USART_SIGNIFICANT_BIT(pstcInit->u32BitDirection));
+        DDL_ASSERT(IS_USART_CLOCK_PRESCALER_DIV(pstcInit->u32ClkPrescaler));
+
+        /* Disbale TX/RX && clear interrupt flag */
+        WRITE_REG32(USARTx->CR1, (USART_CR1_CPE | USART_CR1_CFE | USART_CR1_CORE));
+
+        /* Set CR1 */
+        MODIFY_REG32(USARTx->CR1,
+                     (USART_CR1_SLME | USART_CR1_PS | USART_CR1_PCE |          \
+                      USART_CR1_M | USART_CR1_OVER8 | USART_CR1_MS  |          \
+                      USART_CR1_ML | USART_CR1_NFE | USART_CR1_SBS),           \
+                     (USART_MODE_CLKSYNC | pstcInit->u32BitDirection));
+
+        /* Set CR2 */
+        WRITE_REG32(USARTx->CR2, pstcInit->u32ClkMode);
+
+        /* Set CR3 */
+        WRITE_REG32(USARTx->CR3, pstcInit->u32HwFlowCtrl);
+
+        /* Set PR */
+        WRITE_REG32(USARTx->PR, pstcInit->u32ClkPrescaler);
+
+        /* Set baudrate */
+        enRet = USART_SetBaudrate(USARTx, pstcInit->u32Baudrate, NULL);
     }
-
-    /* Check parameters */
-    DDL_ASSERT(IS_USART_CLOCK_MODE(pstcInit->u32ClkMode));
-    DDL_ASSERT(IS_USART_HWFLOWCTRL(pstcInit->u32HwFlowCtrl));
-    DDL_ASSERT(IS_USART_SIGNIFICANT_BIT(pstcInit->u32BitDirection));
-    DDL_ASSERT(IS_USART_CLOCK_PRESCALER_DIV(pstcInit->u32ClkPrescaler));
-
-    /* Disbale TX/RX && clear interrupt flag */
-    WRITE_REG(USARTx->CR1, (USART_CR1_CPE | USART_CR1_CFE | USART_CR1_CORE));
-
-    /* Set CR1 */
-    MODIFY_REG(USARTx->CR1,
-               (USART_CR1_SLME | USART_CR1_PS | USART_CR1_PCE |                \
-                USART_CR1_M | USART_CR1_OVER8 | USART_CR1_MS  |                \
-                USART_CR1_ML | USART_CR1_NFE | USART_CR1_SBS),                 \
-               (USART_MODE_CLKSYNC | pstcInit->u32BitDirection));
-
-    /* Set CR2 */
-    WRITE_REG(USARTx->CR2, pstcInit->u32ClkMode);
-
-    /* Set CR3 */
-    WRITE_REG(USARTx->CR3, pstcInit->u32HwFlowCtrl);
-
-    /* Set PR */
-    WRITE_REG(USARTx->PR, pstcInit->u32ClkPrescaler);
-
-    /* Set baudrate */
-    enRet = USART_SetBaudrate(USARTx, pstcInit->u32Baudrate, NULL);
 
     return enRet;
 }
@@ -584,19 +577,20 @@ en_result_t USART_ClkSyncInit(M0P_USART_TypeDef *USARTx,
  */
 en_result_t USART_ClkSyncStructInit(stc_clksync_init_t *pstcInit)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check parameter */
-    if (NULL == pstcInit)
+    if (NULL != pstcInit)
     {
-        return ErrorInvalidParameter;
+        pstcInit->u32Baudrate = 9600ul;
+        pstcInit->u32ClkMode = USART_INTCLK_NONE_OUTPUT;
+        pstcInit->u32ClkPrescaler = USART_CLK_PRESCALER_DIV1;
+        pstcInit->u32BitDirection = USART_LSB;
+        pstcInit->u32HwFlowCtrl = USART_HWFLOWCTRL_RTS;
+        enRet = Ok;
     }
 
-    pstcInit->u32Baudrate = 9600;
-    pstcInit->u32ClkMode = USART_INTCLK_NONE_OUTPUT;
-    pstcInit->u32ClkPrescaler = USART_CLK_PRESCALER_DIV1;
-    pstcInit->u32BitDirection = USART_LSB;
-    pstcInit->u32HwFlowCtrl = USART_HWFLOWCTRL_RTS;
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -613,21 +607,22 @@ en_result_t USART_ClkSyncStructInit(stc_clksync_init_t *pstcInit)
  */
 en_result_t USART_DeInit(M0P_USART_TypeDef *USARTx)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check USARTx instance */
-    if (!IS_USART_INSTANCE(USARTx))
+    if (IS_USART_INSTANCE(USARTx))
     {
-        return ErrorInvalidParameter;
+        /* Configures the registers to reset value. */
+        WRITE_REG32(USARTx->CR1, (USART_CR1_CPE | USART_CR1_CFE | USART_CR1_CORE));
+        WRITE_REG32(USARTx->PR, 0x00000000ul);
+        WRITE_REG32(USARTx->BRR, 0x0000FF00ul);
+        WRITE_REG32(USARTx->CR1, 0x80000000ul);
+        WRITE_REG32(USARTx->CR2, 0x00000000ul);
+        WRITE_REG32(USARTx->CR3, 0x00000000ul);
+        enRet = Ok;
     }
 
-    /* Configures the registers to reset value. */
-    WRITE_REG(USARTx->CR1, (USART_CR1_CPE | USART_CR1_CFE | USART_CR1_CORE));
-    WRITE_REG(USARTx->PR, 0x00000000);
-    WRITE_REG(USARTx->BRR, 0x0000FF00);
-    WRITE_REG(USARTx->CR1, 0x80000000);
-    WRITE_REG(USARTx->CR2, 0x00000000);
-    WRITE_REG(USARTx->CR3, 0x00000000);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -655,19 +650,20 @@ en_result_t USART_FuncCmd(M0P_USART_TypeDef *USARTx,
                             uint32_t u32Func,
                             en_functional_state_t enNewSta)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check USARTx instance */
-    if (!IS_USART_INSTANCE(USARTx))
+    if (IS_USART_INSTANCE(USARTx))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewSta));
+        DDL_ASSERT(IS_USART_TRANSMIT_RECEIVE_FUNCTION(u32Func));
+
+        (Enable == enNewSta) ? SET_REG32_BIT(USARTx->CR1, u32Func) : CLEAR_REG32_BIT(USARTx->CR1, u32Func);
+        enRet = Ok;
     }
 
-    /* Check parameters */
-    DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewSta));
-    DDL_ASSERT(IS_USART_TRANSMIT_RECEIVE_FUNCTION(u32Func));
-
-    (Enable == enNewSta) ? SET_BIT(USARTx->CR1, u32Func) : CLEAR_BIT(USARTx->CR1, u32Func);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -695,7 +691,7 @@ en_functional_state_t USART_GetFuncState(M0P_USART_TypeDef *USARTx,
     DDL_ASSERT (IS_USART_INSTANCE(USARTx));
     DDL_ASSERT(IS_USART_TRANSMIT_RECEIVE_FUNCTION(u32Func));
 
-    return (READ_BIT(USARTx->CR1, u32Func) ? Enable : Disable);
+    return (READ_REG32_BIT(USARTx->CR1, u32Func) ? Enable : Disable);
 }
 
 /**
@@ -725,7 +721,7 @@ en_flag_status_t USART_GetFlag(M0P_USART_TypeDef *USARTx, uint32_t u32Flag)
     DDL_ASSERT(IS_USART_INSTANCE(USARTx));
     DDL_ASSERT(IS_USART_FLAG(u32Flag));
 
-    return (READ_BIT(USARTx->SR, u32Flag) ? Set : Reset);
+    return (READ_REG32_BIT(USARTx->SR, u32Flag) ? Set : Reset);
 }
 
 /**
@@ -738,7 +734,7 @@ en_flag_status_t USART_GetFlag(M0P_USART_TypeDef *USARTx, uint32_t u32Flag)
  *           @arg M0P_USART4:           USART unit 4 instance register base
  * @param  [in] u32Flag                 USART flag type
  *         This parameter can be any composed value of the following values:
- *           @arg USART_CLEAR_FLAG_PE:  Clear Parity error flag 
+ *           @arg USART_CLEAR_FLAG_PE:  Clear Parity error flag
  *           @arg USART_CLEAR_FLAG_FE:  Clear Framing error flag
  *           @arg USART_CLEAR_FLAG_ORE: Clear Overrun error flag
  * @retval An en_result_t enumeration value:
@@ -747,18 +743,19 @@ en_flag_status_t USART_GetFlag(M0P_USART_TypeDef *USARTx, uint32_t u32Flag)
  */
 en_result_t USART_ClearFlag(M0P_USART_TypeDef *USARTx, uint32_t u32Flag)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check USARTx instance */
-    if (!IS_USART_INSTANCE(USARTx))
+    if (IS_USART_INSTANCE(USARTx))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_USART_CLEAR_FLAG(u32Flag));
+
+        SET_REG32_BIT(USARTx->CR1, u32Flag);
+        enRet = Ok;
     }
 
-    /* Check parameters */
-    DDL_ASSERT(IS_USART_CLEAR_FLAG(u32Flag));
-
-    SET_BIT(USARTx->CR1, u32Flag);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -777,18 +774,19 @@ en_result_t USART_ClearFlag(M0P_USART_TypeDef *USARTx, uint32_t u32Flag)
  */
 en_result_t USART_SilenceModeCmd(M0P_USART_TypeDef *USARTx, en_functional_state_t enNewSta)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check USARTx instance */
-    if (!IS_USART_INSTANCE(USARTx))
+    if (IS_USART_INSTANCE(USARTx))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewSta));
+
+        (Enable == enNewSta) ? SET_REG32_BIT(USARTx->CR1, USART_CR1_SLME) : CLEAR_REG32_BIT(USARTx->CR1, USART_CR1_SLME);
+        enRet = Ok;
     }
 
-    /* Check parameters */
-    DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewSta));
-
-    (Enable == enNewSta) ? SET_BIT(USARTx->CR1, USART_CR1_SLME) : CLEAR_BIT(USARTx->CR1, USART_CR1_SLME);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -808,7 +806,7 @@ en_functional_state_t USART_GetSilenceModeState(M0P_USART_TypeDef *USARTx)
     /* Check parameters */
     DDL_ASSERT(IS_USART_INSTANCE(USARTx));
 
-    return READ_BIT(USARTx->CR1, USART_CR1_SLME) ? Enable : Disable;
+    return READ_REG32_BIT(USARTx->CR1, USART_CR1_SLME) ? Enable : Disable;
 }
 
 /**
@@ -829,18 +827,19 @@ en_functional_state_t USART_GetSilenceModeState(M0P_USART_TypeDef *USARTx)
  */
 en_result_t USART_SetTransmissionType(M0P_USART_TypeDef *USARTx, uint32_t u32Type)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check USARTx instance */
-    if (!IS_USART_INSTANCE(USARTx))
+    if (IS_USART_INSTANCE(USARTx))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_USART_TRANSMISSION_TYPE(u32Type));
+
+        MODIFY_REG32(USARTx->DR, USART_DR_MPID, u32Type);
+        enRet = Ok;
     }
 
-    /* Check parameters */
-    DDL_ASSERT(IS_USART_TRANSMISSION_TYPE(u32Type));
-
-    MODIFY_REG(USARTx->DR, USART_DR_MPID, u32Type);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -860,7 +859,7 @@ uint32_t USART_GetTransmissionType(M0P_USART_TypeDef *USARTx)
     /* Check parameters */
     DDL_ASSERT(IS_USART_INSTANCE(USARTx));
 
-    return READ_BIT(USARTx->DR, USART_DR_MPID);
+    return READ_REG32_BIT(USARTx->DR, USART_DR_MPID);
 }
 
 /**
@@ -882,18 +881,19 @@ uint32_t USART_GetTransmissionType(M0P_USART_TypeDef *USARTx)
  */
 en_result_t USART_SetParity(M0P_USART_TypeDef *USARTx, uint32_t u32Parity)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check USARTx instance */
-    if (!IS_USART_INSTANCE(USARTx))
+    if (IS_USART_INSTANCE(USARTx))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_USART_PARITY_CONTROL(u32Parity));
+
+        MODIFY_REG32(USARTx->CR1, (USART_CR1_PS | USART_CR1_PCE), u32Parity);
+        enRet = Ok;
     }
 
-    /* Check parameters */
-    DDL_ASSERT(IS_USART_PARITY_CONTROL(u32Parity));
-
-    MODIFY_REG(USARTx->CR1, (USART_CR1_PS | USART_CR1_PCE), u32Parity);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -914,7 +914,7 @@ uint32_t USART_GetParity(M0P_USART_TypeDef *USARTx)
     /* Check parameters */
     DDL_ASSERT(IS_USART_INSTANCE(USARTx));
 
-    return READ_BIT(USARTx->CR1, (USART_CR1_PS | USART_CR1_PCE));
+    return READ_REG32_BIT(USARTx->CR1, (USART_CR1_PS | USART_CR1_PCE));
 }
 
 /**
@@ -935,18 +935,19 @@ uint32_t USART_GetParity(M0P_USART_TypeDef *USARTx)
  */
 en_result_t USART_SetDataWidth(M0P_USART_TypeDef *USARTx, uint32_t u32DataWidth)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check USARTx instance */
-    if (!IS_USART_INSTANCE(USARTx))
+    if (IS_USART_INSTANCE(USARTx))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_USART_DATA_WIDTH(u32DataWidth));
+
+        MODIFY_REG32(USARTx->CR1, USART_CR1_M, u32DataWidth);
+        enRet = Ok;
     }
 
-    /* Check parameters */
-    DDL_ASSERT(IS_USART_DATA_WIDTH(u32DataWidth));
-
-    MODIFY_REG(USARTx->CR1, USART_CR1_M, u32DataWidth);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -966,7 +967,7 @@ uint32_t USART_GetDataWidth(M0P_USART_TypeDef *USARTx)
     /* Check parameters */
     DDL_ASSERT(IS_USART_INSTANCE(USARTx));
 
-    return READ_BIT(USARTx->CR1, USART_CR1_M);
+    return READ_REG32_BIT(USARTx->CR1, USART_CR1_M);
 }
 
 /**
@@ -987,18 +988,19 @@ uint32_t USART_GetDataWidth(M0P_USART_TypeDef *USARTx)
  */
 en_result_t USART_SetOversmaplingBits(M0P_USART_TypeDef *USARTx, uint32_t u32OversamplingBits)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check USARTx instance */
-    if (!IS_USART_INSTANCE(USARTx))
+    if (IS_USART_INSTANCE(USARTx))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_USART_OVERSAMPLING_BITS(u32OversamplingBits));
+
+        MODIFY_REG32(USARTx->CR1, USART_CR1_OVER8, u32OversamplingBits);
+        enRet = Ok;
     }
 
-    /* Check parameters */
-    DDL_ASSERT(IS_USART_OVERSAMPLING_BITS(u32OversamplingBits));
-
-    MODIFY_REG(USARTx->CR1, USART_CR1_OVER8, u32OversamplingBits);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -1018,7 +1020,7 @@ uint32_t USART_GetOversmaplingBits(M0P_USART_TypeDef *USARTx)
     /* Check parameters */
     DDL_ASSERT(IS_USART_INSTANCE(USARTx));
 
-    return READ_BIT(USARTx->CR1, USART_CR1_OVER8);
+    return READ_REG32_BIT(USARTx->CR1, USART_CR1_OVER8);
 }
 
 /**
@@ -1039,18 +1041,19 @@ uint32_t USART_GetOversmaplingBits(M0P_USART_TypeDef *USARTx)
  */
 en_result_t USART_SetMode(M0P_USART_TypeDef *USARTx, uint32_t u32Mode)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check USARTx instance */
-    if (!IS_USART_INSTANCE(USARTx))
+    if (IS_USART_INSTANCE(USARTx))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_USART_MODE_SEL(u32Mode));
+
+        MODIFY_REG32(USARTx->CR1, USART_CR1_MS, u32Mode);
+        enRet = Ok;
     }
 
-    /* Check parameters */
-    DDL_ASSERT(IS_USART_MODE_SEL(u32Mode));
-
-    MODIFY_REG(USARTx->CR1, USART_CR1_MS, u32Mode);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -1070,7 +1073,7 @@ uint32_t USART_GetMode(M0P_USART_TypeDef *USARTx)
     /* Check parameters */
     DDL_ASSERT(IS_USART_INSTANCE(USARTx));
 
-    return READ_BIT(USARTx->CR1, USART_CR1_MS);
+    return READ_REG32_BIT(USARTx->CR1, USART_CR1_MS);
 }
 
 /**
@@ -1092,18 +1095,19 @@ uint32_t USART_GetMode(M0P_USART_TypeDef *USARTx)
 en_result_t USART_SetBitDirection(M0P_USART_TypeDef *USARTx,
                                         uint32_t u32BitDir)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check USARTx instance */
-    if (!IS_USART_INSTANCE(USARTx))
+    if (IS_USART_INSTANCE(USARTx))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_USART_SIGNIFICANT_BIT(u32BitDir));
+
+        MODIFY_REG32(USARTx->CR1, USART_CR1_ML, u32BitDir);
+        enRet = Ok;
     }
 
-    /* Check parameters */
-    DDL_ASSERT(IS_USART_SIGNIFICANT_BIT(u32BitDir));
-
-    MODIFY_REG(USARTx->CR1, USART_CR1_ML, u32BitDir);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -1123,7 +1127,7 @@ uint32_t USART_GetBitDirection(M0P_USART_TypeDef *USARTx)
     /* Check parameters */
     DDL_ASSERT(IS_USART_INSTANCE(USARTx));
 
-    return READ_BIT(USARTx->CR1, USART_CR1_ML);
+    return READ_REG32_BIT(USARTx->CR1, USART_CR1_ML);
 }
 
 /**
@@ -1145,18 +1149,19 @@ uint32_t USART_GetBitDirection(M0P_USART_TypeDef *USARTx)
 en_result_t USART_SetSbDetectPolarity(M0P_USART_TypeDef *USARTx,
                                             uint32_t u32Polarity)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check USARTx instance */
-    if (!IS_USART_INSTANCE(USARTx))
+    if (IS_USART_INSTANCE(USARTx))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_USART_SB_DETECT_POLARITY(u32Polarity));
+
+        MODIFY_REG32(USARTx->CR1, USART_CR1_SBS, u32Polarity);
+        enRet = Ok;
     }
 
-    /* Check parameters */
-    DDL_ASSERT(IS_USART_SB_DETECT_POLARITY(u32Polarity));
-
-    MODIFY_REG(USARTx->CR1, USART_CR1_SBS, u32Polarity);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -1176,7 +1181,7 @@ uint32_t USART_GetSbDetectPolarity(M0P_USART_TypeDef *USARTx)
     /* Check parameters */
     DDL_ASSERT(IS_USART_INSTANCE(USARTx));
 
-    return READ_BIT(USARTx->CR1, USART_CR1_SBS);
+    return READ_REG32_BIT(USARTx->CR1, USART_CR1_SBS);
 }
 
 /**
@@ -1198,18 +1203,19 @@ uint32_t USART_GetSbDetectPolarity(M0P_USART_TypeDef *USARTx)
  */
 en_result_t USART_SetClockMode(M0P_USART_TypeDef *USARTx, uint32_t u32ClkMode)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check USARTx instance */
-    if (!IS_USART_INSTANCE(USARTx))
+    if (IS_USART_INSTANCE(USARTx))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_USART_CLOCK_MODE(u32ClkMode));
+
+        MODIFY_REG32(USARTx->CR2, USART_CR2_CLKC, u32ClkMode);
+        enRet = Ok;
     }
 
-    /* Check parameters */
-    DDL_ASSERT(IS_USART_CLOCK_MODE(u32ClkMode));
-
-    MODIFY_REG(USARTx->CR2, USART_CR2_CLKC, u32ClkMode);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -1230,7 +1236,7 @@ uint32_t USART_GetClockMode(M0P_USART_TypeDef *USARTx)
     /* Check parameters */
     DDL_ASSERT(IS_USART_INSTANCE(USARTx));
 
-    return READ_BIT(USARTx->CR2, USART_CR2_CLKC);
+    return READ_REG32_BIT(USARTx->CR2, USART_CR2_CLKC);
 }
 
 /**
@@ -1251,18 +1257,19 @@ uint32_t USART_GetClockMode(M0P_USART_TypeDef *USARTx)
  */
 en_result_t USART_SetStopBits(M0P_USART_TypeDef *USARTx, uint32_t u32StopBits)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check USARTx instance */
-    if (!IS_USART_INSTANCE(USARTx))
+    if (IS_USART_INSTANCE(USARTx))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_USART_STOP_BITS(u32StopBits));
+
+        MODIFY_REG32(USARTx->CR2, USART_CR2_STOP, u32StopBits);
+        enRet = Ok;
     }
 
-    /* Check parameters */
-    DDL_ASSERT(IS_USART_STOP_BITS(u32StopBits));
-
-    MODIFY_REG(USARTx->CR2, USART_CR2_STOP, u32StopBits);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -1282,7 +1289,7 @@ uint32_t USART_GetStopBits(M0P_USART_TypeDef *USARTx)
     /* Check parameters */
     DDL_ASSERT(IS_USART_INSTANCE(USARTx));
 
-    return READ_BIT(USARTx->CR2, USART_CR2_STOP);
+    return READ_REG32_BIT(USARTx->CR2, USART_CR2_STOP);
 }
 
 /**
@@ -1304,18 +1311,19 @@ uint32_t USART_GetStopBits(M0P_USART_TypeDef *USARTx)
 en_result_t USART_SetDuplexMode(M0P_USART_TypeDef *USARTx,
                                 uint32_t u32Mode)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check USARTx instance */
-    if (!IS_USART_INSTANCE(USARTx))
+    if (IS_USART_INSTANCE(USARTx))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_UART_DUPLEX_MODE(u32Mode));
+
+        MODIFY_REG32(USARTx->CR3, USART_CR3_HDSEL, u32Mode);
+        enRet = Ok;
     }
 
-    /* Check parameters */
-    DDL_ASSERT(IS_UART_DUPLEX_MODE(u32Mode));
-
-    MODIFY_REG(USARTx->CR3, USART_CR3_HDSEL, u32Mode);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -1335,7 +1343,7 @@ uint32_t USART_GetDuplexMode(M0P_USART_TypeDef *USARTx)
     /* Check parameters */
     DDL_ASSERT(IS_USART_INSTANCE(USARTx));
 
-    return READ_BIT(USARTx->CR3, USART_CR3_HDSEL);
+    return READ_REG32_BIT(USARTx->CR3, USART_CR3_HDSEL);
 }
 
 /**
@@ -1357,18 +1365,19 @@ uint32_t USART_GetDuplexMode(M0P_USART_TypeDef *USARTx)
 en_result_t USART_SetHwFlowCtrl(M0P_USART_TypeDef *USARTx,
                                 uint32_t u32HwFlowCtrl)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check USARTx instance */
-    if (!IS_USART_INSTANCE(USARTx))
+    if (IS_USART_INSTANCE(USARTx))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_USART_HWFLOWCTRL(u32HwFlowCtrl));
+
+        MODIFY_REG32(USARTx->CR3, USART_CR3_CTSE, u32HwFlowCtrl);
+        enRet = Ok;
     }
 
-    /* Check parameters */
-    DDL_ASSERT(IS_USART_HWFLOWCTRL(u32HwFlowCtrl));
-
-    MODIFY_REG(USARTx->CR3, USART_CR3_CTSE, u32HwFlowCtrl);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -1388,7 +1397,7 @@ uint32_t USART_GetHwFlowCtrl(M0P_USART_TypeDef *USARTx)
     /* Check parameters */
     DDL_ASSERT(IS_USART_INSTANCE(USARTx));
 
-    return READ_BIT(USARTx->CR3, USART_CR3_CTSE);
+    return READ_REG32_BIT(USARTx->CR3, USART_CR3_CTSE);
 }
 
 /**
@@ -1412,18 +1421,19 @@ uint32_t USART_GetHwFlowCtrl(M0P_USART_TypeDef *USARTx)
 en_result_t USART_SetClkPrescaler(M0P_USART_TypeDef *USARTx,
                                     uint32_t u32PrescalerDiv)
 {
+    en_result_t enRet = ErrorInvalidParameter;
+
     /* Check USARTx instance */
-    if (!IS_USART_INSTANCE(USARTx))
+    if (IS_USART_INSTANCE(USARTx))
     {
-        return ErrorInvalidParameter;
+        /* Check parameters */
+        DDL_ASSERT(IS_USART_CLOCK_PRESCALER_DIV(u32PrescalerDiv));
+
+        MODIFY_REG32(USARTx->PR, USART_PR_PSC, u32PrescalerDiv);
+        enRet = Ok;
     }
 
-    /* Check parameters */
-    DDL_ASSERT(IS_USART_CLOCK_PRESCALER_DIV(u32PrescalerDiv));
-
-    MODIFY_REG(USARTx->PR, USART_PR_PSC, u32PrescalerDiv);
-
-    return Ok;
+    return enRet;
 }
 
 /**
@@ -1445,7 +1455,7 @@ uint32_t USART_GetClkPrescaler(M0P_USART_TypeDef *USARTx)
     /* Check parameters */
     DDL_ASSERT(IS_USART_INSTANCE(USARTx));
 
-    return READ_BIT(USARTx->PR, USART_PR_PSC);
+    return READ_REG32_BIT(USARTx->PR, USART_PR_PSC);
 }
 
 /**
@@ -1466,71 +1476,71 @@ en_result_t USART_SetBaudrate(M0P_USART_TypeDef *USARTx,
                                     uint32_t u32Baudrate,
                                     float32_t *pf32Err)
 {
-    uint32_t B;
-    uint32_t C;
-    uint32_t OVER8;
-    uint32_t DIV_Integer;
-    uint32_t u32Prescaler = 0u;
-    uint32_t u32Mode = READ_BIT(USARTx->CR1, USART_CR1_MS);
+    uint32_t B = 0ul;
+    uint32_t C = 0ul;
+    uint32_t OVER8 = 0ul;
+    uint32_t DIV_Integer = 0ul;
+    uint32_t u32Temp = 0ul;
+    uint32_t u32Prescaler = 0ul;
+    uint32_t u32Mode = READ_REG32_BIT(USARTx->CR1, USART_CR1_MS);
+    en_result_t enRet = ErrorInvalidParameter;
 
     /* Check USARTx pointer */
-    if (!IS_USART_INSTANCE(USARTx))
+    if (IS_USART_INSTANCE(USARTx) && u32Baudrate)
     {
-        return ErrorInvalidParameter;
-    }
+        u32Prescaler = READ_REG32_BIT(USARTx->PR, USART_PR_PSC);
 
-    u32Prescaler = READ_BIT(USARTx->PR, USART_PR_PSC);
+        B = u32Baudrate;
+        C = (SystemCoreClock / (1ul << (u32Prescaler * 2ul)));
+        OVER8 = READ_REG32_BIT(USARTx->CR1, USART_CR1_OVER8) ? 1ul : 0ul;
 
-    B = u32Baudrate;
-    C = (SystemCoreClock / (1 << (u32Prescaler * 2)));
-    OVER8 = READ_BIT(USARTx->CR1, USART_CR1_OVER8) ? 1u : 0u;
-
-    if (USART_MODE_UART == u32Mode)
-    {
-        /* UART Baudrate Calculation Formula */
-        /* B = C / (8 * (2 - OVER8) * (DIV_Integer + 1)) */
-        DIV_Integer = (C * 10) / (B * 8 * (2 - OVER8));
-    }
-    else
-    {
-        /* Clock Sync Baudrate Calculation Formula */
-        /* B = C / (4 * (DIV_Integer + 1)) */
-        DIV_Integer = (C * 10) / (B * 4);
-    }
-
-    if (DIV_Integer % 10 < 5)
-    {
-        DIV_Integer -= 10;
-    }
-
-    DIV_Integer /= 10;
-
-    if (DIV_Integer > 0xFF)
-    {
-        DDL_ASSERT(NULL);
-        return ErrorInvalidParameter;
-    }
-
-    if (pf32Err)
-    {
         if (USART_MODE_UART == u32Mode)
         {
-            /* UART Baudrate Error Calculation Formula */
-            /* E(%) = C / (8 * (2 - OVER8) * (DIV_Integer + 1) * B) - 1 */
-            *pf32Err = ((float64_t)C) / (8 * (2 - OVER8) * (DIV_Integer + 1) * B) - 1.0;
+            /* UART Baudrate Calculation Formula */
+            /* B = C / (8 * (2 - OVER8) * (DIV_Integer + 1)) */
+            DIV_Integer = (C * 10ul) / (B * 8ul * (2ul - OVER8));
         }
         else
         {
-            /* Clock Sync Baudrate Error Calculation Formula */
-            /* E(%) = C / (4 * (DIV_Integer + 1) * B) - 1 */
-            *pf32Err = ((float64_t)C) / (4 * (DIV_Integer + 1) * B) - 1.0;
+            /* Clock Sync Baudrate Calculation Formula */
+            /* B = C / (4 * (DIV_Integer + 1)) */
+            DIV_Integer = (C * 10ul) / (B * 4ul);
+        }
+
+        if (DIV_Integer % 10ul < 5ul)
+        {
+            DIV_Integer -= 10ul;
+        }
+
+        DIV_Integer /= 10ul;
+
+        if (DIV_Integer <= 0xFFul)
+        {
+            if (pf32Err)
+            {
+                if (USART_MODE_UART == u32Mode)
+                {
+                    /* UART Baudrate Error Calculation Formula */
+                    /* E(%) = C / (8 * (2 - OVER8) * (DIV_Integer + 1) * B) - 1 */
+                    u32Temp = (8ul * (2ul - OVER8) * (DIV_Integer + 1ul) * B);
+                }
+                else
+                {
+                    /* Clock Sync Baudrate Error Calculation Formula */
+                    /* E(%) = C / (4 * (DIV_Integer + 1) * B) - 1 */
+                    u32Temp = (4ul * (DIV_Integer + 1ul) * B);
+                }
+
+                *pf32Err = (float32_t)(((float64_t)C) / (float64_t)u32Temp) - 1.0f;
+            }
+
+            /* Set USART_BRR register bits:DIV_Integer */
+            WRITE_REG32(USARTx->BRR, (DIV_Integer << USART_BRR_DIV_INTEGER_POS));
+            enRet = Ok;
         }
     }
 
-    /* Set USART_BRR register bits:DIV_Integer */
-    WRITE_REG(USARTx->BRR, (DIV_Integer << USART_BRR_DIV_INTEGER_POS));
-
-    return Ok;
+    return enRet;
 }
 
 /**

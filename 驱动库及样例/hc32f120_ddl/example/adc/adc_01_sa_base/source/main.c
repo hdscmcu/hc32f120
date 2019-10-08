@@ -72,12 +72,6 @@
 /*******************************************************************************
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
-/* Enable ADC peripheral. */
-#define ENABLE_ADC()                CLK_FcgPeriphClockCmd(CLK_FCG_ADC, Enable)
-
-/* Disable ADC peripheral. */
-#define DISABLE_ADC()               CLK_FcgPeriphClockCmd(CLK_FCG_ADC, Disable)
-
 /* ADC channels definition for this example. */
 #define ADC_SA_CHANNEL              (ADC_CH0 | ADC_CH2 | ADC_CH4 | ADC_CH11)
 #define ADC_SA_CHANNEL_COUNT        (4u)
@@ -86,7 +80,7 @@
 #define ADC_SAMPLE_TIME             ((uint8_t)10)
 
 /* ADC resolution definition. */
-#define ADC_RESOLUTION              ADC_RESOLUTION_12B
+#define ADC_RESOLUTION              (ADC_RESOLUTION_12B)
 
 /* ADC accuracy. */
 #define ADC_ACCURACY                (1ul << 12u)
@@ -140,7 +134,7 @@ int32_t main(void)
 
     while (1u)
     {
-        ADC_SaPolling(m_au16AdcSaVal, TIMEOUT_MS);
+        ADC_PollingSa(m_au16AdcSaVal, ADC_SA_CHANNEL_COUNT, TIMEOUT_MS);
         m_f32Vol = ((float)m_au16AdcSaVal[3u] * ADC_VREF) / ((float)ADC_ACCURACY);
         (void)m_f32Vol;
     }
@@ -153,6 +147,9 @@ int32_t main(void)
  */
 static void SystemClockConfig(void)
 {
+    /* Set EFM read latency when system clock greater than 24MHz. */
+    EFM_SetLatency(EFM_LATENCY_1);
+
     /* Configure the system clock to HRC32MHz. */
     CLK_HRCInit(CLK_HRC_ON, CLK_HRCFREQ_32);
 }
@@ -198,7 +195,7 @@ static void AdcInitConfig(void)
     stcInit.u8SampTime    = ADC_SAMPLE_TIME;
     
     /* 1. Enable ADC peripheral. */
-    ENABLE_ADC();
+    CLK_FcgPeriphClockCmd(CLK_FCG_ADC, Enable);
 
     /* 2. Initializes ADC. */
     ADC_Init(&stcInit);
@@ -250,8 +247,9 @@ static void AdcSetChannelPinAnalogMode(uint16_t u16Channel)
  */
 static void AdcSetPinAnalogMode(uint8_t u8PinNbr)
 {
-    uint8_t u8Port;
-    uint8_t u8Pin;
+    uint8_t u8Port = GPIO_PORT_2;
+    uint8_t u8Pin  = GPIO_PIN_0;
+    uint8_t u8Flag = 1u;
 
     switch (u8PinNbr)
     {
@@ -316,10 +314,14 @@ static void AdcSetPinAnalogMode(uint8_t u8PinNbr)
         break;
 
     default:
-        return;
+        u8Flag = 0u;
+        break;
     }
 
-    GPIO_SetFunc(u8Port, u8Pin, GPIO_FUNC_ANIN);
+    if (u8Flag != 0u)
+    {
+        GPIO_SetFunc(u8Port, u8Pin, GPIO_FUNC_1_ANIN);
+    }
 }
 
 /**

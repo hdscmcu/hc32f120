@@ -73,39 +73,39 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* Define slave device address for example */
-#define DEVICE_ADDRESS                  0x06
+#define DEVICE_ADDRESS                  (0x06u)
 /* Define port and pin for SDA and SCL */
-#define I2C_SCL_PORT                    GPIO_PORT_6
-#define I2C_SCL_PIN                     GPIO_PIN_0
-#define I2C_SDA_PORT                    GPIO_PORT_6
-#define I2C_SDA_PIN                     GPIO_PIN_1
+#define I2C_SCL_PORT                    (GPIO_PORT_6)
+#define I2C_SCL_PIN                     (GPIO_PIN_0)
+#define I2C_SDA_PORT                    (GPIO_PORT_6)
+#define I2C_SDA_PIN                     (GPIO_PIN_1)
 
 #define TIMEOUT                         ((uint32_t)0x10000)
 
-#define I2C_RET_OK                      0
-#define I2C_RET_ERROR                   1
+#define I2C_RET_OK                      (0u)
+#define I2C_RET_ERROR                   (1u)
 
-#define GENERATE_START                  0x00
-#define GENERATE_RESTART                0x01
+#define GENERATE_START                  (0x00u)
+#define GENERATE_RESTART                (0x01u)
 
-#define ADDRESS_W                       0x00
-#define ADDRESS_R                       0x01
+#define ADDRESS_W                       (0x00u)
+#define ADDRESS_R                       (0x01u)
 
 /* Define Write and read data length for the example */
-#define TEST_DATA_LEN                   128
+#define TEST_DATA_LEN                   (128u)
 /* Define i2c baudrate */
-#define I2C_BAUDRATE                    400000
+#define I2C_BAUDRATE                    (400000ul)
 
 /* Define for RGB LED */
-#define LED_RGB_PORT    GPIO_PORT_2
-#define LED_R_PORT      GPIO_PORT_2
-#define LED_G_PORT      GPIO_PORT_2
-#define LED_B_PORT      GPIO_PORT_2
-#define LED_R_PIN       GPIO_PIN_5
-#define LED_G_PIN       GPIO_PIN_6
-#define LED_B_PIN       GPIO_PIN_7
-#define LED_G_TOGGLE()  GPIO_TogglePins(LED_G_PORT, LED_G_PIN)
-#define LED_R_TOGGLE()  GPIO_TogglePins(LED_R_PORT, LED_R_PIN)
+#define LED_RGB_PORT                    (GPIO_PORT_2)
+#define LED_R_PORT                      (GPIO_PORT_2)
+#define LED_G_PORT                      (GPIO_PORT_2)
+#define LED_B_PORT                      (GPIO_PORT_2)
+#define LED_R_PIN                       (GPIO_PIN_5)
+#define LED_G_PIN                       (GPIO_PIN_6)
+#define LED_B_PIN                       (GPIO_PIN_7)
+#define LED_G_TOGGLE()                  (GPIO_TogglePins(LED_G_PORT, LED_G_PIN))
+#define LED_R_TOGGLE()                  (GPIO_TogglePins(LED_R_PORT, LED_R_PIN))
 
 
 
@@ -119,7 +119,7 @@
 static uint8_t Master_StartOrRestart(uint8_t u8Start);
 static uint8_t Master_SendAdr(uint8_t u8Adr);
 static uint8_t Master_WriteData(uint8_t *pTxData, uint32_t u32Size);
-static uint8_t Master_SendAdrRevData(uint8_t u8Adr, uint8_t *pRxData, uint32_t u32Size);
+static uint8_t Master_RevData(uint8_t *pRxData, uint32_t u32Size);
 uint8_t Master_Stop(void);
 uint8_t Master_Initialize(void);
 static void JudgeResult(uint8_t u8Result);
@@ -137,13 +137,12 @@ uint8_t u8RxBuf[TEST_DATA_LEN];
  * Function implementation - global ('extern') and local ('static')
  ******************************************************************************/
 /**
- * @brief  Main function of i2c_at24c02 project
+ * @brief  Main function
  * @param  None
  * @retval int32_t return value, if needed
  */
 int32_t main(void)
 {
-
     uint32_t i;
     uint8_t u8Ret = I2C_RET_OK;
 
@@ -154,18 +153,18 @@ int32_t main(void)
     LedConfig();
 
     /* Test buffer initialize */
-    for(i=0; i<TEST_DATA_LEN; i++)
+    for(i=0u; i<TEST_DATA_LEN; i++)
     {
-        u8TxBuf[i] = i+1;
+        u8TxBuf[i] = (uint8_t)(i+1u);
     }
-    for(i=0; i<TEST_DATA_LEN; i++)
+    for(i=0u; i<TEST_DATA_LEN; i++)
     {
-        u8RxBuf[i] = 0;
+        u8RxBuf[i] = 0u;
     }
 
     /* Initialize I2C port*/
-    GPIO_SetFunc(I2C_SCL_PORT, I2C_SCL_PIN, GPIO_FUNC_I2C);
-    GPIO_SetFunc(I2C_SDA_PORT, I2C_SDA_PIN, GPIO_FUNC_I2C);
+    GPIO_SetFunc(I2C_SCL_PORT, I2C_SCL_PIN, GPIO_FUNC_4_I2C);
+    GPIO_SetFunc(I2C_SDA_PORT, I2C_SDA_PIN, GPIO_FUNC_4_I2C);
 
     /* Enable I2C Peripheral*/
     CLK_FcgPeriphClockCmd(CLK_FCG_I2C, Enable);
@@ -179,7 +178,7 @@ int32_t main(void)
     /* I2C master data write*/
     u8Ret = Master_StartOrRestart(GENERATE_START);
     JudgeResult(u8Ret);
-    u8Ret = Master_SendAdr((DEVICE_ADDRESS<<1)|ADDRESS_W);
+    u8Ret = Master_SendAdr(((uint8_t)DEVICE_ADDRESS<<1u)|ADDRESS_W);
     JudgeResult(u8Ret);
     u8Ret = Master_WriteData(u8TxBuf, TEST_DATA_LEN);
     JudgeResult(u8Ret);
@@ -187,18 +186,20 @@ int32_t main(void)
     JudgeResult(u8Ret);
 
     /* 5mS delay for device*/
-    DDL_Delay1ms(1);
+    DDL_Delay1ms(1u);
 
     /* I2C master data read*/
     u8Ret = Master_StartOrRestart(GENERATE_START);
     JudgeResult(u8Ret);
-    u8Ret = Master_SendAdrRevData((DEVICE_ADDRESS<<1)|ADDRESS_R, u8RxBuf, TEST_DATA_LEN);
+    u8Ret = Master_SendAdr(((uint8_t)DEVICE_ADDRESS<<1u)|ADDRESS_R);
+    JudgeResult(u8Ret);
+    u8Ret = Master_RevData(u8RxBuf, TEST_DATA_LEN);
     JudgeResult(u8Ret);
     u8Ret = Master_Stop();
     JudgeResult(u8Ret);
 
     /* Compare the data */
-    for(i=0; i<TEST_DATA_LEN; i++)
+    for(i=0u; i<TEST_DATA_LEN; i++)
     {
         if(u8TxBuf[i] != u8RxBuf[i])
         {
@@ -206,7 +207,7 @@ int32_t main(void)
             while(1)
             {
                 LED_R_TOGGLE();
-                DDL_Delay1ms(500);
+                DDL_Delay1ms(500u);
             }
         }
     }
@@ -215,7 +216,7 @@ int32_t main(void)
     while(1)
     {
         LED_G_TOGGLE();
-        DDL_Delay1ms(500);
+        DDL_Delay1ms(500u);
     }
 
 }
@@ -228,16 +229,25 @@ int32_t main(void)
 static void WaitSw2_ShortPress(void)
 {
     /* Wait key up */
-    while(Pin_Set != GPIO_ReadInputPortPin(GPIO_PORT_7, GPIO_PIN_0));
-    DDL_Delay1ms(5);
+    while(Pin_Set != GPIO_ReadInputPortPin(GPIO_PORT_7, GPIO_PIN_0))
+    {
+        ;
+    }
+    DDL_Delay1ms(5u);
 
     /* Wait key down */
-    while(Pin_Reset != GPIO_ReadInputPortPin(GPIO_PORT_7, GPIO_PIN_0));
-    DDL_Delay1ms(5);
+    while(Pin_Reset != GPIO_ReadInputPortPin(GPIO_PORT_7, GPIO_PIN_0))
+    {
+        ;
+    }
+    DDL_Delay1ms(5u);
 
     /* Wait key up */
-    while(Pin_Set != GPIO_ReadInputPortPin(GPIO_PORT_7, GPIO_PIN_0));
-    DDL_Delay1ms(5);
+    while(Pin_Set != GPIO_ReadInputPortPin(GPIO_PORT_7, GPIO_PIN_0))
+    {
+        ;
+    }
+    DDL_Delay1ms(5u);
 }
 
 /**
@@ -250,6 +260,8 @@ static void WaitSw2_ShortPress(void)
 static uint8_t Master_StartOrRestart(uint8_t u8Start)
 {
     uint32_t u32TimeOut = TIMEOUT;
+    en_flag_status_t enBusyFlag, enStartFlag;
+    uint8_t u8Ret = I2C_RET_OK;
 
     /* generate start or restart signal */
     if(GENERATE_START == u8Start)
@@ -265,14 +277,22 @@ static uint8_t Master_StartOrRestart(uint8_t u8Start)
     }
 
     /* Judge if start success*/
-    u32TimeOut = TIMEOUT;
-    while((Reset == I2C_GetStatus(I2C_SR_BUSY)) ||
-            (Reset == I2C_GetStatus(I2C_SR_STARTF)))
+    while(1)
     {
-        if(0 == (u32TimeOut--)) return I2C_RET_ERROR;
+        enBusyFlag = I2C_GetStatus(I2C_SR_BUSY);
+        enStartFlag = I2C_GetStatus(I2C_SR_STARTF);
+        u32TimeOut--;
+        if(((Set == enBusyFlag) && (Set == enStartFlag))||(0u == u32TimeOut))
+        {
+            break;
+        }
+    }
+    if(0u == u32TimeOut)
+    {
+        u8Ret = I2C_RET_ERROR;
     }
 
-    return I2C_RET_OK;
+    return u8Ret;
 }
 
 /**
@@ -289,26 +309,35 @@ static uint8_t Master_SendAdr(uint8_t u8Adr)
     /* Wait tx buffer empty */
     while(Reset == I2C_GetStatus(I2C_SR_TEMPTYF))
     {
-        if(0 == (u32TimeOut--)) return I2C_RET_ERROR;
+        if(0u == (u32TimeOut--))
+        {
+            return I2C_RET_ERROR;
+        }
     }
 
     /* Send I2C address */
     I2C_SendData(u8Adr);
 
-    if(ADDRESS_W == (u8Adr & 0x01))
+    if(ADDRESS_W == (u8Adr & 0x01u))
     {
         /* If in master transfer process, Need wait transfer end*/
         uint32_t u32TimeOut = TIMEOUT;
         while(Reset == I2C_GetStatus(I2C_SR_TENDF))
         {
-            if(0 == (u32TimeOut--)) return I2C_RET_ERROR;
+            if(0u == (u32TimeOut--))
+            {
+                return I2C_RET_ERROR;
+            }
         }
+    }
 
-        /* Check ACK */
-        u32TimeOut = TIMEOUT;
-        while(Set == I2C_GetStatus(I2C_SR_ACKRF))
+    /* Check ACK */
+    u32TimeOut = TIMEOUT;
+    while(Set == I2C_GetStatus(I2C_SR_ACKRF))
+    {
+        if(0u == (u32TimeOut--))
         {
-            if(0 == (u32TimeOut--)) return I2C_RET_ERROR;
+            return I2C_RET_ERROR;
         }
     }
 
@@ -333,24 +362,34 @@ static uint8_t Master_WriteData(uint8_t *pTxData, uint32_t u32Size)
         u32TimeOut = TIMEOUT;
         while(Reset == I2C_GetStatus(I2C_SR_TEMPTYF))
         {
-            if(0 == (u32TimeOut--)) return I2C_RET_ERROR;
+            if(0u == (u32TimeOut--))
+            {
+                return I2C_RET_ERROR;
+            }
         }
 
         /* Send one byte data */
-        I2C_SendData(*pTxData++);
+        I2C_SendData(*pTxData);
+        pTxData++;
 
         /* Wait transfer end*/
         u32TimeOut = TIMEOUT;
         while(Reset == I2C_GetStatus(I2C_SR_TENDF))
         {
-            if(0 == (u32TimeOut--)) return I2C_RET_ERROR;
+            if(0u == (u32TimeOut--))
+            {
+                return I2C_RET_ERROR;
+            }
         }
 
         /* Check ACK */
         u32TimeOut = TIMEOUT;
         while(Set == I2C_GetStatus(I2C_SR_ACKRF))
         {
-            if(0 == (u32TimeOut--)) return I2C_RET_ERROR;
+            if(0u == (u32TimeOut--))
+            {
+                return I2C_RET_ERROR;
+            }
         }
     }
 
@@ -358,43 +397,33 @@ static uint8_t Master_WriteData(uint8_t *pTxData, uint32_t u32Size)
 }
 
 /**
- * @brief   Write address and receive data from slave
- * @param   [in]  u8Adr    Device address and R/W bit
+ * @brief   Receive data from slave
  * @param   [in]  pRxData  Pointer to the data buffer
  * @param   [in]  u32Size  Data size
  * @retval  Process result
  *          - I2C_RET_ERROR  Process failed
  *          - I2C_RET_OK     Process success
  */
-static uint8_t Master_SendAdrRevData(uint8_t u8Adr, uint8_t *pRxData, uint32_t u32Size)
+static uint8_t Master_RevData(uint8_t *pRxData, uint32_t u32Size)
 {
     uint32_t u32TimeOut = TIMEOUT;
 
-    /* Wait tx buffer empty */
-    while(Reset == I2C_GetStatus(I2C_SR_TEMPTYF))
-    {
-        if(0 == (u32TimeOut--)) return I2C_RET_ERROR;
-    }
-
-    for(uint32_t i=0; i<u32Size; i++)
+    for(uint32_t i=0u; i<u32Size; i++)
     {
         /* if the last byte receive, need config NACK*/
-        if(i == (u32Size - 1))
+        if(i == (u32Size - 1u))
         {
             I2C_NackConfig(Enable);
-        }
-
-        /* if first byte receive, need send adr*/
-        if(0 == i)
-        {
-            I2C_SendData(u8Adr);
         }
 
         /* Wait receive full flag*/
         u32TimeOut = TIMEOUT;
         while(Reset == I2C_GetStatus(I2C_SR_RFULLF))
         {
-            if(0 == (u32TimeOut--)) return I2C_RET_ERROR;
+            if(0u == (u32TimeOut--))
+            {
+                return I2C_RET_ERROR;
+            }
         }
 
         /* read data from register*/
@@ -415,7 +444,6 @@ uint8_t Master_Stop(void)
     uint32_t u32TimeOut;
 
     /* Clear stop flag */
-    u32TimeOut = TIMEOUT;
     while(Set == I2C_GetStatus(I2C_SR_STOPF))
     {
         I2C_ClearStatus(I2C_CLR_STOPFCLR);
@@ -427,7 +455,10 @@ uint8_t Master_Stop(void)
     u32TimeOut = TIMEOUT;
     while(Reset == I2C_GetStatus(I2C_SR_STOPF))
     {
-        if(0 == (u32TimeOut--)) return I2C_RET_ERROR;
+        if(0u == (u32TimeOut--))
+        {
+            return I2C_RET_ERROR;
+        }
     }
     return I2C_RET_OK;
 }
@@ -448,7 +479,7 @@ uint8_t Master_Initialize(void)
 
     I2C_StructInit(&stcI2cInit);
     stcI2cInit.u32Baudrate = I2C_BAUDRATE;
-    stcI2cInit.u32SclTime = 5;
+    stcI2cInit.u32SclTime = 5u;
     stcI2cInit.u32I2cClkDiv = I2C_CLK_DIV1;
     I2C_Init(&stcI2cInit, &fErr);
 
@@ -492,7 +523,7 @@ static void JudgeResult(uint8_t u8Result)
         while(1)
         {
             LED_R_TOGGLE();
-            DDL_Delay1ms(500);
+            DDL_Delay1ms(500u);
         }
     }
 }
@@ -504,14 +535,12 @@ static void JudgeResult(uint8_t u8Result)
  */
 static void LedConfig(void)
 {
-    stc_gpio_init_t stcGpioInit = {0};
+    stc_gpio_init_t stcGpioInit = {0u};
 
     stcGpioInit.u16PinMode = PIN_MODE_OUT;
     stcGpioInit.u16PinState = PIN_STATE_SET;
     GPIO_Init(LED_G_PORT, LED_G_PIN|LED_R_PIN, &stcGpioInit);
 }
-
-
 
 /**
  * @}

@@ -157,43 +157,43 @@ typedef struct
  * @defgroup CLK_XTAL_Config XTAL Config
  * @{
  */
-#define CLK_XTAL_OFF                CMU_XTALCR_XTALSTP
-#define CLK_XTAL_ON                 ((uint8_t)0x00)
+#define CLK_XTAL_OFF                (CMU_XTALCR_XTALSTP)
+#define CLK_XTAL_ON                 ((uint8_t)0x00u)
 
 /**
  * @brief XTAL mode selection osc or exclk
  */
 
-#define CLK_XTALMODE_OSC            ((uint8_t)0x00)
-#define CLK_XTALMODE_EXCLK          CMU_XTALCFGR_XTALMS
+#define CLK_XTALMODE_OSC            ((uint8_t)0x00u)
+#define CLK_XTALMODE_EXCLK          (CMU_XTALCFGR_XTALMS)
 
 /**
  * @brief XTAL super driver on or off
  */
-#define CLK_XTAL_SUPDRV_ON          CMU_XTALCFGR_SUPDRV
-#define CLK_XTAL_SUPDRV_OFF         ((uint8_t)0x00)
+#define CLK_XTAL_SUPDRV_ON          (CMU_XTALCFGR_SUPDRV)
+#define CLK_XTAL_SUPDRV_OFF         ((uint8_t)0x00u)
 
 /**
  * @brief XTAL driver ability
  * @note  High suggest OSC 20MHz, Mid bettween 10~20MHz, Low bettween 4~10MHz, ULow 4MHz.
  */
-#define CLK_XTALDRV_HIGH            ((uint8_t)0x00)
-#define CLK_XTALDRV_MID             CMU_XTALCFGR_XTALDRV_0
-#define CLK_XTALDRV_LOW             CMU_XTALCFGR_XTALDRV_1
-#define CLK_XTALDRV_ULOW            CMU_XTALCFGR_XTALDRV
+#define CLK_XTALDRV_HIGH            ((uint8_t)0x00u)
+#define CLK_XTALDRV_MID             (CMU_XTALCFGR_XTALDRV_0)
+#define CLK_XTALDRV_LOW             (CMU_XTALCFGR_XTALDRV_1)
+#define CLK_XTALDRV_ULOW            (CMU_XTALCFGR_XTALDRV)
 
 /**
  * @brief XTAL stable time selection.
  * @note  a cycle of stable counter = a cycle of XTAL
  */
-#define CLK_XTALSTB_8               ((uint8_t)0x00)       /*!< 2^8 * XTAL cycle.  */
-#define CLK_XTALSTB_9               ((uint8_t)0x01)       /*!< 2^9 * XTAL cycle.  */
-#define CLK_XTALSTB_10              ((uint8_t)0x02)       /*!< 2^10 * XTAL cycle. */
-#define CLK_XTALSTB_11              ((uint8_t)0x03)       /*!< 2^11 * XTAL cycle. */
-#define CLK_XTALSTB_13              ((uint8_t)0x04)       /*!< 2^13 * XTAL cycle. */
-#define CLK_XTALSTB_15              ((uint8_t)0x05)       /*!< 2^15 * XTAL cycle. */
-#define CLK_XTALSTB_16              ((uint8_t)0x06)       /*!< 2^16 * XTAL cycle. */
-#define CLK_XTALSTB_17              ((uint8_t)0x07)       /*!< 2^17 * XTAL cycle. */
+#define CLK_XTALSTB_8               ((uint8_t)0x00u)       /*!< 2^8 * XTAL cycle.  */
+#define CLK_XTALSTB_9               ((uint8_t)0x01u)       /*!< 2^9 * XTAL cycle.  */
+#define CLK_XTALSTB_10              ((uint8_t)0x02u)       /*!< 2^10 * XTAL cycle. */
+#define CLK_XTALSTB_11              ((uint8_t)0x03u)       /*!< 2^11 * XTAL cycle. */
+#define CLK_XTALSTB_13              ((uint8_t)0x04u)       /*!< 2^13 * XTAL cycle. */
+#define CLK_XTALSTB_15              ((uint8_t)0x05u)       /*!< 2^15 * XTAL cycle. */
+#define CLK_XTALSTB_16              ((uint8_t)0x06u)       /*!< 2^16 * XTAL cycle. */
+#define CLK_XTALSTB_17              ((uint8_t)0x07u)       /*!< 2^17 * XTAL cycle. */
 /**
  * @}
  */
@@ -206,26 +206,26 @@ typedef struct
 /**
  * @brief XTAL trouble detection on or off
  */
-#define CLK_XTALSTD_OFF             ((uint8_t)0x00)
-#define CLK_XTALSTD_ON              CMU_XTALSTDCR_XTALSTDE
+#define CLK_XTALSTD_OFF             ((uint8_t)0x00u)
+#define CLK_XTALSTD_ON              (CMU_XTALSTDCR_XTALSTDE)
 
 /**
  * @brief XTALSTD mode selection
  */
-#define CLK_XTALSTD_MODE_RST        CMU_XTALSTDCR_XTALSTDRIS
-#define CLK_XTALSTD_MODE_INT        ((uint8_t)0x00)
+#define CLK_XTALSTD_MODE_RST        (CMU_XTALSTDCR_XTALSTDRIS)
+#define CLK_XTALSTD_MODE_INT        ((uint8_t)0x00u)
 
 /**
  * @brief XTALSTD reset on or off
  */
-#define CLK_XTALSTD_RST_OFF         ((uint8_t)0x00)
-#define CLK_XTALSTD_RST_ON          CMU_XTALSTDCR_XTALSTDRE
+#define CLK_XTALSTD_RST_OFF         ((uint8_t)0x00u)
+#define CLK_XTALSTD_RST_ON          (CMU_XTALSTDCR_XTALSTDRE)
 
 /**
  * @brief XTALSTD interrupt on or off
  */
-#define CLK_XTALSTD_INT_OFF         ((uint8_t)0x00)
-#define CLK_XTALSTD_INT_ON          CMU_XTALSTDCR_XTALSTDIE
+#define CLK_XTALSTD_INT_OFF         ((uint8_t)0x00u)
+#define CLK_XTALSTD_INT_ON          (CMU_XTALSTDCR_XTALSTDIE)
 /**
  * @}
  */
@@ -235,29 +235,29 @@ typedef struct
  * @defgroup CLK_XTAL32_Config XTAL32 Config
  * @{
  */
-#define CLK_XTAL32_OFF              CMU_XTAL32CR_XTAL32STP
-#define CLK_XTAL32_ON               ((uint8_t)0x00)
+#define CLK_XTAL32_OFF              (CMU_XTAL32CR_XTAL32STP)
+#define CLK_XTAL32_ON               ((uint8_t)0x00u)
 
 /**
  * @brief XTAL32 super driver on or off
  */
-#define CLK_XTAL32_SUPDRV_ON        CMU_XTAL32CFGR_XTAL32SUPDRV
-#define CLK_XTAL32_SUPDRV_OFF       ((uint8_t)0x00)
+#define CLK_XTAL32_SUPDRV_ON        (CMU_XTAL32CFGR_XTAL32SUPDRV)
+#define CLK_XTAL32_SUPDRV_OFF       ((uint8_t)0x00u)
 
 /**
  * @brief XTAL32 driver ability.
  */
-#define CLK_XTAL32DRV_MID           ((uint8_t)0x00)
-#define CLK_XTAL32DRV_HIGH          CMU_XTAL32CFGR_XTAL32DRV_0
-#define CLK_XTAL32DRV_LOW           CMU_XTAL32CFGR_XTAL32DRV_1
-#define CLK_XTAL32DRV_ULOW          CMU_XTAL32CFGR_XTAL32DRV
+#define CLK_XTAL32DRV_MID           ((uint8_t)0x00u)
+#define CLK_XTAL32DRV_HIGH          (CMU_XTAL32CFGR_XTAL32DRV_0)
+#define CLK_XTAL32DRV_LOW           (CMU_XTAL32CFGR_XTAL32DRV_1)
+#define CLK_XTAL32DRV_ULOW          (CMU_XTAL32CFGR_XTAL32DRV)
 
 /**
  * @brief XTAL32 filtering seletion.
  */
-#define CLK_XTAL32NF_FULL           ((uint8_t)0x00)   /*!< Valid in run,stop,power down mode.     */
-#define CLK_XTAL32NF_PART           ((uint8_t)0x02)   /*!< Valid in run mode.                     */
-#define CLK_XTAL32NF_NONE           ((uint8_t)0x03)   /*!< Invalid in run,stop,power down mode.   */
+#define CLK_XTAL32NF_FULL           ((uint8_t)0x00u)   /*!< Valid in run,stop,power down mode.     */
+#define CLK_XTAL32NF_PART           ((uint8_t)0x02u)   /*!< Valid in run mode.                     */
+#define CLK_XTAL32NF_NONE           ((uint8_t)0x03u)   /*!< Invalid in run,stop,power down mode.   */
 /**
  * @}
  */
@@ -266,8 +266,8 @@ typedef struct
  * @defgroup CLK_HRC_Config HRC Config
  * @{
  */
-#define CLK_HRC_OFF                 CMU_HRCCR_HRCSTP
-#define CLK_HRC_ON                  ((uint8_t)0x00)
+#define CLK_HRC_OFF                 (CMU_HRCCR_HRCSTP)
+#define CLK_HRC_ON                  ((uint8_t)0x00u)
 /**
  * @}
  */
@@ -277,19 +277,19 @@ typedef struct
  * @defgroup CLK_HRCFreq_Sel HRC Config
  * @{
  */
-#define CLK_HRCFREQ_32              ((uint8_t)0x00)   /*!< ICG.HRCFREQS[3] = 0. */
-#define CLK_HRCFREQ_16              ((uint8_t)0x01)   /*!< ICG.HRCFREQS[3] = 0. */
-#define CLK_HRCFREQ_8               ((uint8_t)0x02)   /*!< ICG.HRCFREQS[3] = 0. */
-#define CLK_HRCFREQ_4               ((uint8_t)0x03)   /*!< ICG.HRCFREQS[3] = 0. */
-#define CLK_HRCFREQ_2               ((uint8_t)0x04)   /*!< ICG.HRCFREQS[3] = 0. */
-#define CLK_HRCFREQ_1               ((uint8_t)0x05)   /*!< ICG.HRCFREQS[3] = 0. */
+#define CLK_HRCFREQ_32              ((uint8_t)0x00u)   /*!< ICG.HRCFREQS[3] = 0. */
+#define CLK_HRCFREQ_16              ((uint8_t)0x01u)   /*!< ICG.HRCFREQS[3] = 0. */
+#define CLK_HRCFREQ_8               ((uint8_t)0x02u)   /*!< ICG.HRCFREQS[3] = 0. */
+#define CLK_HRCFREQ_4               ((uint8_t)0x03u)   /*!< ICG.HRCFREQS[3] = 0. */
+#define CLK_HRCFREQ_2               ((uint8_t)0x04u)   /*!< ICG.HRCFREQS[3] = 0. */
+#define CLK_HRCFREQ_1               ((uint8_t)0x05u)   /*!< ICG.HRCFREQS[3] = 0. */
 
-#define CLK_HRCFREQ_48              ((uint8_t)0x00)   /*!< ICG.HRCFREQS[3] = 1. */
-#define CLK_HRCFREQ_24              ((uint8_t)0x01)   /*!< ICG.HRCFREQS[3] = 1. */
-#define CLK_HRCFREQ_12              ((uint8_t)0x02)   /*!< ICG.HRCFREQS[3] = 1. */
-#define CLK_HRCFREQ_6               ((uint8_t)0x03)   /*!< ICG.HRCFREQS[3] = 1. */
-#define CLK_HRCFREQ_3               ((uint8_t)0x04)   /*!< ICG.HRCFREQS[3] = 1. */
-#define CLK_HRCFREQ_1P5             ((uint8_t)0x05)   /*!< ICG.HRCFREQS[3] = 1. */
+#define CLK_HRCFREQ_48              ((uint8_t)0x00u)   /*!< ICG.HRCFREQS[3] = 1. */
+#define CLK_HRCFREQ_24              ((uint8_t)0x01u)   /*!< ICG.HRCFREQS[3] = 1. */
+#define CLK_HRCFREQ_12              ((uint8_t)0x02u)   /*!< ICG.HRCFREQS[3] = 1. */
+#define CLK_HRCFREQ_6               ((uint8_t)0x03u)   /*!< ICG.HRCFREQS[3] = 1. */
+#define CLK_HRCFREQ_3               ((uint8_t)0x04u)   /*!< ICG.HRCFREQS[3] = 1. */
+#define CLK_HRCFREQ_1P5             ((uint8_t)0x05u)   /*!< ICG.HRCFREQS[3] = 1. */
 
 /**
  * @}
@@ -299,8 +299,8 @@ typedef struct
  * @defgroup CLK_LRC_Config LRC Config
  * @{
  */
-#define CLK_LRC_OFF                 CMU_LRCCR_LRCSTP
-#define CLK_LRC_ON                  ((uint8_t)0x00)
+#define CLK_LRC_OFF                 (CMU_LRCCR_LRCSTP)
+#define CLK_LRC_ON                  ((uint8_t)0x00u)
 /**
  * @}
  */
@@ -309,9 +309,9 @@ typedef struct
  * @defgroup CLK_STB_Flag CLK stable Flags
  * @{
  */
-#define CLK_FLAG_HRCSTB             CMU_OSCSTBSR_HRCSTBF
-#define CLK_FLAG_XTALSTB            CMU_OSCSTBSR_XTALSTBF
-#define CLK_FLAG_XTAL32STB          CMU_OSCSTBSR_XTAL32STBF
+#define CLK_FLAG_HRCSTB             (CMU_OSCSTBSR_HRCSTBF)
+#define CLK_FLAG_XTALSTB            (CMU_OSCSTBSR_XTALSTBF)
+#define CLK_FLAG_XTAL32STB          (CMU_OSCSTBSR_XTAL32STBF)
 /**
  * @}
  */
@@ -320,10 +320,10 @@ typedef struct
  * @defgroup CLK_System_Clock_Source System Clock Source
  * @{
  */
-#define CLK_SYSCLKSOURCE_HRC        ((uint8_t)0x00)
-#define CLK_SYSCLKSOURCE_XTAL       ((uint8_t)0x01)
-#define CLK_SYSCLKSOURCE_LRC        ((uint8_t)0x02)
-#define CLK_SYSCLKSOURCE_XTAL32     ((uint8_t)0x03)
+#define CLK_SYSCLKSOURCE_HRC        ((uint8_t)0x00u)
+#define CLK_SYSCLKSOURCE_XTAL       ((uint8_t)0x01u)
+#define CLK_SYSCLKSOURCE_LRC        ((uint8_t)0x02u)
+#define CLK_SYSCLKSOURCE_XTAL32     ((uint8_t)0x03u)
 /**
  * @}
  */
@@ -332,13 +332,13 @@ typedef struct
  * @defgroup CLK_System_Clock_Divider System clock divider
  * @{
  */
-#define CLK_SYSCLK_DIV1             ((uint8_t)0x00)
-#define CLK_SYSCLK_DIV2             ((uint8_t)0x01)
-#define CLK_SYSCLK_DIV4             ((uint8_t)0x02)
-#define CLK_SYSCLK_DIV8             ((uint8_t)0x03)
-#define CLK_SYSCLK_DIV16            ((uint8_t)0x04)
-#define CLK_SYSCLK_DIV32            ((uint8_t)0x05)
-#define CLK_SYSCLK_DIV64            ((uint8_t)0x06)
+#define CLK_SYSCLK_DIV1             ((uint8_t)0x00u)
+#define CLK_SYSCLK_DIV2             ((uint8_t)0x01u)
+#define CLK_SYSCLK_DIV4             ((uint8_t)0x02u)
+#define CLK_SYSCLK_DIV8             ((uint8_t)0x03u)
+#define CLK_SYSCLK_DIV16            ((uint8_t)0x04u)
+#define CLK_SYSCLK_DIV32            ((uint8_t)0x05u)
+#define CLK_SYSCLK_DIV64            ((uint8_t)0x06u)
 /**
  * @}
  */
@@ -347,12 +347,12 @@ typedef struct
  * @defgroup CLK_HCLK_Divider HCLK divider
  * @{
  */
-#define CLK_HCLK_DIV1               ((uint8_t)0x00)
-#define CLK_HCLK_DIV2               ((uint8_t)0x01)
-#define CLK_HCLK_DIV4               ((uint8_t)0x02)
-#define CLK_HCLK_DIV8               ((uint8_t)0x03)
-#define CLK_HCLK_DIV16              ((uint8_t)0x04)
-#define CLK_HCLK_DIV32              ((uint8_t)0x05)
+#define CLK_HCLK_DIV1               ((uint8_t)0x00u)
+#define CLK_HCLK_DIV2               ((uint8_t)0x01u)
+#define CLK_HCLK_DIV4               ((uint8_t)0x02u)
+#define CLK_HCLK_DIV8               ((uint8_t)0x03u)
+#define CLK_HCLK_DIV16              ((uint8_t)0x04u)
+#define CLK_HCLK_DIV32              ((uint8_t)0x05u)
 /**
  * @}
  */
@@ -361,11 +361,11 @@ typedef struct
  * @defgroup CLK_MCO_Clock_Source CLK MCO Clock Source
  * @{
  */
-#define CLK_MCOSOURCCE_HRC          ((uint8_t)0x00)
-#define CLK_MCOSOURCCE_LRC          ((uint8_t)0x01)
-#define CLK_MCOSOURCCE_XTAL         ((uint8_t)0x02)
-#define CLK_MCOSOURCCE_XTAL32       ((uint8_t)0x03)
-#define CLK_MCOSOURCCE_SYSCLK       ((uint8_t)0x04)
+#define CLK_MCOSOURCCE_HRC          ((uint8_t)0x00u)
+#define CLK_MCOSOURCCE_LRC          ((uint8_t)0x01u)
+#define CLK_MCOSOURCCE_XTAL         ((uint8_t)0x02u)
+#define CLK_MCOSOURCCE_XTAL32       ((uint8_t)0x03u)
+#define CLK_MCOSOURCCE_SYSCLK       ((uint8_t)0x04u)
 /**
  * @}
  */
@@ -374,14 +374,14 @@ typedef struct
  * @defgroup CLK_MCO_Clock_Prescaler CLK MCO Clock Prescaler
  * @{
  */
-#define CLK_MCODIV_1                ((uint8_t)0x00)
-#define CLK_MCODIV_2                ((uint8_t)0x10)
-#define CLK_MCODIV_4                ((uint8_t)0x20)
-#define CLK_MCODIV_8                ((uint8_t)0x30)
-#define CLK_MCODIV_16               ((uint8_t)0x40)
-#define CLK_MCODIV_32               ((uint8_t)0x50)
-#define CLK_MCODIV_64               ((uint8_t)0x60)
-#define CLK_MCODIV_128              ((uint8_t)0x70)
+#define CLK_MCODIV_1                ((uint8_t)0x00u)
+#define CLK_MCODIV_2                ((uint8_t)0x10u)
+#define CLK_MCODIV_4                ((uint8_t)0x20u)
+#define CLK_MCODIV_8                ((uint8_t)0x30u)
+#define CLK_MCODIV_16               ((uint8_t)0x40u)
+#define CLK_MCODIV_32               ((uint8_t)0x50u)
+#define CLK_MCODIV_64               ((uint8_t)0x60u)
+#define CLK_MCODIV_128              ((uint8_t)0x70u)
 /**
  * @}
  */
@@ -390,26 +390,26 @@ typedef struct
  * @defgroup CLK_FCG_Peripheral_Control CLK FCG Peripheral function control
  * @{
  */
-#define CLK_FCG_ADC                  CMU_FCG_ADC
-#define CLK_FCG_CTC                  CMU_FCG_CTC
-#define CLK_FCG_AOS                  CMU_FCG_AOS
-#define CLK_FCG_CRC                  CMU_FCG_CRC
-#define CLK_FCG_TIMB1                CMU_FCG_TIMB1
-#define CLK_FCG_TIMB2                CMU_FCG_TIMB2
-#define CLK_FCG_TIMB3                CMU_FCG_TIMB3
-#define CLK_FCG_TIMB4                CMU_FCG_TIMB4
-#define CLK_FCG_TIMB5                CMU_FCG_TIMB5
-#define CLK_FCG_TIMB6                CMU_FCG_TIMB6
-#define CLK_FCG_TIMB7                CMU_FCG_TIMB7
-#define CLK_FCG_TIMB8                CMU_FCG_TIMB8
-#define CLK_FCG_TIM0                 CMU_FCG_TIM0
-#define CLK_FCG_RTC                  CMU_FCG_RTC
-#define CLK_FCG_UART1                CMU_FCG_UART1
-#define CLK_FCG_UART2                CMU_FCG_UART2
-#define CLK_FCG_UART3                CMU_FCG_UART3
-#define CLK_FCG_UART4                CMU_FCG_UART4
-#define CLK_FCG_I2C                  CMU_FCG_IIC
-#define CLK_FCG_SPI                  CMU_FCG_SPI
+#define CLK_FCG_ADC                  (CMU_FCG_ADC)
+#define CLK_FCG_CTC                  (CMU_FCG_CTC)
+#define CLK_FCG_AOS                  (CMU_FCG_AOS)
+#define CLK_FCG_CRC                  (CMU_FCG_CRC)
+#define CLK_FCG_TIMB1                (CMU_FCG_TIMB1)
+#define CLK_FCG_TIMB2                (CMU_FCG_TIMB2)
+#define CLK_FCG_TIMB3                (CMU_FCG_TIMB3)
+#define CLK_FCG_TIMB4                (CMU_FCG_TIMB4)
+#define CLK_FCG_TIMB5                (CMU_FCG_TIMB5)
+#define CLK_FCG_TIMB6                (CMU_FCG_TIMB6)
+#define CLK_FCG_TIMB7                (CMU_FCG_TIMB7)
+#define CLK_FCG_TIMB8                (CMU_FCG_TIMB8)
+#define CLK_FCG_TIM0                 (CMU_FCG_TIM0)
+#define CLK_FCG_RTC                  (CMU_FCG_RTC)
+#define CLK_FCG_UART1                (CMU_FCG_UART1)
+#define CLK_FCG_UART2                (CMU_FCG_UART2)
+#define CLK_FCG_UART3                (CMU_FCG_UART3)
+#define CLK_FCG_UART4                (CMU_FCG_UART4)
+#define CLK_FCG_I2C                  (CMU_FCG_IIC)
+#define CLK_FCG_SPI                  (CMU_FCG_SPI)
 /**
  * @}
  */
@@ -422,13 +422,13 @@ typedef struct
  * @defgroup CLK_REG_Write_Configuration CLK register write Configuration
  * @{
  */
-#define CLK_REG_WRITE_ENABLE()      (M0P_PWC->FPRC = 0xa501)
-#define CLK_REG_WRITE_DISABLE()     (M0P_PWC->FPRC = 0xa500)
+#define CLK_REG_WRITE_ENABLE()      (M0P_PWC->FPRC = 0xa501u)
+#define CLK_REG_WRITE_DISABLE()     (M0P_PWC->FPRC = 0xa500u)
 
-#define CLK_HRCCFGR_WRITE_ENBALE()  M0P_EFM->FAPRT = 0x0123; \
-                                    M0P_EFM->FAPRT = 0x3210
+#define CLK_HRCCFGR_WRITE_ENBALE()  {M0P_EFM->FAPRT = 0x0123u; \
+                                     M0P_EFM->FAPRT = 0x3210u;}
 
-#define CLK_HRCCFGR_WRITE_DISABLE() (M0P_EFM->FAPRT = 0x0)
+#define CLK_HRCCFGR_WRITE_DISABLE() (M0P_EFM->FAPRT = 0x0u)
 /**
  * @}
  */

@@ -73,16 +73,16 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* LED_R Port/Pin definition */
-#define LED_R_PORT                      GPIO_PORT_2
-#define LED_R_PIN                       GPIO_PIN_5
+#define LED_R_PORT                      (GPIO_PORT_2)
+#define LED_R_PIN                       (GPIO_PIN_5)
 
-#define LED_R_ON()                      GPIO_ResetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_OFF()                     GPIO_SetPins(LED_R_PORT, LED_R_PIN)
-#define LED_R_TOGGLE()                  GPIO_TogglePins(LED_R_PORT, LED_R_PIN)
+#define LED_R_ON()                      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_OFF()                     (GPIO_SetPins(LED_R_PORT, LED_R_PIN))
+#define LED_R_TOGGLE()                  (GPIO_TogglePins(LED_R_PORT, LED_R_PIN))
 
 /* SW1 Port/Pin definition */
-#define SW1_PORT                        GPIO_PORT_6
-#define SW1_PIN                         GPIO_PIN_2
+#define SW1_PORT                        (GPIO_PORT_6)
+#define SW1_PIN                         (GPIO_PIN_2)
 
 /* SWDT count cycle definition */
 #define SWDT_COUNT_CYCLE                (4096u)
@@ -118,7 +118,7 @@ void EXINT06_Handler(void)
     if (Set == EXINT_GetExIntSrc(EXINT_CH06))
     {
         u8ExIntFlag = 1u;
-        EXINT_ClrSrc(EXINT_CH06);
+        EXINT_ClrExIntSrc(EXINT_CH06);
     }
 }
 
@@ -127,7 +127,7 @@ void EXINT06_Handler(void)
  * @param  None
  * @retval None
  */
-void SW1_Config(void)
+static void SW1_Config(void)
 {
     stc_gpio_init_t stcGpioInit;
     stc_exint_config_t stcExIntInit;
@@ -204,23 +204,23 @@ int32_t main(void)
     /* SW1 configuration */
     SW1_Config();
     /* Wait for SWDT module to complete initial load */
-    DDL_Delay1ms(200);
+    DDL_Delay1ms(200u);
     /* Count cycle=16384,range=0%-25% */
-    u16CmpVal = SWDT_COUNT_CYCLE / 4;
+    u16CmpVal = SWDT_COUNT_CYCLE / 4u;
 
     while (1)
     {
         if (1u == u8ExIntFlag)
         {
             u8ExIntFlag = 0u;
-            u16CmpVal = SWDT_COUNT_CYCLE / 2;
+            u16CmpVal = SWDT_COUNT_CYCLE / 2u;
         }
 
         if (SWDT_GetCountValue() < u16CmpVal)
         {
             SWDT_ReloadCounter();
             /* Wait for the count value to update */
-            DDL_Delay1ms(10);
+            DDL_Delay1ms(10u);
             if (RESET_SOURCE_OTHER == u8ResetSource)
             {
                 LED_R_TOGGLE();

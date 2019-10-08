@@ -99,7 +99,7 @@
 int32_t main(void)
 {
     uint8_t u8TestBuf[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19};
-    uint8_t u8Len = 17;
+    uint32_t u32Len = 17u;
 
     /* Unlock EFM. */
     EFM_Unlock();
@@ -107,24 +107,30 @@ int32_t main(void)
     /* Enable flash. */
     EFM_Cmd(Enable);
     /* Wait flash ready. */
-    while(Set != EFM_GetFlagStatus(EFM_FLAG_RDY));
+    while(Set != EFM_GetFlagStatus(EFM_FLAG_RDY))
+    {
+        ;
+    }
 
     /* Erase sector 10 11. */
     EFM_SectorErase(EFM_SECTOR10_ADRR);
     EFM_SectorErase(EFM_SECTOR11_ADRR);
 
     /* Sequence program. */
-    EFM_SequenceProgram(EFM_SECTOR10_ADRR, u8Len, u8TestBuf);
+    EFM_SequenceProgram(EFM_SECTOR10_ADRR, u32Len, u8TestBuf);
 
     /* Sequence program. */
-    EFM_SequenceProgram(EFM_SECTOR11_ADRR, u8Len + 2, u8TestBuf);
+    EFM_SequenceProgram(EFM_SECTOR11_ADRR, u32Len + 2ul, u8TestBuf);
 
     EFM_ChipErase();
 
     /* Lock EFM. */
     EFM_Lock();
 
-    while(1);
+    while(1)
+    {
+        ;
+    }
 }
 
 /**

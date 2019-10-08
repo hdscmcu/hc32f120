@@ -73,17 +73,17 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* UART RX/TX Port/Pin definition */
-#define UART_RX_PORT                    GPIO_PORT_1
-#define UART_RX_PIN                     GPIO_PIN_1      /* P11: USART1_RX_A */
+#define UART_RX_PORT                    (GPIO_PORT_1)
+#define UART_RX_PIN                     (GPIO_PIN_1)      /* P11: USART1_RX_A */
 
-#define UART_TX_PORT                    GPIO_PORT_1
-#define UART_TX_PIN                     GPIO_PIN_2      /* P12: USART1_TX_A */
+#define UART_TX_PORT                    (GPIO_PORT_1)
+#define UART_TX_PIN                     (GPIO_PIN_2)      /* P12: USART1_TX_A */
 
 /* UART unit definition */
-#define UART_UNIT                       M0P_USART1
+#define UART_UNIT                       (M0P_USART1)
 
 /* Function clock gate definition  */
-#define FUNCTION_CLK_GATE               CLK_FCG_UART1
+#define FUNCTION_CLK_GATE               (CLK_FCG_UART1)
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
@@ -98,17 +98,6 @@ static void UsartRxErrProcess(void);
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-static const stc_uart_init_t m_stcUartInit = {
-    .u32Baudrate = 115200,
-    .u32BitDirection = USART_LSB,
-    .u32StopBit = USART_STOP_BITS_1,
-    .u32Parity = USART_PARITY_NONE,
-    .u32DataWidth = USART_DATA_WIDTH_BITS_8,
-    .u32ClkMode = USART_INTCLK_NONE_OUTPUT,
-    .u32OversamplingBits = USART_OVERSAMPLING_BITS_8,
-    .u32NoiseFilterState = USART_NOISE_FILTER_DISABLE,
-    .u32SbDetectPolarity = USART_SB_DETECT_FALLING,
-};
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -148,9 +137,6 @@ static void UsartRxErrProcess(void)
     {
         USART_ClearFlag(UART_UNIT, (USART_CLEAR_FLAG_PE | USART_CLEAR_FLAG_FE | USART_CLEAR_FLAG_ORE));
     }
-    else
-    {
-    }
 }
 
 /**
@@ -160,20 +146,31 @@ static void UsartRxErrProcess(void)
  */
 int32_t main(void)
 {
-    uint16_t u16RxData;
+    __IO uint16_t u16RxData;
+    const stc_uart_init_t stcUartInit = {
+        .u32Baudrate = 115200ul,
+        .u32BitDirection = USART_LSB,
+        .u32StopBit = USART_STOP_BITS_1,
+        .u32Parity = USART_PARITY_NONE,
+        .u32DataWidth = USART_DATA_WIDTH_BITS_8,
+        .u32ClkMode = USART_INTCLK_NONE_OUTPUT,
+        .u32OversamplingBits = USART_OVERSAMPLING_BITS_8,
+        .u32NoiseFilterState = USART_NOISE_FILTER_DISABLE,
+        .u32SbDetectPolarity = USART_SB_DETECT_FALLING,
+    };
 
     /* Configure system clock. */
     SystemClockConfig();
 
     /* Configure USART RX/TX pin. */
-    GPIO_SetFunc(UART_RX_PORT, UART_RX_PIN, GPIO_FUNC_USART);
-    GPIO_SetFunc(UART_TX_PORT, UART_TX_PIN, GPIO_FUNC_USART);
+    GPIO_SetFunc(UART_RX_PORT, UART_RX_PIN, GPIO_FUNC_3_USART);
+    GPIO_SetFunc(UART_TX_PORT, UART_TX_PIN, GPIO_FUNC_3_USART);
 
     /* Enable peripheral clock */
     CLK_FcgPeriphClockCmd(FUNCTION_CLK_GATE, Enable);
 
     /* Initialize UART function. */
-    USART_UartInit(UART_UNIT, &m_stcUartInit);
+    USART_UartInit(UART_UNIT, &stcUartInit);
 
     /* Enable RX/TX function */
     USART_FuncCmd(UART_UNIT, (USART_RX | USART_TX), Enable);
@@ -186,12 +183,10 @@ int32_t main(void)
 
             while (Reset == USART_GetFlag(UART_UNIT, USART_FLAG_TXE)) /* Wait Tx data register empty */
             {
+                ;
             }
 
             USART_SendData(UART_UNIT, u16RxData);
-        }
-        else
-        {
         }
 
         UsartRxErrProcess();
