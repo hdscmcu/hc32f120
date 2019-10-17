@@ -6,6 +6,7 @@
    Change Logs:
    Date             Author          Notes
    2019-05-09       Chengy          First version
+   2019-10-17       Chengy          Bug Fixed #function PWC_LvdCmd
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -506,8 +507,15 @@ void PWC_LvdCmd(en_functional_state_t enNewState)
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
 
     PWC_LVD_REG_WRITE_ENABLE();
-
-    bM0P_EFM->LVDICGCR_b.LVDDIS = enNewState;
+    
+    if(Enable == enNewState)
+    {
+        bM0P_EFM->LVDICGCR_b.LVDDIS = 0u;
+    }
+    else
+    {
+        bM0P_EFM->LVDICGCR_b.LVDDIS = 1u;
+    }
 
     PWC_LVD_REG_WRITE_DISABLE();
 }
