@@ -7,7 +7,8 @@
    Change Logs:
    Date             Author          Notes
    2019-04-22       Zhangxl         First version
-   2019-10-17       Zhangxl         Correct EIRQCRx address calculate formula
+   2019-10-17       Zhangxl         Correct EIRQCRx address calculate formula;
+                                    LVD judgment in IRQHandler31;
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -1347,7 +1348,7 @@ void IRQ031_Handler(void)
     uint32_t ISELBR31 = M0P_INTC->ISELBR31;
 
     /* LVD detected */
-    if (0u == M0P_ICG->ICG1_f.IRDIS)
+    if (0u == M0P_EFM->LVDICGCR_f.LVDDIS)
     {
         u32Tmp1 = bM0P_PWC->LVDCSR_b.DETF;
         if ((ISELBR31 & BIT_MASK_02) && (u32Tmp1))
