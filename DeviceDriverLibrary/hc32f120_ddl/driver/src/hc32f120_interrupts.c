@@ -7,6 +7,7 @@
    Change Logs:
    Date             Author          Notes
    2019-04-22       Zhangxl         First version
+   2019-10-17       Zhangxl         Correct EIRQCRx address calculate formula
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -524,7 +525,7 @@ en_result_t EXINT_Init(const stc_exint_config_t *pstcExIntConfig)
         {
             if (pstcExIntConfig->u16ExIntCh & (1ul << u8ExIntPos))
             {
-                WRITE_REG8(*(uint8_t *)((uint32_t)(&M0P_INTC->EIRQCR0) + u8ExIntPos),   \
+                WRITE_REG8(*(uint8_t *)((uint32_t)(&M0P_INTC->EIRQCR0) + 4u*u8ExIntPos),\
                           (pstcExIntConfig->u8ExIntFE         |                         \
                            pstcExIntConfig->u8ExIntFClk       |                         \
                            pstcExIntConfig->u8ExIntLvl));
