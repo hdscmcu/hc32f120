@@ -7,6 +7,7 @@
    Change Logs:
    Date             Author          Notes
    2019-04-18       Wuze            First version
+   2019-10-17       Wuze            Delete the interval between consecutively sent data.
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -177,8 +178,7 @@ static en_result_t SPI_Tx(const void *pvTxBuf, uint32_t u32Length);
  * @defgroup SPI_Local_Variables SPI Local Variables
  * @{
  */
-static uint32_t m_u32DelayToTx = 0u;
-static uint32_t m_u32Timeout   = 0u;
+static uint32_t m_u32Timeout = 0u;
 
 /**
  * @}
@@ -205,10 +205,6 @@ en_result_t SPI_Init(const stc_spi_init_t *pstcInit)
 {
     en_result_t enRet = ErrorInvalidParameter;
     uint32_t u32Div;
-    /* Some delay is required between continuous data transmission.
-       The index is pstcInit->u32BitRateDiv >> SPI_CFG2_MBR_POS. */
-    uint16_t au16FdxDelay[8u] = {0u, 0u, 0u, 0u, 0u, 6u, 20u, 70u};
-    uint16_t au16TxDelay[8u]  = {0u, 0u, 6u, 18u, 40u, 90u, 178u, 380u};
 
     if (pstcInit != NULL)
     {
@@ -226,17 +222,7 @@ en_result_t SPI_Init(const stc_spi_init_t *pstcInit)
         DDL_ASSERT(IS_SPI_FIRST_BIT(pstcInit->u32FirstBit));
 
         u32Div = pstcInit->u32BaudRatePrescaler >> SPI_CFG2_MBR_POS;
-
-        if (pstcInit->u32TransMode == SPI_FULL_DUPLEX)
-        {
-            m_u32DelayToTx = au16FdxDelay[u32Div];
-        }
-        else
-        {
-            m_u32DelayToTx = au16TxDelay[u32Div];
-        }
-
-        m_u32Timeout  = (2ul << u32Div) * 8u;
+        m_u32Timeout  = (2ul << u32Div) * ((uint32_t)M0P_CMU->SCKDIVR) * 16ul;
 
         M0P_SPI->CR1  = pstcInit->u32WireMode          |   \
                         pstcInit->u32TransMode         |   \
@@ -440,18 +426,15 @@ en_result_t SPI_TransmitReceive(const void *pvTxBuf, void *pvRxBuf, uint32_t u32
  */
 static en_result_t SPI_TxRx(const void *pvTxBuf, void *pvRxBuf, uint32_t u32Length)
 {
-    uint32_t u32Flags;
     uint32_t u32BitSize;
     uint32_t u32Timecount;
     uint32_t u32Count = 0u;
-    uint32_t u32Delay = m_u32DelayToTx;
     en_result_t enRet = Ok;
 
     u32BitSize = M0P_SPI->CFG2 & SPI_DATA_SIZE_16BIT;
 
     while (u32Count < u32Length)
     {
-        u32Timecount = m_u32Timeout;
         if (pvTxBuf != NULL)
         {
             if (u32BitSize)
@@ -468,11 +451,15 @@ static en_result_t SPI_TxRx(const void *pvTxBuf, void *pvRxBuf, uint32_t u32Leng
             M0P_SPI->DR = (uint16_t)0xFFFF;
         }
 
+        u32Timecount = m_u32Timeout;
         do
         {
-            u32Flags = M0P_SPI->SR;
+            if (M0P_SPI->SR & SPI_FLAG_RX_BUFFER_FULL)
+            {
+                break;
+            }
             u32Timecount--;
-        } while (((u32Flags & SPI_FLAG_RX_BUFFER_FULL) == 0u) && (u32Timecount != 0u));
+        } while (u32Timecount != 0u);
 
         if (pvRxBuf != NULL)
         {
@@ -485,21 +472,11 @@ static en_result_t SPI_TxRx(const void *pvTxBuf, void *pvRxBuf, uint32_t u32Leng
                 ((uint8_t *)pvRxBuf)[u32Count] = (uint8_t)M0P_SPI->DR;
             }
         }
-        M0P_SPI->SR &= ~SPI_FLAG_RX_BUFFER_FULL;
 
         if (u32Timecount == 0u)
         {
             enRet = ErrorTimeout;
             break;
-        }
-
-        if (u32Delay)
-        {
-            while (--u32Delay)
-            {
-                ;
-            }
-            u32Delay = m_u32DelayToTx;
         }
 
         u32Count++;
@@ -513,13 +490,15 @@ static en_result_t SPI_TxRx(const void *pvTxBuf, void *pvRxBuf, uint32_t u32Leng
  * @param  [in]  pvTxBuf            The pointer to the buffer which contains the data to be sent.
  * @param  [in]  u32Length          The length of the data in byte or half word.
  * @retval An en_result_t enumeration value:
- *   @arg  Ok:                      No errors occurred
+ *   @arg  Ok:                      No errors occurred.
+ *   @arg  ErrorTimeout:            SPI transmit timeout.
  */
 static en_result_t SPI_Tx(const void *pvTxBuf, uint32_t u32Length)
 {
     uint32_t u32Count = 0u;
-    uint32_t u32Delay = m_u32DelayToTx;
+    uint32_t u32Timecount;
     uint32_t u32BitSize;
+    en_result_t enRet = Ok;
 
     u32BitSize = M0P_SPI->CFG2 & SPI_DATA_SIZE_16BIT;
 
@@ -534,19 +513,25 @@ static en_result_t SPI_Tx(const void *pvTxBuf, uint32_t u32Length)
             M0P_SPI->DR = ((const uint8_t *)pvTxBuf)[u32Count];
         }
 
-        if (u32Delay)
+        u32Timecount = m_u32Timeout;
+        do
         {
-            while (--u32Delay)
+            if (M0P_SPI->SR & SPI_FLAG_TX_BUFFER_EMPTY)
             {
-                ;
+                break;
             }
-            u32Delay = m_u32DelayToTx;
+            u32Timecount--;
+        } while (u32Timecount != 0u);
+        
+        if (u32Timecount == 0u)
+        {
+            enRet = ErrorTimeout;
         }
 
         u32Count++;
     }
 
-    return Ok;
+    return enRet;
 }
 
 /**
