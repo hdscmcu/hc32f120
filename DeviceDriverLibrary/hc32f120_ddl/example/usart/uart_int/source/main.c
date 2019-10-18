@@ -6,6 +6,7 @@
    Change Logs:
    Date             Author          Notes
    2019-04-28       Hongjh          First version
+   2019-10-28       Hongjh          Check function return value: USART_UartInit
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -83,6 +84,10 @@ typedef struct
 /*******************************************************************************
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
+/* Red LED Port/Pin definition */
+#define LED_R_PORT                      (GPIO_PORT_2)
+#define LED_R_PIN                       (GPIO_PIN_5)
+#define LED_R_ON()                      (GPIO_ResetPins(LED_R_PORT, LED_R_PIN))
 
 /* UART RX/TX Port/Pin definition */
 #define UART_RX_PORT                    (GPIO_PORT_1)
@@ -142,6 +147,20 @@ static stc_ring_buffer_t m_stcRingBuf = {
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
  ******************************************************************************/
+
+/**
+ * @brief  Configure RGB LED.
+ * @param  None
+ * @retval None
+ */
+static void LedConfig(void)
+{
+    stc_gpio_init_t stcGpioInit = {0};
+
+    stcGpioInit.u16PinMode = PIN_MODE_OUT;
+    stcGpioInit.u16PinState = PIN_STATE_SET;
+    GPIO_Init(LED_R_PORT, LED_R_PIN, &stcGpioInit);
+}
 
 /**
  * @brief  Configure system clock.
@@ -280,6 +299,7 @@ int32_t main(void)
     stc_irq_regi_config_t stcIrqRegiConf;
     const stc_uart_init_t stcUartInit = {
         .u32Baudrate = 115200ul,
+        .u32ClkPrescaler = USART_CLK_PRESCALER_DIV1,
         .u32BitDirection = USART_LSB,
         .u32StopBit = USART_STOP_BITS_1,
         .u32Parity = USART_PARITY_NONE,
@@ -289,6 +309,9 @@ int32_t main(void)
         .u32NoiseFilterState = USART_NOISE_FILTER_DISABLE,
         .u32SbDetectPolarity = USART_SB_DETECT_FALLING,
     };
+
+    /* Configure LED pin. */
+    LedConfig();
 
     /* Configure system clock. */
     SystemClockConfig();
@@ -301,7 +324,14 @@ int32_t main(void)
     CLK_FcgPeriphClockCmd(FUNCTION_CLK_GATE, Enable);
 
     /* Initialize UART function. */
-    USART_UartInit(UART_UNIT, &stcUartInit);
+    if (Ok != USART_UartInit(UART_UNIT, &stcUartInit))
+    {
+        LED_R_ON();
+        while(1)
+        {
+            ;
+        }
+    }
 
     /* Register error IRQ handler && configure NVIC. */
     stcIrqRegiConf.enIRQn = UART_UNIT_ERR_IRQn;

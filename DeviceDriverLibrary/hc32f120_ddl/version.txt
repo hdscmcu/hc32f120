@@ -1,5 +1,7 @@
 version     date            comment
- 1.0.0      Oct 17, 2019    1. Correct EIRQCRx address calculate formula [interrupt];
+ 1.0.0      Oct 18, 2019    1. Check function return value(USART_UartInit) for UART sample [usart];
+
+            Oct 17, 2019    1. Correct EIRQCRx address calculate formula [interrupt];
                             2. LVD judgement in IRQHandler31 [interrupt];
                             3. Delete the interval between consecutively sent data; [spi]
                             4. Bug fix, function PWC_LvdCmd; [pwc]
