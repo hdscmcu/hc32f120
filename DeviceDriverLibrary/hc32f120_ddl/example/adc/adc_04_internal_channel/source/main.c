@@ -6,6 +6,7 @@
    Change Logs:
    Date             Author          Notes
    2019-03-20       Wuze            First version
+   2019-10-18       Wuze            Added code for calculating the temperature.
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -72,6 +73,11 @@
 /*******************************************************************************
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
+/* Function definition for this application. */
+#define APP_FUNC_GET_INREF          (1u)
+#define APP_FUNC_CAL_TEMP           (2u)
+#define APP_FUNCTION                (APP_FUNC_CAL_TEMP)
+ 
 /* ADC channels definition for this example. */
 #define ADC_SA_CHANNEL              (ADC_CH11)
 #define ADC_SA_CHANNEL_COUNT        (1u)
@@ -109,6 +115,10 @@ static void AdcChannelConfig(void);
 static float m_f32Vol;
 static uint16_t m_au16AdcSaVal[ADC_SA_CHANNEL_COUNT];
 
+#if (APP_FUNCTION == APP_FUNC_CAL_TEMP)
+static float m_f32Temp;
+#endif
+
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
  ******************************************************************************/
@@ -131,7 +141,13 @@ int32_t main(void)
     {
         ADC_PollingSa(m_au16AdcSaVal, ADC_SA_CHANNEL_COUNT, TIMEOUT_MS);
         m_f32Vol = ((float)m_au16AdcSaVal[0u] * ADC_VREF) / ((float)ADC_ACCURACY);
+#if (APP_FUNCTION == APP_FUNC_CAL_TEMP)
+        /* temperature = 25 - (((adc_voltage - 1.03) * 1000) / 3.5) */
+        m_f32Temp = 25.f - (((m_f32Vol - 1.03f) * 1000.f) / 3.5f);
+        (void)m_f32Temp;
+#else
         (void)m_f32Vol;
+#endif /* #if (APP_FUNCTION == APP_FUNC_CAL_TEMP) */
     }
 }
 
@@ -191,7 +207,15 @@ static void AdcChannelConfig(void)
     /* 1. Configures the source of extend channel.
           PWC_PWRMON_VINREF: Internal reference voltage.
           PWC_PWRMON_VOTS: Internal temperature sensor. */
-    stc_pwc_pwrmon_init_t stcPwrMonInit = {PWC_PWRMON_ON, PWC_PWRMON_VINREF};
+    stc_pwc_pwrmon_init_t stcPwrMonInit =
+    {
+        PWC_PWRMON_ON,
+#if (APP_FUNCTION == APP_FUNC_CAL_TEMP)
+        PWC_PWRMON_VOTS
+#else
+        PWC_PWRMON_VINREF
+#endif
+    };
     PWC_PwrMonInit(&stcPwrMonInit);
 
     /* 2. Select internal analog input for ADC extend channel. */
