@@ -6,6 +6,7 @@
    Change Logs:
    Date             Author          Notes
    2019-04-22       Chengy          First version
+   2019-10-21       Chengy          Add function CLK_ClearXtalStdFlag
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -963,6 +964,27 @@ void CLK_MCOCmd(en_functional_state_t enNewState)
 
     /* Enable or disable clock output. */
     bM0P_CMU->MCO1CFGR_b.MCO1EN = enNewState;
+
+    /* Disbale register write. */
+    CLK_REG_WRITE_DISABLE();
+}
+
+/**
+ * @brief  Clear the XTAL error flag.
+ * @param  None
+ * @retval None
+ * @note   The system clock should not be XTAL before call this function.
+ */
+void CLK_ClearXtalStdFlag(void)
+{
+    /* Enable register write. */
+    CLK_REG_WRITE_ENABLE();
+
+    if(CMU_XTALSTDSR_XTALSTDF == M0P_CMU->XTALSTDSR)
+    {
+        /* Clear the XTAL STD flag */
+        CLEAR_REG8(M0P_CMU->XTALSTDSR, CMU_XTALSTDSR_XTALSTDF);
+    }
 
     /* Disbale register write. */
     CLK_REG_WRITE_DISABLE();

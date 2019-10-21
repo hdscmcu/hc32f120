@@ -7,6 +7,7 @@
    Change Logs:
    Date             Author          Notes
    2019-04-22       Chengy          First version
+   2019-10-21       Chengy          Add function CLK_ClearXtalStdFlag
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -465,6 +466,8 @@ void CLK_FcgPeriphClockCmd(uint32_t u32FcgPeriph, en_functional_state_t enNewSta
 
 void CLK_MCOConfig(uint8_t CLK_MCOSource, uint8_t CLK_MCODiv);
 void CLK_MCOCmd(en_functional_state_t enNewState);
+
+void CLK_ClearXtalStdFlag(void);
 en_flag_status_t CLK_GetStableFlag(uint8_t u8Flag);
 
 /**
