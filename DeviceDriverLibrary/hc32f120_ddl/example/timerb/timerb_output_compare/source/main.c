@@ -86,10 +86,10 @@
 #define TIMERB_EVEN_UNIT_COMPARE_VALUE  (TIMERB_EVEN_UNIT_PERIOD_VALUE/2ul)
 
 /* TIMERB TIMB_t_PWM1 Port/Pin definition */
-#define TIMERB_ODD_UNIT_PWM1_PORT       (GPIO_PORT_14)    /* P146: TIMB_1_PWM1_D */
+#define TIMERB_ODD_UNIT_PWM1_PORT       (GPIO_PORT_14)    /* P146: TIMB_1_PWM1 */
 #define TIMERB_ODD_UNIT_PWM1_PIN        (GPIO_PIN_6)
 
-#define TIMERB_EVEN_UNIT_PWM1_PORT      (GPIO_PORT_1)     /* P16: TIMB_2_PWM1_A */
+#define TIMERB_EVEN_UNIT_PWM1_PORT      (GPIO_PORT_1)     /* P16: TIMB_2_PWM1 */
 #define TIMERB_EVEN_UNIT_PWM1_PIN       (GPIO_PIN_6)
 
 /* Function clock gate definition  */

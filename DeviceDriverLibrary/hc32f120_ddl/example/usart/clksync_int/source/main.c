@@ -107,13 +107,13 @@ typedef struct
 
 /* CLKSYNC CK/RX/TX Port/Pin definition */
 #define CLKSYNC_CK_PORT                 (GPIO_PORT_3)
-#define CLKSYNC_CK_PIN                  (GPIO_PIN_0)      /* P30: USART2_CK_A */
+#define CLKSYNC_CK_PIN                  (GPIO_PIN_0)      /* P30: USART2_CK */
 
 #define CLKSYNC_RX_PORT                 (GPIO_PORT_0)
-#define CLKSYNC_RX_PIN                  (GPIO_PIN_1)      /* P01: USART2_RX_B */
+#define CLKSYNC_RX_PIN                  (GPIO_PIN_1)      /* P01: USART2_RX */
 
 #define CLKSYNC_TX_PORT                 (GPIO_PORT_0)
-#define CLKSYNC_TX_PIN                  (GPIO_PIN_0)      /* P00: USART2_TX_B */
+#define CLKSYNC_TX_PIN                  (GPIO_PIN_0)      /* P00: USART2_TX */
 
 /* UART unit definition */
 #define CLKSYNC_UNIT                    (M0P_USART2)

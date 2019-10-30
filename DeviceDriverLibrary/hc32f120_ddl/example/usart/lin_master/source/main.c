@@ -114,10 +114,10 @@ typedef struct
 
 /* USART RX/TX Port/Pin definition */
 #define LIN_RX_PORT                     (GPIO_PORT_1)
-#define LIN_RX_PIN                      (GPIO_PIN_6)      /* P16: USART1_RX_B */
+#define LIN_RX_PIN                      (GPIO_PIN_6)      /* P16: USART1_RX */
 
 #define LIN_TX_PORT                     (GPIO_PORT_1)
-#define LIN_TX_PIN                      (GPIO_PIN_7)      /* P17: USART1_TX_B */
+#define LIN_TX_PIN                      (GPIO_PIN_7)      /* P17: USART1_TX */
 
 /* LIN transceiver chip sleep Port/Pin definition */
 #define LIN_SLEEP_PORT                  (GPIO_PORT_1)

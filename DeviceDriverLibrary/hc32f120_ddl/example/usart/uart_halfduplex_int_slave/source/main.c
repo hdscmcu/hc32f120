@@ -77,7 +77,7 @@
  ******************************************************************************/
 /* UART TX Port/Pin definition */
 #define UART_SLAVE_TX_PORT              (GPIO_PORT_0)
-#define UART_SLAVE_TX_PIN               (GPIO_PIN_0)      /* P00: USART2_TX_B */
+#define UART_SLAVE_TX_PIN               (GPIO_PIN_0)      /* P00: USART2_TX */
 
 /* UART unit definition */
 #define UART_SLAVE_UNIT                 (M0P_USART2)

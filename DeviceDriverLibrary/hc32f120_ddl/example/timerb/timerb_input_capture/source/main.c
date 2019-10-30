@@ -107,13 +107,13 @@ typedef struct
 #define TIMERB_OC_UNIT_COMPARE_VALUE        (TIMERB_OC_UNIT_PERIOD_VALUE/2ul)
 
 /* TIMERB TIMB_t_PWM1 Port/Pin definition */
-#define TIMERB_IC_ODD_UNIT_PWM1_PORT        (GPIO_PORT_14)    /* P146: TIMB_1_PWM1_D */
+#define TIMERB_IC_ODD_UNIT_PWM1_PORT        (GPIO_PORT_14)    /* P146: TIMB_1_PWM1 */
 #define TIMERB_IC_ODD_UNIT_PWM1_PIN         (GPIO_PIN_6)
 
-#define TIMERB_IC_EVEN_UNIT_PWM1_PORT       (GPIO_PORT_1)     /* P16: TIMB_2_PWM1_A */
+#define TIMERB_IC_EVEN_UNIT_PWM1_PORT       (GPIO_PORT_1)     /* P16: TIMB_2_PWM1 */
 #define TIMERB_IC_EVEN_UNIT_PWM1_PIN        (GPIO_PIN_6)
 
-#define TIMERB_OC_UNIT_PWM1_PORT            (GPIO_PORT_1)     /* P17: TIMB_3_PWM1_A */
+#define TIMERB_OC_UNIT_PWM1_PORT            (GPIO_PORT_1)     /* P17: TIMB_3_PWM1 */
 #define TIMERB_OC_UNIT_PWM1_PIN             (GPIO_PIN_7)
 
 /* Function clock gate definition */

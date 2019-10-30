@@ -112,7 +112,7 @@ typedef struct
 #define LED_G_OFF()                     (GPIO_SetPins(LED_G_PORT, LED_G_PIN))
 
 #define UART_MASTER_TX_PORT             (GPIO_PORT_0)
-#define UART_MASTER_TX_PIN              (GPIO_PIN_0)      /* P00: USART2_TX_B */
+#define UART_MASTER_TX_PIN              (GPIO_PIN_0)      /* P00: USART2_TX */
 
 /* UART unit definition */
 #define UART_MASTER_UNIT                (M0P_USART2)

@@ -86,10 +86,10 @@ typedef struct
 
 /* UART RX/TX Port/Pin definition */
 #define UART_RX_PORT                    (GPIO_PORT_0)
-#define UART_RX_PIN                     (GPIO_PIN_1)      /* P01: USART2_RX_B */
+#define UART_RX_PIN                     (GPIO_PIN_1)      /* P01: USART2_RX */
 
 #define UART_TX_PORT                    (GPIO_PORT_0)
-#define UART_TX_PIN                     (GPIO_PIN_0)      /* P00: USART2_TX_B */
+#define UART_TX_PIN                     (GPIO_PIN_0)      /* P00: USART2_TX */
 
 /* UART unit definition */
 #define UART_UNIT                       (M0P_USART2)
