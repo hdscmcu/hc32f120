@@ -7,6 +7,8 @@
    Date             Author          Notes
    2019-04-28       Hongjh          First version
    2019-10-28       Hongjh          Check function return value: USART_UartInit
+   2019-11-04       Hongjh          TX empty interrupt IRQ callback disable TX 
+                                    empyt interrupt when buffer data is empty.
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -213,6 +215,7 @@ static void UartTxIrqCallback(void)
 
     if (IS_RING_BUFFER_EMPYT(&m_stcRingBuf))
     {
+        USART_FuncCmd(UART_UNIT, (USART_INT_TXE), Disable);
         USART_FuncCmd(UART_UNIT, USART_INT_TC, Enable);
     }
 }
@@ -224,7 +227,7 @@ static void UartTxIrqCallback(void)
  */
 static void UartTcIrqCallback(void)
 {
-    USART_FuncCmd(UART_UNIT, (USART_TX | USART_INT_TC | USART_INT_TXE), Disable);
+    USART_FuncCmd(UART_UNIT, (USART_TX | USART_INT_TC), Disable);
 }
 
 /**

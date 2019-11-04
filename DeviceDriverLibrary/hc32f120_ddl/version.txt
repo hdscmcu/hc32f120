@@ -1,5 +1,8 @@
 version     date            comment
- 1.0.0      Oct 30, 2019    1. Update STK hardware version: STK_HC32F120_LQFP44_080_V11;
+ 1.0.0      Nov 04, 2019    1. TX empty interrupt IRQ callback disable TX empyt interrupt 
+                               when buffer data is empty for UART interrupt sample.[usart];
+
+            Oct 30, 2019    1. Update STK hardware version: STK_HC32F120_LQFP44_080_V11;
 
             Oct 18, 2019    1. Check function return value(USART_UartInit) for UART sample [usart];
 
