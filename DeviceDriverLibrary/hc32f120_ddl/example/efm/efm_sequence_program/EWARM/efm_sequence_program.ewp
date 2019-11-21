@@ -1947,6 +1947,9 @@
     </file>
     -->
     <file>
+      <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_utility.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_gpio.c</name>
     </file>
     <file>
@@ -1954,9 +1957,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_icg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_utility.c</name>
     </file>
 
   </group>

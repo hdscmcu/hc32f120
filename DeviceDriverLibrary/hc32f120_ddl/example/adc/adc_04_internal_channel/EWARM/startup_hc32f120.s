@@ -130,8 +130,8 @@ Reset_Handler
                 LDR     R1, =0x42280190 ; PWC_RAMCR_RPERDIS
                 STRB    R0, [R1]        ; PWC_RAMCR_RPERDIS = 1
 
-                LDR     R1, =0x42280004 ; PWC_STPMCR_CKSHRC
-                STRB    R0, [R1]        ; PWC_STPMCR_CKSHRC = 1
+                LDR     R1, =0x42280008
+                STRB    R0, [R1]        ; PWC_STPMCR_bit2 = 1
 
                 LDR     R0, =0xA500
                 STR     R0, [R2]        ; PWC_FPRC = 0xA500

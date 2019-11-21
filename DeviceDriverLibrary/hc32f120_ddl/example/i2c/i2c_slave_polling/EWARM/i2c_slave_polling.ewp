@@ -1950,10 +1950,10 @@
       <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_i2c.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_gpio.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_clk.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_clk.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_gpio.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_icg.c</name>

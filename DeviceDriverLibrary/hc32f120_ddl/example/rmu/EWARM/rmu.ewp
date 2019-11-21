@@ -1950,10 +1950,7 @@
       <name>$PROJ_DIR$\..\..\..\driver\src\hc32f120_swdt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\driver\src\hc32f120_pwc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\driver\src\hc32f120_gpio.c</name>
+      <name>$PROJ_DIR$\..\..\..\driver\src\hc32f120_usart.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\driver\src\hc32f120_clk.c</name>
@@ -1962,13 +1959,16 @@
       <name>$PROJ_DIR$\..\..\..\driver\src\hc32f120_rmu.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\driver\src\hc32f120_gpio.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\driver\src\hc32f120_icg.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\driver\src\hc32f120_usart.c</name>
+      <name>$PROJ_DIR$\..\..\..\driver\src\hc32f120_utility.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\driver\src\hc32f120_utility.c</name>
+      <name>$PROJ_DIR$\..\..\..\driver\src\hc32f120_pwc.c</name>
     </file>
 
   </group>

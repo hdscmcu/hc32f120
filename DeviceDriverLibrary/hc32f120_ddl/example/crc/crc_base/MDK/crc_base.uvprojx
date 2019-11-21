@@ -150,7 +150,7 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>6</TargetSelection>
+          <TargetSelection>12</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -164,7 +164,7 @@
             <PeripheralDll></PeripheralDll>
             <PeripheralDllArguments></PeripheralDllArguments>
             <InitializationFile></InitializationFile>
-            <Driver>Segger\JL2CM3.dll</Driver>
+            <Driver>BIN\CMSIS_AGDI.dll</Driver>
           </TargetDlls>
         </DebugOption>
         <Utilities>
@@ -450,6 +450,9 @@
             </File>
             -->
             <File>
+<FileName>hc32f120_utility.c</FileName>
+<FileType>1</FileType><FilePath>..\..\..\..\driver\src\hc32f120_utility.c</FilePath></File>
+<File>
 <FileName>hc32f120_crc.c</FileName>
 <FileType>1</FileType><FilePath>..\..\..\..\driver\src\hc32f120_crc.c</FilePath></File>
 <File>
@@ -458,9 +461,6 @@
 <File>
 <FileName>hc32f120_icg.c</FileName>
 <FileType>1</FileType><FilePath>..\..\..\..\driver\src\hc32f120_icg.c</FilePath></File>
-<File>
-<FileName>hc32f120_utility.c</FileName>
-<FileType>1</FileType><FilePath>..\..\..\..\driver\src\hc32f120_utility.c</FilePath></File>
 
     </Files>
   </Group>
@@ -624,7 +624,7 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>6</TargetSelection>
+          <TargetSelection>12</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -638,7 +638,7 @@
             <PeripheralDll></PeripheralDll>
             <PeripheralDllArguments></PeripheralDllArguments>
             <InitializationFile></InitializationFile>
-            <Driver>Segger\JL2CM3.dll</Driver>
+            <Driver>BIN\CMSIS_AGDI.dll</Driver>
           </TargetDlls>
         </DebugOption>
         <Utilities>
@@ -924,6 +924,9 @@
             </File>
             -->
             <File>
+<FileName>hc32f120_utility.c</FileName>
+<FileType>1</FileType><FilePath>..\..\..\..\driver\src\hc32f120_utility.c</FilePath></File>
+<File>
 <FileName>hc32f120_crc.c</FileName>
 <FileType>1</FileType><FilePath>..\..\..\..\driver\src\hc32f120_crc.c</FilePath></File>
 <File>
@@ -932,9 +935,6 @@
 <File>
 <FileName>hc32f120_icg.c</FileName>
 <FileType>1</FileType><FilePath>..\..\..\..\driver\src\hc32f120_icg.c</FilePath></File>
-<File>
-<FileName>hc32f120_utility.c</FileName>
-<FileType>1</FileType><FilePath>..\..\..\..\driver\src\hc32f120_utility.c</FilePath></File>
 
     </Files>
   </Group>

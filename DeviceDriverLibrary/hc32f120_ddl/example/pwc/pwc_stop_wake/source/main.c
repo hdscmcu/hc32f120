@@ -137,6 +137,7 @@ static void SW2_Init(void)
     stc_exint_config_t stcExIntInit;
 
     /* External interrupt Ch.0 initialize */
+    GPIO_StructInit(&stcGpioInit);
     stcGpioInit.u16ExInt = PIN_EXINT_ON;
     GPIO_Init(GPIO_PORT_7, GPIO_PIN_0, &stcGpioInit);
 
