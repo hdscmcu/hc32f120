@@ -1,5 +1,7 @@
 version     date            comment
- 1.0.0      Nov 04, 2019    1. TX empty interrupt IRQ callback disable TX empyt interrupt 
+ 1.0.0      Nov 20, 2019    1. Configure DAP to the default ICE
+ 
+            Nov  4, 2019    1. TX empty interrupt IRQ callback disable TX empyt interrupt 
                                when buffer data is empty for UART interrupt sample.[usart];
 
             Oct 30, 2019    1. Update STK hardware version: STK_HC32F120_LQFP44_080_V11;
