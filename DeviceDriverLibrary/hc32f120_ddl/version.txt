@@ -1,5 +1,13 @@
 version     date            comment
- 1.0.0      Nov 20, 2019    1. Configure DAP to the default ICE
+ 1.0.0      
+            Jan  08, 2020   1. Added GCC compiler support.
+                            2. Added Eclipse project files for each example project.
+                            3. Modified the type of 'u32Event0' in structure stc_adc_trg_cfg_t,
+                               from 'uint32 enEvent0' to 'en_event_src_t enEvent0'. Same with 'u32Event1'.
+                            4. Modified the definitions of ADC_Trigger_Source_Type.
+                            5. Fixed a bug of IS_VALID_EFM_ADDR in hc32f120_efm.c.
+
+            Nov 20, 2019    1. Configure DAP to the default ICE
  
             Nov  4, 2019    1. TX empty interrupt IRQ callback disable TX empyt interrupt 
                                when buffer data is empty for UART interrupt sample.[usart];

@@ -7,6 +7,7 @@
    Change Logs:
    Date             Author          Notes
    2019-05-06       Chengy          First version
+   2020-01-08       Wuze            Fixed a bug of IS_VALID_EFM_ADDR.
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -133,8 +134,8 @@
 
 #define IS_VALID_EFM_ADDR(addr)                                                \
 (       ((addr) == EFM_START_ADDR)              ||                             \
-        ((addr) >= (EFM_START_ADDR + 1))        &&                             \
-        ((addr) <= EFM_END_ADDR))
+        (((addr) >= (EFM_START_ADDR + 1))       &&                             \
+        ((addr) <= EFM_END_ADDR)))
 
 /**
  * @}

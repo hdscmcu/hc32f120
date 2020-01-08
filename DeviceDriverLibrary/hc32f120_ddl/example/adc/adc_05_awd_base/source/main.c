@@ -6,6 +6,8 @@
    Change Logs:
    Date             Author          Notes
    2019-03-20       Wuze            First version
+   2020-01-08       Wuze            Modified the type of 'u32Event0' in structure stc_adc_trg_cfg_t,
+                                    from 'uint32 enEvent0' to 'en_event_src_t enEvent0'. Same with 'u32Event1'.
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -348,7 +350,7 @@ static void AdcTriggerConfig(void)
        Sequence B can only be started by the trigger source. */
     u8Seq = ADC_SEQ_B;
     stcTrgCfg.u16TrgSrc = ADC_TRGSRC_IN_EVT0;
-    stcTrgCfg.u32Event0 = EVT_ADC_EOCA;
+    stcTrgCfg.enEvent0  = EVT_ADC_EOCA;
     /* 1. Enable AOS */
     CLK_FcgPeriphClockCmd(CLK_FCG_AOS, Enable);
     /* 2. Configrues the trigger source of sequence B. */
