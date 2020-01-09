@@ -1,28 +1,32 @@
 version     date            comment
  1.0.0      
-            Jan  08, 2020   1. Added GCC compiler support.
-                            2. Added Eclipse project files for each example project.
-                            3. Modified the type of 'u32Event0' in structure stc_adc_trg_cfg_t,
-                               from 'uint32 enEvent0' to 'en_event_src_t enEvent0'. Same with 'u32Event1'.
-                            4. Modified the definitions of ADC_Trigger_Source_Type.
-                            5. Fixed a bug of IS_VALID_EFM_ADDR in hc32f120_efm.c.
+            Jan 08, 2020   1. Added GCC compiler support.
+                           2. Added Eclipse project files for each example project.
+                           3. Modified the type of 'u32Event0' in structure stc_adc_trg_cfg_t,
+                              from 'uint32 enEvent0' to 'en_event_src_t enEvent0'. Same with 'u32Event1'.
+                           4. Modified the definitions of ADC_Trigger_Source_Type.
+                           5. Fixed a bug of IS_VALID_EFM_ADDR in hc32f120_efm.c.
 
-            Nov 20, 2019    1. Configure DAP to the default ICE
+            Jan 03, 2020   1. comment revise for gpio driver
+
+            Dec 11, 2019   1. Add timeout function for timer0
+
+            Nov 20, 2019   1. Configure DAP to the default ICE
  
-            Nov  4, 2019    1. TX empty interrupt IRQ callback disable TX empyt interrupt 
-                               when buffer data is empty for UART interrupt sample.[usart];
+            Nov 04, 2019   1. TX empty interrupt IRQ callback disable TX empyt interrupt 
+                              when buffer data is empty for UART interrupt sample.[usart];
 
-            Oct 30, 2019    1. Update STK hardware version: STK_HC32F120_LQFP44_080_V11;
+            Oct 30, 2019   1. Update STK hardware version: STK_HC32F120_LQFP44_080_V11;
 
-            Oct 18, 2019    1. Check function return value(USART_UartInit) for UART sample [usart];
+            Oct 18, 2019   1. Check function return value(USART_UartInit) for UART sample [usart];
 
-            Oct 17, 2019    1. Correct EIRQCRx address calculate formula [interrupt];
-                            2. LVD judgement in IRQHandler31 [interrupt];
-                            3. Delete the interval between consecutively sent data; [spi]
-                            4. Bug fix, function PWC_LvdCmd; [pwc]
+            Oct 17, 2019   1. Correct EIRQCRx address calculate formula [interrupt];
+                           2. LVD judgement in IRQHandler31 [interrupt];
+                           3. Delete the interval between consecutively sent data; [spi]
+                           4. Bug fix, function PWC_LvdCmd; [pwc]
 
-            Oct  8, 2019    1. MISRAC2004 compliance (portion rules)
+            Oct 08, 2019   1. MISRAC2004 compliance (portion rules)
 
-            June 7, 2019    1. the first release for hc32f120 series DDL(Device Driver Library)
+            Jun 07, 2019   1. the first release for hc32f120 series DDL(Device Driver Library)
 
 EOF

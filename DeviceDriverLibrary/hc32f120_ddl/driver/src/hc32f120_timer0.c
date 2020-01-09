@@ -7,6 +7,7 @@
    Change Logs:
    Date             Author          Notes
    2019-04-28       Wangmin         First version
+   2019-12-11       Wangmin         Add timeout function for register write
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -81,6 +82,9 @@
  * @defgroup TIMER0_Local_Macros TIMER0 Local Macros
  * @{
  */
+
+/* Delay count for time out */
+#define TIMER0_TMOUT 0x2000ul
 
 /**
  * @defgroup TIMER0_Check_Parameters_Validity TIMER0 Check Parameters Validity
@@ -177,10 +181,6 @@
  */
 static uint32_t TIMER0_GetClkMode(void)
 {
-    for(uint32_t i=0ul; i<SystemCoreClock/10000ul; i++)
-    {
-        __NOP();
-    }
     return (M0P_TMR0->BCONR & TIMER0_CLK_ASYNC);
 }
 
@@ -214,7 +214,8 @@ static void AsyncDelay(void)
  * @brief  Timer0 peripheral initialization stucture clear
  * @param  [in] pstcInitStruct    Timer0 function structure
  *   @arg  See the structure definition for @ref stc_tim0_init_t
- * @retval en_result_t
+ * @retval Ok: Success
+ * @retval ErrorInvalidParameter: Parameter error
  */
 en_result_t TIMER0_StructInit(stc_tim0_init_t* pstcInitStruct)
 {
@@ -239,12 +240,15 @@ en_result_t TIMER0_StructInit(stc_tim0_init_t* pstcInitStruct)
  * @brief  Timer0 peripheral function initialize
  * @param  [in] pstcTmr0Init    Timer0 function base parameter structure
  *   @arg  See the structure definition for @ref stc_tim0_init_t
- * @retval en_result_t
+ * @retval Ok: Success
+ * @retval ErrorInvalidParameter: Parameter error
+ * @retval ErrorTimeout: Process timeout
  * @note   In capture mode, don't need configure member u32HwTrigFunc and u16CmpValue
  */
 en_result_t TIMER0_Init(const stc_tim0_init_t* pstcTmr0Init)
 {
     en_result_t enRet = Ok;
+    uint32_t u32TimeOut = 0ul;
     if (pstcTmr0Init == NULL)
     {
         enRet = ErrorInvalidParameter;
@@ -260,6 +264,14 @@ en_result_t TIMER0_Init(const stc_tim0_init_t* pstcTmr0Init)
         /* Configure register to default value, TIMER0 enter synchronous mode */
         M0P_TMR0->BCONR = 0x00000000ul;
         AsyncDelay();
+        while(0x00000000ul != M0P_TMR0->BCONR)
+        {
+            if(u32TimeOut++ > TIMER0_TMOUT)
+            {
+                enRet = ErrorTimeout;
+                break;
+            }
+        }
 
         /* Set timer compare value */
         M0P_TMR0->CMPAR = pstcTmr0Init->u16CmpValue;
@@ -274,11 +286,31 @@ en_result_t TIMER0_Init(const stc_tim0_init_t* pstcTmr0Init)
         {
             MODIFY_REG(M0P_TMR0->BCONR, TMR0_BCONR_ASYNCLKA, pstcTmr0Init->u32ClockSource);
             bM0P_TMR0->BCONR_b.SYNSA = 1u;
+            AsyncDelay();
+            u32TimeOut = 0ul;
+            while(1u != bM0P_TMR0->BCONR_b.SYNSA)
+            {
+                if(u32TimeOut++ > TIMER0_TMOUT)
+                {
+                    enRet = ErrorTimeout;
+                    break;
+                }
+            }
         }
         else
         {
             MODIFY_REG(M0P_TMR0->BCONR, TMR0_BCONR_SYNCLKA, pstcTmr0Init->u32ClockSource);
             bM0P_TMR0->BCONR_b.SYNSA = 0u;
+            AsyncDelay();
+            u32TimeOut = 0ul;
+            while(1u != bM0P_TMR0->BCONR_b.SYNSA)
+            {
+                if(u32TimeOut++ > TIMER0_TMOUT)
+                {
+                    enRet = ErrorTimeout;
+                    break;
+                }
+            }
         }
     }
     return enRet;
@@ -301,40 +333,77 @@ en_flag_status_t TIMER0_GetFlag(void)
  * @brief  Clear Timer0 status flag
  * @param  [in] None
  *
- * @retval None
+ * @retval Ok: Success
+ * @retval ErrorTimeout: Process timeout
  */
-void TIMER0_ClearFlag(void)
+en_result_t TIMER0_ClearFlag(void)
 {
+    en_result_t enRet = Ok;
+    uint32_t u32TimeOut = 0ul;
+
     bM0P_TMR0->STFLR_b.CMFA = 0u;
     AsyncDelay();
+    while(0u != bM0P_TMR0->STFLR_b.CMFA)
+    {
+        if(u32TimeOut++ > TIMER0_TMOUT)
+        {
+            enRet = ErrorTimeout;
+            break;
+        }
+    }
+    return enRet;
 }
 
 /**
  * @brief  Command the timer0 function
  * @param  [in] enCmd    Disable or Enable the function
  *
- * @retval None
+ * @retval Ok: Success
+ * @retval ErrorTimeout: Process timeout
  */
-void TIMER0_Cmd(en_functional_state_t enCmd)
+en_result_t TIMER0_Cmd(en_functional_state_t enCmd)
 {
+    en_result_t enRet = Ok;
+    uint32_t u32TimeOut = 0ul;
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enCmd));
 
     bM0P_TMR0->BCONR_b.CSTA = enCmd;
     AsyncDelay();
+    while(enCmd != bM0P_TMR0->BCONR_b.CSTA)
+    {
+        if(u32TimeOut++ > TIMER0_TMOUT)
+        {
+            enRet = ErrorTimeout;
+            break;
+        }
+    }
+    return enRet;
 }
 
 /**
  * @brief  Timer0 interrupt function command
  * @param  [in] enCmd    Disable or Enable the function
  *
- * @retval None
+ * @retval Ok: Success
+ * @retval ErrorTimeout: Process timeout
  */
-void TIMER0_IntCmd(en_functional_state_t enCmd)
+en_result_t TIMER0_IntCmd(en_functional_state_t enCmd)
 {
+    en_result_t enRet = Ok;
+    uint32_t u32TimeOut = 0ul;
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enCmd));
 
     bM0P_TMR0->BCONR_b.INTENA = enCmd;
     AsyncDelay();
+    while(enCmd != bM0P_TMR0->BCONR_b.INTENA)
+    {
+        if(u32TimeOut++ > TIMER0_TMOUT)
+        {
+            enRet = ErrorTimeout;
+            break;
+        }
+    }
+    return enRet;
 }
 
 /**
@@ -353,12 +422,25 @@ uint16_t TIMER0_GetCntReg(void)
  * @brief  Write Timer0 counter register
  * @param  [in] u16Cnt The data to write to the counter register
  *
- * @retval None
+ * @retval Ok: Success
+ * @retval ErrorTimeout: Process timeout
  */
-void TIMER0_WriteCntReg(uint16_t u16Cnt)
+en_result_t TIMER0_WriteCntReg(uint16_t u16Cnt)
 {
+    en_result_t enRet = Ok;
+    uint32_t u32TimeOut = 0ul;
+
     M0P_TMR0->CNTAR = (uint32_t)u16Cnt;
     AsyncDelay();
+    while((uint32_t)u16Cnt != M0P_TMR0->CNTAR)
+    {
+        if(u32TimeOut++ > TIMER0_TMOUT)
+        {
+            enRet = ErrorTimeout;
+            break;
+        }
+    }
+    return enRet;
 }
 
 /**
@@ -377,27 +459,53 @@ uint16_t TIMER0_GetCmpReg(void)
  * @brief  Write Timer0 compare count register
  * @param  [in] u16Cnt  The data to write to the compare register
  *
- * @retval None
+ * @retval Ok: Success
+ * @retval ErrorTimeout: Process timeout
  */
-void TIMER0_WriteCmpReg(uint16_t u16Cnt)
+en_result_t TIMER0_WriteCmpReg(uint16_t u16Cnt)
 {
+    en_result_t enRet = Ok;
+    uint32_t u32TimeOut = 0ul;
+
     M0P_TMR0->CMPAR = (uint32_t)u16Cnt;
     AsyncDelay();
+    while((uint32_t)u16Cnt != M0P_TMR0->CMPAR)
+    {
+        if(u32TimeOut++ > TIMER0_TMOUT)
+        {
+            enRet = ErrorTimeout;
+            break;
+        }
+    }
+    return enRet;
 }
 
 /**
  * @brief  Timer0 peripheral base function initialize
  * @param  [in] None
  *
- * @retval None
+ * @retval Ok: Success
+ * @retval ErrorTimeout: Process timeout
  */
-void TIMER0_DeInit(void)
+en_result_t TIMER0_DeInit(void)
 {
+    en_result_t enRet = Ok;
+    uint32_t u32TimeOut = 0ul;
+
     M0P_TMR0->BCONR = 0x00000000ul;
     AsyncDelay();
+    while(0x00000000ul != M0P_TMR0->BCONR)
+    {
+        if(u32TimeOut++ > TIMER0_TMOUT)
+        {
+            enRet = ErrorTimeout;
+            break;
+        }
+    }
     M0P_TMR0->CMPAR = 0x0000FFFFul;
     M0P_TMR0->CNTAR = 0x00000000ul;
     M0P_TMR0->STFLR = 0x00000000ul;
+    return enRet;
 }
 
 /**
