@@ -9,6 +9,8 @@
    2019-04-22       Zhangxl         First version
    2019-10-17       Zhangxl         Correct EIRQCRx address calculate formula;
                                     LVD judgment in IRQHandler31;
+   2020-01-22       Zhangxl         Modify exclusive IRQ request process for 
+                                    share handler
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -1085,7 +1087,7 @@ void IRQ027_Handler(void)
     uint32_t ISELBR27 = M0P_INTC->ISELBR27;
 
     /* EKEY and other Interrupt source are exclusive */
-    if (ISELBR27 & BIT_MASK_01)
+    if (BIT_MASK_01 == ISELBR27)
     {
         EKey_IrqHandler();
     }
@@ -1402,7 +1404,7 @@ void IRQ031_Handler(void)
     }
     if (Set == bM0P_ADC->AWDCR_b.AWD1IEN)
     {
-        /* ADC convert result in range of window 1 if dependence use */
+        /* ADC convert result in range of window 1 if independence use */
         u32Tmp1 = bM0P_ADC->AWDSR_b.AWD1F;
         u32Tmp2 = M0P_ADC->AWDCR_f.AWDCM;
         if ((ISELBR31 & BIT_MASK_11) && (u32Tmp1) && (Reset == u32Tmp2))

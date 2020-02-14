@@ -69,7 +69,7 @@ extern "C"
  */
 
 /**
- * @addtogroup HC32f120_System
+ * @addtogroup HC32F120_System
  * @{
  */
 
@@ -77,7 +77,7 @@ extern "C"
  * Global pre-processor symbols/macros ('define')
  ******************************************************************************/
 /**
- * @addtogroup HC32f120_System_Global_Macros
+ * @addtogroup HC32F120_System_Global_Macros
  * @{
  */
 
@@ -89,7 +89,7 @@ extern "C"
 
 
 /**
- * @addtogroup HC32f120_System_Clock_Source
+ * @addtogroup HC32F120_System_Clock_Source
  * @{
  */
 #if !defined (HRC_VALUE)
@@ -120,7 +120,7 @@ extern "C"
  * Global variable definitions ('extern')
  ******************************************************************************/
 /**
- * @addtogroup HC32f120_System_Exported_Variable
+ * @addtogroup HC32F120_System_Exported_Variable
  * @{
  */
 
@@ -134,7 +134,7 @@ extern uint32_t SystemCoreClock;          /*!< System clock frequency (Core cloc
  * Global function prototypes (definition in C source)
  ******************************************************************************/
 /**
- * @addtogroup HC32f120_System_Global_Functions
+ * @addtogroup HC32F120_System_Global_Functions
  * @{
  */
 

@@ -62,7 +62,7 @@
  */
 
 /**
- * @addtogroup HC32f120_System
+ * @addtogroup HC32F120_System
  * @{
  */
 
@@ -74,7 +74,7 @@
  * Global variable definitions (declared in header file with 'extern')
  ******************************************************************************/
 /**
- * @addtogroup HC32f120_System_Global_Variable
+ * @addtogroup HC32F120_System_Global_Variable
  * @{
  */
 
@@ -92,7 +92,7 @@ uint32_t SystemCoreClock = HRC_VALUE;  /*!< System clock frequency (Core clock) 
  * Function implementation - global ('extern') and local ('static')
  ******************************************************************************/
 /**
- * @addtogroup HC32f120_System_Global_Functions
+ * @addtogroup HC32F120_System_Global_Functions
  * @{
  */
 
