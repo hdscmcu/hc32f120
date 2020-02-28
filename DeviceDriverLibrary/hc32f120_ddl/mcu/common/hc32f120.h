@@ -5,7 +5,7 @@
  @verbatim
    Change Logs:
    Date             Author          Notes
-   2019-08-22       chengy          First version
+   2020-02-28       chengy          First version
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2017, Huada Semiconductor Co.,Ltd All rights reserved.
@@ -56,7 +56,7 @@
  **
  ** History:
  **
- **   - 2019-08-22  1.0   First version for Device Driver Library of HC32F120 series MCU.
+ **   - 2020-02-28  1.0   First version for Device Driver Library of HC32F120 series MCU.
  **
  ******************************************************************************/
 
@@ -1670,122 +1670,116 @@ typedef struct
 
 typedef struct
 {
-    __IO uint32_t RESET                     : 1;
-    uint32_t RESERVED1                      :31;
+    __IO uint8_t RESET                      : 1;
+    uint8_t RESERVED1                       : 7;
 } stc_rtc_cr0_field_t;
 
 typedef struct
 {
-    __IO uint32_t PRDS                      : 3;
-    __IO uint32_t AMPM                      : 1;
-    uint32_t RESERVED4                      : 1;
-    __IO uint32_t ONEHZOE                   : 1;
-    uint32_t RESERVED6                      : 1;
-    __IO uint32_t START                     : 1;
-    uint32_t RESERVED8                      :24;
+    __IO uint8_t PRDS                       : 3;
+    __IO uint8_t AMPM                       : 1;
+    uint8_t RESERVED4                       : 1;
+    __IO uint8_t ONEHZOE                    : 1;
+    uint8_t RESERVED6                       : 1;
+    __IO uint8_t START                      : 1;
 } stc_rtc_cr1_field_t;
 
 typedef struct
 {
-    __IO uint32_t WAIT                      : 1;
-    __IO uint32_t WAITF                     : 1;
-    __IO uint32_t PRDF                      : 1;
-    __IO uint32_t ALMF                      : 1;
-    uint32_t RESERVED4                      : 1;
-    __IO uint32_t PRDIE                     : 1;
-    __IO uint32_t ALMIE                     : 1;
-    __IO uint32_t ALME                      : 1;
-    uint32_t RESERVED8                      :24;
+    __IO uint8_t WAIT                       : 1;
+    __IO uint8_t WAITF                      : 1;
+    __IO uint8_t PRDF                       : 1;
+    __IO uint8_t ALMF                       : 1;
+    uint8_t RESERVED4                       : 1;
+    __IO uint8_t PRDIE                      : 1;
+    __IO uint8_t ALMIE                      : 1;
+    __IO uint8_t ALME                       : 1;
 } stc_rtc_cr2_field_t;
 
 typedef struct
 {
-    uint32_t RESERVED0                      : 4;
-    __IO uint32_t LRCEN                     : 1;
-    uint32_t RESERVED5                      : 2;
-    __IO uint32_t RCKSEL                    : 1;
-    uint32_t RESERVED8                      :24;
+    uint8_t RESERVED0                       : 4;
+    __IO uint8_t LRCEN                      : 1;
+    uint8_t RESERVED5                       : 2;
+    __IO uint8_t RCKSEL                     : 1;
 } stc_rtc_cr3_field_t;
 
 typedef struct
 {
-    __IO uint32_t SECU                      : 4;
-    __IO uint32_t SECD                      : 3;
-    uint32_t RESERVED7                      :25;
+    __IO uint8_t SECU                       : 4;
+    __IO uint8_t SECD                       : 3;
+    uint8_t RESERVED7                       : 1;
 } stc_rtc_sec_field_t;
 
 typedef struct
 {
-    __IO uint32_t MINU                      : 4;
-    __IO uint32_t MIND                      : 3;
-    uint32_t RESERVED7                      :25;
+    __IO uint8_t MINU                       : 4;
+    __IO uint8_t MIND                       : 3;
+    uint8_t RESERVED7                       : 1;
 } stc_rtc_min_field_t;
 
 typedef struct
 {
-    __IO uint32_t HOURU                     : 4;
-    __IO uint32_t HOURD                     : 2;
-    uint32_t RESERVED6                      :26;
+    __IO uint8_t HOURU                      : 4;
+    __IO uint8_t HOURD                      : 2;
+    uint8_t RESERVED6                       : 2;
 } stc_rtc_hour_field_t;
 
 typedef struct
 {
-    __IO uint32_t WEEK                      : 3;
-    uint32_t RESERVED3                      :29;
+    __IO uint8_t WEEK                       : 3;
+    uint8_t RESERVED3                       : 5;
 } stc_rtc_week_field_t;
 
 typedef struct
 {
-    __IO uint32_t DAYU                      : 4;
-    __IO uint32_t DAYD                      : 2;
-    uint32_t RESERVED6                      :26;
+    __IO uint8_t DAYU                       : 4;
+    __IO uint8_t DAYD                       : 2;
+    uint8_t RESERVED6                       : 2;
 } stc_rtc_day_field_t;
 
 typedef struct
 {
-    __IO uint32_t MON                       : 5;
-    uint32_t RESERVED5                      :27;
+    __IO uint8_t MON                        : 5;
+    uint8_t RESERVED5                       : 3;
 } stc_rtc_mon_field_t;
 
 typedef struct
 {
-    __IO uint32_t YEARU                     : 4;
-    __IO uint32_t YEARD                     : 4;
-    uint32_t RESERVED8                      :24;
+    __IO uint8_t YEARU                      : 4;
+    __IO uint8_t YEARD                      : 4;
 } stc_rtc_year_field_t;
 
 typedef struct
 {
-    __IO uint32_t ALMMINU                   : 4;
-    __IO uint32_t ALMMIND                   : 3;
-    uint32_t RESERVED7                      :25;
+    __IO uint8_t ALMMINU                    : 4;
+    __IO uint8_t ALMMIND                    : 3;
+    uint8_t RESERVED7                       : 1;
 } stc_rtc_almmin_field_t;
 
 typedef struct
 {
-    __IO uint32_t ALMHOURU                  : 4;
-    __IO uint32_t ALMHOURD                  : 2;
-    uint32_t RESERVED6                      :26;
+    __IO uint8_t ALMHOURU                   : 4;
+    __IO uint8_t ALMHOURD                   : 2;
+    uint8_t RESERVED6                       : 2;
 } stc_rtc_almhour_field_t;
 
 typedef struct
 {
-    __IO uint32_t ALMWEEK                   : 7;
-    uint32_t RESERVED7                      :25;
+    __IO uint8_t ALMWEEK                    : 7;
+    uint8_t RESERVED7                       : 1;
 } stc_rtc_almweek_field_t;
 
 typedef struct
 {
-    __IO uint32_t COMP8                     : 1;
-    uint32_t RESERVED1                      : 6;
-    __IO uint32_t COMPEN                    : 1;
-    uint32_t RESERVED8                      :24;
+    __IO uint8_t COMP8                      : 1;
+    uint8_t RESERVED1                       : 6;
+    __IO uint8_t COMPEN                     : 1;
 } stc_rtc_errcrh_field_t;
 
 typedef struct
 {
-    __IO uint32_t COMP                      : 8;
-    uint32_t RESERVED8                      :24;
+    __IO uint8_t COMP                       : 8;
 } stc_rtc_errcrl_field_t;
 
 typedef struct
@@ -3459,82 +3453,97 @@ typedef struct
 {
     union
     {
-        __IO uint32_t CR0;
+        __IO uint8_t CR0;
         stc_rtc_cr0_field_t CR0_f;
     };
+    uint8_t RESERVED0[3];
     union
     {
-        __IO uint32_t CR1;
+        __IO uint8_t CR1;
         stc_rtc_cr1_field_t CR1_f;
     };
+    uint8_t RESERVED1[3];
     union
     {
-        __IO uint32_t CR2;
+        __IO uint8_t CR2;
         stc_rtc_cr2_field_t CR2_f;
     };
+    uint8_t RESERVED2[3];
     union
     {
-        __IO uint32_t CR3;
+        __IO uint8_t CR3;
         stc_rtc_cr3_field_t CR3_f;
     };
+    uint8_t RESERVED3[3];
     union
     {
-        __IO uint32_t SEC;
+        __IO uint8_t SEC;
         stc_rtc_sec_field_t SEC_f;
     };
+    uint8_t RESERVED4[3];
     union
     {
-        __IO uint32_t MIN;
+        __IO uint8_t MIN;
         stc_rtc_min_field_t MIN_f;
     };
+    uint8_t RESERVED5[3];
     union
     {
-        __IO uint32_t HOUR;
+        __IO uint8_t HOUR;
         stc_rtc_hour_field_t HOUR_f;
     };
+    uint8_t RESERVED6[3];
     union
     {
-        __IO uint32_t WEEK;
+        __IO uint8_t WEEK;
         stc_rtc_week_field_t WEEK_f;
     };
+    uint8_t RESERVED7[3];
     union
     {
-        __IO uint32_t DAY;
+        __IO uint8_t DAY;
         stc_rtc_day_field_t DAY_f;
     };
+    uint8_t RESERVED8[3];
     union
     {
-        __IO uint32_t MON;
+        __IO uint8_t MON;
         stc_rtc_mon_field_t MON_f;
     };
+    uint8_t RESERVED9[3];
     union
     {
-        __IO uint32_t YEAR;
+        __IO uint8_t YEAR;
         stc_rtc_year_field_t YEAR_f;
     };
+    uint8_t RESERVED10[3];
     union
     {
-        __IO uint32_t ALMMIN;
+        __IO uint8_t ALMMIN;
         stc_rtc_almmin_field_t ALMMIN_f;
     };
+    uint8_t RESERVED11[3];
     union
     {
-        __IO uint32_t ALMHOUR;
+        __IO uint8_t ALMHOUR;
         stc_rtc_almhour_field_t ALMHOUR_f;
     };
+    uint8_t RESERVED12[3];
     union
     {
-        __IO uint32_t ALMWEEK;
+        __IO uint8_t ALMWEEK;
         stc_rtc_almweek_field_t ALMWEEK_f;
     };
+    uint8_t RESERVED13[3];
     union
     {
-        __IO uint32_t ERRCRH;
+        __IO uint8_t ERRCRH;
         stc_rtc_errcrh_field_t ERRCRH_f;
     };
+    uint8_t RESERVED14[3];
     union
     {
-        __IO uint32_t ERRCRL;
+        __IO uint8_t ERRCRL;
         stc_rtc_errcrl_field_t ERRCRL_f;
     };
 } M0P_RTC_TypeDef;
@@ -5836,176 +5845,176 @@ typedef struct
 *******************************************************************************/
 /*  Bit definition for RTC_CR0 register  */
 #define RTC_CR0_RESET_POS                    (0U)
-#define RTC_CR0_RESET                        ((uint32_t)0x00000001U)
+#define RTC_CR0_RESET                        ((uint8_t)0x01U)
 
 /*  Bit definition for RTC_CR1 register  */
 #define RTC_CR1_PRDS_POS                     (0U)
-#define RTC_CR1_PRDS                         ((uint32_t)0x00000007U)
-#define RTC_CR1_PRDS_0                       ((uint32_t)0x00000001U)
-#define RTC_CR1_PRDS_1                       ((uint32_t)0x00000002U)
-#define RTC_CR1_PRDS_2                       ((uint32_t)0x00000004U)
+#define RTC_CR1_PRDS                         ((uint8_t)0x07U)
+#define RTC_CR1_PRDS_0                       ((uint8_t)0x01U)
+#define RTC_CR1_PRDS_1                       ((uint8_t)0x02U)
+#define RTC_CR1_PRDS_2                       ((uint8_t)0x04U)
 #define RTC_CR1_AMPM_POS                     (3U)
-#define RTC_CR1_AMPM                         ((uint32_t)0x00000008U)
+#define RTC_CR1_AMPM                         ((uint8_t)0x08U)
 #define RTC_CR1_ONEHZOE_POS                  (5U)
-#define RTC_CR1_ONEHZOE                      ((uint32_t)0x00000020U)
+#define RTC_CR1_ONEHZOE                      ((uint8_t)0x20U)
 #define RTC_CR1_START_POS                    (7U)
-#define RTC_CR1_START                        ((uint32_t)0x00000080U)
+#define RTC_CR1_START                        ((uint8_t)0x80U)
 
 /*  Bit definition for RTC_CR2 register  */
 #define RTC_CR2_WAIT_POS                     (0U)
-#define RTC_CR2_WAIT                         ((uint32_t)0x00000001U)
+#define RTC_CR2_WAIT                         ((uint8_t)0x01U)
 #define RTC_CR2_WAITF_POS                    (1U)
-#define RTC_CR2_WAITF                        ((uint32_t)0x00000002U)
+#define RTC_CR2_WAITF                        ((uint8_t)0x02U)
 #define RTC_CR2_PRDF_POS                     (2U)
-#define RTC_CR2_PRDF                         ((uint32_t)0x00000004U)
+#define RTC_CR2_PRDF                         ((uint8_t)0x04U)
 #define RTC_CR2_ALMF_POS                     (3U)
-#define RTC_CR2_ALMF                         ((uint32_t)0x00000008U)
+#define RTC_CR2_ALMF                         ((uint8_t)0x08U)
 #define RTC_CR2_PRDIE_POS                    (5U)
-#define RTC_CR2_PRDIE                        ((uint32_t)0x00000020U)
+#define RTC_CR2_PRDIE                        ((uint8_t)0x20U)
 #define RTC_CR2_ALMIE_POS                    (6U)
-#define RTC_CR2_ALMIE                        ((uint32_t)0x00000040U)
+#define RTC_CR2_ALMIE                        ((uint8_t)0x40U)
 #define RTC_CR2_ALME_POS                     (7U)
-#define RTC_CR2_ALME                         ((uint32_t)0x00000080U)
+#define RTC_CR2_ALME                         ((uint8_t)0x80U)
 
 /*  Bit definition for RTC_CR3 register  */
 #define RTC_CR3_LRCEN_POS                    (4U)
-#define RTC_CR3_LRCEN                        ((uint32_t)0x00000010U)
+#define RTC_CR3_LRCEN                        ((uint8_t)0x10U)
 #define RTC_CR3_RCKSEL_POS                   (7U)
-#define RTC_CR3_RCKSEL                       ((uint32_t)0x00000080U)
+#define RTC_CR3_RCKSEL                       ((uint8_t)0x80U)
 
 /*  Bit definition for RTC_SEC register  */
 #define RTC_SEC_SECU_POS                     (0U)
-#define RTC_SEC_SECU                         ((uint32_t)0x0000000FU)
-#define RTC_SEC_SECU_0                       ((uint32_t)0x00000001U)
-#define RTC_SEC_SECU_1                       ((uint32_t)0x00000002U)
-#define RTC_SEC_SECU_2                       ((uint32_t)0x00000004U)
-#define RTC_SEC_SECU_3                       ((uint32_t)0x00000008U)
+#define RTC_SEC_SECU                         ((uint8_t)0x0FU)
+#define RTC_SEC_SECU_0                       ((uint8_t)0x01U)
+#define RTC_SEC_SECU_1                       ((uint8_t)0x02U)
+#define RTC_SEC_SECU_2                       ((uint8_t)0x04U)
+#define RTC_SEC_SECU_3                       ((uint8_t)0x08U)
 #define RTC_SEC_SECD_POS                     (4U)
-#define RTC_SEC_SECD                         ((uint32_t)0x00000070U)
-#define RTC_SEC_SECD_0                       ((uint32_t)0x00000010U)
-#define RTC_SEC_SECD_1                       ((uint32_t)0x00000020U)
-#define RTC_SEC_SECD_2                       ((uint32_t)0x00000040U)
+#define RTC_SEC_SECD                         ((uint8_t)0x70U)
+#define RTC_SEC_SECD_0                       ((uint8_t)0x10U)
+#define RTC_SEC_SECD_1                       ((uint8_t)0x20U)
+#define RTC_SEC_SECD_2                       ((uint8_t)0x40U)
 
 /*  Bit definition for RTC_MIN register  */
 #define RTC_MIN_MINU_POS                     (0U)
-#define RTC_MIN_MINU                         ((uint32_t)0x0000000FU)
-#define RTC_MIN_MINU_0                       ((uint32_t)0x00000001U)
-#define RTC_MIN_MINU_1                       ((uint32_t)0x00000002U)
-#define RTC_MIN_MINU_2                       ((uint32_t)0x00000004U)
-#define RTC_MIN_MINU_3                       ((uint32_t)0x00000008U)
+#define RTC_MIN_MINU                         ((uint8_t)0x0FU)
+#define RTC_MIN_MINU_0                       ((uint8_t)0x01U)
+#define RTC_MIN_MINU_1                       ((uint8_t)0x02U)
+#define RTC_MIN_MINU_2                       ((uint8_t)0x04U)
+#define RTC_MIN_MINU_3                       ((uint8_t)0x08U)
 #define RTC_MIN_MIND_POS                     (4U)
-#define RTC_MIN_MIND                         ((uint32_t)0x00000070U)
-#define RTC_MIN_MIND_0                       ((uint32_t)0x00000010U)
-#define RTC_MIN_MIND_1                       ((uint32_t)0x00000020U)
-#define RTC_MIN_MIND_2                       ((uint32_t)0x00000040U)
+#define RTC_MIN_MIND                         ((uint8_t)0x70U)
+#define RTC_MIN_MIND_0                       ((uint8_t)0x10U)
+#define RTC_MIN_MIND_1                       ((uint8_t)0x20U)
+#define RTC_MIN_MIND_2                       ((uint8_t)0x40U)
 
 /*  Bit definition for RTC_HOUR register  */
 #define RTC_HOUR_HOURU_POS                   (0U)
-#define RTC_HOUR_HOURU                       ((uint32_t)0x0000000FU)
-#define RTC_HOUR_HOURU_0                     ((uint32_t)0x00000001U)
-#define RTC_HOUR_HOURU_1                     ((uint32_t)0x00000002U)
-#define RTC_HOUR_HOURU_2                     ((uint32_t)0x00000004U)
-#define RTC_HOUR_HOURU_3                     ((uint32_t)0x00000008U)
+#define RTC_HOUR_HOURU                       ((uint8_t)0x0FU)
+#define RTC_HOUR_HOURU_0                     ((uint8_t)0x01U)
+#define RTC_HOUR_HOURU_1                     ((uint8_t)0x02U)
+#define RTC_HOUR_HOURU_2                     ((uint8_t)0x04U)
+#define RTC_HOUR_HOURU_3                     ((uint8_t)0x08U)
 #define RTC_HOUR_HOURD_POS                   (4U)
-#define RTC_HOUR_HOURD                       ((uint32_t)0x00000030U)
-#define RTC_HOUR_HOURD_0                     ((uint32_t)0x00000010U)
-#define RTC_HOUR_HOURD_1                     ((uint32_t)0x00000020U)
+#define RTC_HOUR_HOURD                       ((uint8_t)0x30U)
+#define RTC_HOUR_HOURD_0                     ((uint8_t)0x10U)
+#define RTC_HOUR_HOURD_1                     ((uint8_t)0x20U)
 
 /*  Bit definition for RTC_WEEK register  */
 #define RTC_WEEK_WEEK_POS                    (0U)
-#define RTC_WEEK_WEEK                        ((uint32_t)0x00000007U)
-#define RTC_WEEK_WEEK_0                      ((uint32_t)0x00000001U)
-#define RTC_WEEK_WEEK_1                      ((uint32_t)0x00000002U)
-#define RTC_WEEK_WEEK_2                      ((uint32_t)0x00000004U)
+#define RTC_WEEK_WEEK                        ((uint8_t)0x07U)
+#define RTC_WEEK_WEEK_0                      ((uint8_t)0x01U)
+#define RTC_WEEK_WEEK_1                      ((uint8_t)0x02U)
+#define RTC_WEEK_WEEK_2                      ((uint8_t)0x04U)
 
 /*  Bit definition for RTC_DAY register  */
 #define RTC_DAY_DAYU_POS                     (0U)
-#define RTC_DAY_DAYU                         ((uint32_t)0x0000000FU)
-#define RTC_DAY_DAYU_0                       ((uint32_t)0x00000001U)
-#define RTC_DAY_DAYU_1                       ((uint32_t)0x00000002U)
-#define RTC_DAY_DAYU_2                       ((uint32_t)0x00000004U)
-#define RTC_DAY_DAYU_3                       ((uint32_t)0x00000008U)
+#define RTC_DAY_DAYU                         ((uint8_t)0x0FU)
+#define RTC_DAY_DAYU_0                       ((uint8_t)0x01U)
+#define RTC_DAY_DAYU_1                       ((uint8_t)0x02U)
+#define RTC_DAY_DAYU_2                       ((uint8_t)0x04U)
+#define RTC_DAY_DAYU_3                       ((uint8_t)0x08U)
 #define RTC_DAY_DAYD_POS                     (4U)
-#define RTC_DAY_DAYD                         ((uint32_t)0x00000030U)
-#define RTC_DAY_DAYD_0                       ((uint32_t)0x00000010U)
-#define RTC_DAY_DAYD_1                       ((uint32_t)0x00000020U)
+#define RTC_DAY_DAYD                         ((uint8_t)0x30U)
+#define RTC_DAY_DAYD_0                       ((uint8_t)0x10U)
+#define RTC_DAY_DAYD_1                       ((uint8_t)0x20U)
 
 /*  Bit definition for RTC_MON register  */
 #define RTC_MON_MON_POS                      (0U)
-#define RTC_MON_MON                          ((uint32_t)0x0000001FU)
-#define RTC_MON_MON_0                        ((uint32_t)0x00000001U)
-#define RTC_MON_MON_1                        ((uint32_t)0x00000002U)
-#define RTC_MON_MON_2                        ((uint32_t)0x00000004U)
-#define RTC_MON_MON_3                        ((uint32_t)0x00000008U)
-#define RTC_MON_MON_4                        ((uint32_t)0x00000010U)
+#define RTC_MON_MON                          ((uint8_t)0x1FU)
+#define RTC_MON_MON_0                        ((uint8_t)0x01U)
+#define RTC_MON_MON_1                        ((uint8_t)0x02U)
+#define RTC_MON_MON_2                        ((uint8_t)0x04U)
+#define RTC_MON_MON_3                        ((uint8_t)0x08U)
+#define RTC_MON_MON_4                        ((uint8_t)0x10U)
 
 /*  Bit definition for RTC_YEAR register  */
 #define RTC_YEAR_YEARU_POS                   (0U)
-#define RTC_YEAR_YEARU                       ((uint32_t)0x0000000FU)
-#define RTC_YEAR_YEARU_0                     ((uint32_t)0x00000001U)
-#define RTC_YEAR_YEARU_1                     ((uint32_t)0x00000002U)
-#define RTC_YEAR_YEARU_2                     ((uint32_t)0x00000004U)
-#define RTC_YEAR_YEARU_3                     ((uint32_t)0x00000008U)
+#define RTC_YEAR_YEARU                       ((uint8_t)0x0FU)
+#define RTC_YEAR_YEARU_0                     ((uint8_t)0x01U)
+#define RTC_YEAR_YEARU_1                     ((uint8_t)0x02U)
+#define RTC_YEAR_YEARU_2                     ((uint8_t)0x04U)
+#define RTC_YEAR_YEARU_3                     ((uint8_t)0x08U)
 #define RTC_YEAR_YEARD_POS                   (4U)
-#define RTC_YEAR_YEARD                       ((uint32_t)0x000000F0U)
-#define RTC_YEAR_YEARD_0                     ((uint32_t)0x00000010U)
-#define RTC_YEAR_YEARD_1                     ((uint32_t)0x00000020U)
-#define RTC_YEAR_YEARD_2                     ((uint32_t)0x00000040U)
-#define RTC_YEAR_YEARD_3                     ((uint32_t)0x00000080U)
+#define RTC_YEAR_YEARD                       ((uint8_t)0xF0U)
+#define RTC_YEAR_YEARD_0                     ((uint8_t)0x10U)
+#define RTC_YEAR_YEARD_1                     ((uint8_t)0x20U)
+#define RTC_YEAR_YEARD_2                     ((uint8_t)0x40U)
+#define RTC_YEAR_YEARD_3                     ((uint8_t)0x80U)
 
 /*  Bit definition for RTC_ALMMIN register  */
 #define RTC_ALMMIN_ALMMINU_POS               (0U)
-#define RTC_ALMMIN_ALMMINU                   ((uint32_t)0x0000000FU)
-#define RTC_ALMMIN_ALMMINU_0                 ((uint32_t)0x00000001U)
-#define RTC_ALMMIN_ALMMINU_1                 ((uint32_t)0x00000002U)
-#define RTC_ALMMIN_ALMMINU_2                 ((uint32_t)0x00000004U)
-#define RTC_ALMMIN_ALMMINU_3                 ((uint32_t)0x00000008U)
+#define RTC_ALMMIN_ALMMINU                   ((uint8_t)0x0FU)
+#define RTC_ALMMIN_ALMMINU_0                 ((uint8_t)0x01U)
+#define RTC_ALMMIN_ALMMINU_1                 ((uint8_t)0x02U)
+#define RTC_ALMMIN_ALMMINU_2                 ((uint8_t)0x04U)
+#define RTC_ALMMIN_ALMMINU_3                 ((uint8_t)0x08U)
 #define RTC_ALMMIN_ALMMIND_POS               (4U)
-#define RTC_ALMMIN_ALMMIND                   ((uint32_t)0x00000070U)
-#define RTC_ALMMIN_ALMMIND_0                 ((uint32_t)0x00000010U)
-#define RTC_ALMMIN_ALMMIND_1                 ((uint32_t)0x00000020U)
-#define RTC_ALMMIN_ALMMIND_2                 ((uint32_t)0x00000040U)
+#define RTC_ALMMIN_ALMMIND                   ((uint8_t)0x70U)
+#define RTC_ALMMIN_ALMMIND_0                 ((uint8_t)0x10U)
+#define RTC_ALMMIN_ALMMIND_1                 ((uint8_t)0x20U)
+#define RTC_ALMMIN_ALMMIND_2                 ((uint8_t)0x40U)
 
 /*  Bit definition for RTC_ALMHOUR register  */
 #define RTC_ALMHOUR_ALMHOURU_POS             (0U)
-#define RTC_ALMHOUR_ALMHOURU                 ((uint32_t)0x0000000FU)
-#define RTC_ALMHOUR_ALMHOURU_0               ((uint32_t)0x00000001U)
-#define RTC_ALMHOUR_ALMHOURU_1               ((uint32_t)0x00000002U)
-#define RTC_ALMHOUR_ALMHOURU_2               ((uint32_t)0x00000004U)
-#define RTC_ALMHOUR_ALMHOURU_3               ((uint32_t)0x00000008U)
+#define RTC_ALMHOUR_ALMHOURU                 ((uint8_t)0x0FU)
+#define RTC_ALMHOUR_ALMHOURU_0               ((uint8_t)0x01U)
+#define RTC_ALMHOUR_ALMHOURU_1               ((uint8_t)0x02U)
+#define RTC_ALMHOUR_ALMHOURU_2               ((uint8_t)0x04U)
+#define RTC_ALMHOUR_ALMHOURU_3               ((uint8_t)0x08U)
 #define RTC_ALMHOUR_ALMHOURD_POS             (4U)
-#define RTC_ALMHOUR_ALMHOURD                 ((uint32_t)0x00000030U)
-#define RTC_ALMHOUR_ALMHOURD_0               ((uint32_t)0x00000010U)
-#define RTC_ALMHOUR_ALMHOURD_1               ((uint32_t)0x00000020U)
+#define RTC_ALMHOUR_ALMHOURD                 ((uint8_t)0x30U)
+#define RTC_ALMHOUR_ALMHOURD_0               ((uint8_t)0x10U)
+#define RTC_ALMHOUR_ALMHOURD_1               ((uint8_t)0x20U)
 
 /*  Bit definition for RTC_ALMWEEK register  */
 #define RTC_ALMWEEK_ALMWEEK_POS              (0U)
-#define RTC_ALMWEEK_ALMWEEK                  ((uint32_t)0x0000007FU)
-#define RTC_ALMWEEK_ALMWEEK_0                ((uint32_t)0x00000001U)
-#define RTC_ALMWEEK_ALMWEEK_1                ((uint32_t)0x00000002U)
-#define RTC_ALMWEEK_ALMWEEK_2                ((uint32_t)0x00000004U)
-#define RTC_ALMWEEK_ALMWEEK_3                ((uint32_t)0x00000008U)
-#define RTC_ALMWEEK_ALMWEEK_4                ((uint32_t)0x00000010U)
-#define RTC_ALMWEEK_ALMWEEK_5                ((uint32_t)0x00000020U)
-#define RTC_ALMWEEK_ALMWEEK_6                ((uint32_t)0x00000040U)
+#define RTC_ALMWEEK_ALMWEEK                  ((uint8_t)0x7FU)
+#define RTC_ALMWEEK_ALMWEEK_0                ((uint8_t)0x01U)
+#define RTC_ALMWEEK_ALMWEEK_1                ((uint8_t)0x02U)
+#define RTC_ALMWEEK_ALMWEEK_2                ((uint8_t)0x04U)
+#define RTC_ALMWEEK_ALMWEEK_3                ((uint8_t)0x08U)
+#define RTC_ALMWEEK_ALMWEEK_4                ((uint8_t)0x10U)
+#define RTC_ALMWEEK_ALMWEEK_5                ((uint8_t)0x20U)
+#define RTC_ALMWEEK_ALMWEEK_6                ((uint8_t)0x40U)
 
 /*  Bit definition for RTC_ERRCRH register  */
 #define RTC_ERRCRH_COMP8_POS                 (0U)
-#define RTC_ERRCRH_COMP8                     ((uint32_t)0x00000001U)
+#define RTC_ERRCRH_COMP8                     ((uint8_t)0x01U)
 #define RTC_ERRCRH_COMPEN_POS                (7U)
-#define RTC_ERRCRH_COMPEN                    ((uint32_t)0x00000080U)
+#define RTC_ERRCRH_COMPEN                    ((uint8_t)0x80U)
 
 /*  Bit definition for RTC_ERRCRL register  */
 #define RTC_ERRCRL_COMP_POS                  (0U)
-#define RTC_ERRCRL_COMP                      ((uint32_t)0x000000FFU)
-#define RTC_ERRCRL_COMP_0                    ((uint32_t)0x00000001U)
-#define RTC_ERRCRL_COMP_1                    ((uint32_t)0x00000002U)
-#define RTC_ERRCRL_COMP_2                    ((uint32_t)0x00000004U)
-#define RTC_ERRCRL_COMP_3                    ((uint32_t)0x00000008U)
-#define RTC_ERRCRL_COMP_4                    ((uint32_t)0x00000010U)
-#define RTC_ERRCRL_COMP_5                    ((uint32_t)0x00000020U)
-#define RTC_ERRCRL_COMP_6                    ((uint32_t)0x00000040U)
-#define RTC_ERRCRL_COMP_7                    ((uint32_t)0x00000080U)
+#define RTC_ERRCRL_COMP                      ((uint8_t)0xFFU)
+#define RTC_ERRCRL_COMP_0                    ((uint8_t)0x01U)
+#define RTC_ERRCRL_COMP_1                    ((uint8_t)0x02U)
+#define RTC_ERRCRL_COMP_2                    ((uint8_t)0x04U)
+#define RTC_ERRCRL_COMP_3                    ((uint8_t)0x08U)
+#define RTC_ERRCRL_COMP_4                    ((uint8_t)0x10U)
+#define RTC_ERRCRL_COMP_5                    ((uint8_t)0x20U)
+#define RTC_ERRCRL_COMP_6                    ((uint8_t)0x40U)
+#define RTC_ERRCRL_COMP_7                    ((uint8_t)0x80U)
 
 
 /*******************************************************************************
@@ -10043,7 +10052,7 @@ typedef struct
 typedef struct
 {
     __IO uint32_t RESET;
-    uint32_t RESERVED0[31];
+    uint32_t RESERVED0[7];
 } stc_rtc_cr0_bit_t;
 
 typedef struct
@@ -10056,7 +10065,6 @@ typedef struct
     __IO uint32_t ONEHZOE;
     uint32_t RESERVED1[1];
     __IO uint32_t START;
-    uint32_t RESERVED2[24];
 } stc_rtc_cr1_bit_t;
 
 typedef struct
@@ -10069,7 +10077,6 @@ typedef struct
     __IO uint32_t PRDIE;
     __IO uint32_t ALMIE;
     __IO uint32_t ALME;
-    uint32_t RESERVED1[24];
 } stc_rtc_cr2_bit_t;
 
 typedef struct
@@ -10078,7 +10085,6 @@ typedef struct
     __IO uint32_t LRCEN;
     uint32_t RESERVED1[2];
     __IO uint32_t RCKSEL;
-    uint32_t RESERVED2[24];
 } stc_rtc_cr3_bit_t;
 
 typedef struct
@@ -10090,7 +10096,7 @@ typedef struct
     __IO uint32_t SECD0;
     __IO uint32_t SECD1;
     __IO uint32_t SECD2;
-    uint32_t RESERVED0[25];
+    uint32_t RESERVED0[1];
 } stc_rtc_sec_bit_t;
 
 typedef struct
@@ -10102,7 +10108,7 @@ typedef struct
     __IO uint32_t MIND0;
     __IO uint32_t MIND1;
     __IO uint32_t MIND2;
-    uint32_t RESERVED0[25];
+    uint32_t RESERVED0[1];
 } stc_rtc_min_bit_t;
 
 typedef struct
@@ -10113,7 +10119,7 @@ typedef struct
     __IO uint32_t HOURU3;
     __IO uint32_t HOURD0;
     __IO uint32_t HOURD1;
-    uint32_t RESERVED0[26];
+    uint32_t RESERVED0[2];
 } stc_rtc_hour_bit_t;
 
 typedef struct
@@ -10121,7 +10127,7 @@ typedef struct
     __IO uint32_t WEEK0;
     __IO uint32_t WEEK1;
     __IO uint32_t WEEK2;
-    uint32_t RESERVED0[29];
+    uint32_t RESERVED0[5];
 } stc_rtc_week_bit_t;
 
 typedef struct
@@ -10132,7 +10138,7 @@ typedef struct
     __IO uint32_t DAYU3;
     __IO uint32_t DAYD0;
     __IO uint32_t DAYD1;
-    uint32_t RESERVED0[26];
+    uint32_t RESERVED0[2];
 } stc_rtc_day_bit_t;
 
 typedef struct
@@ -10142,7 +10148,7 @@ typedef struct
     __IO uint32_t MON2;
     __IO uint32_t MON3;
     __IO uint32_t MON4;
-    uint32_t RESERVED0[27];
+    uint32_t RESERVED0[3];
 } stc_rtc_mon_bit_t;
 
 typedef struct
@@ -10155,7 +10161,6 @@ typedef struct
     __IO uint32_t YEARD1;
     __IO uint32_t YEARD2;
     __IO uint32_t YEARD3;
-    uint32_t RESERVED0[24];
 } stc_rtc_year_bit_t;
 
 typedef struct
@@ -10167,7 +10172,7 @@ typedef struct
     __IO uint32_t ALMMIND0;
     __IO uint32_t ALMMIND1;
     __IO uint32_t ALMMIND2;
-    uint32_t RESERVED0[25];
+    uint32_t RESERVED0[1];
 } stc_rtc_almmin_bit_t;
 
 typedef struct
@@ -10178,7 +10183,7 @@ typedef struct
     __IO uint32_t ALMHOURU3;
     __IO uint32_t ALMHOURD0;
     __IO uint32_t ALMHOURD1;
-    uint32_t RESERVED0[26];
+    uint32_t RESERVED0[2];
 } stc_rtc_almhour_bit_t;
 
 typedef struct
@@ -10190,7 +10195,7 @@ typedef struct
     __IO uint32_t ALMWEEK4;
     __IO uint32_t ALMWEEK5;
     __IO uint32_t ALMWEEK6;
-    uint32_t RESERVED0[25];
+    uint32_t RESERVED0[1];
 } stc_rtc_almweek_bit_t;
 
 typedef struct
@@ -10198,7 +10203,6 @@ typedef struct
     __IO uint32_t COMP8;
     uint32_t RESERVED0[6];
     __IO uint32_t COMPEN;
-    uint32_t RESERVED1[24];
 } stc_rtc_errcrh_bit_t;
 
 typedef struct
@@ -10211,7 +10215,6 @@ typedef struct
     __IO uint32_t COMP5;
     __IO uint32_t COMP6;
     __IO uint32_t COMP7;
-    uint32_t RESERVED0[24];
 } stc_rtc_errcrl_bit_t;
 
 typedef struct
@@ -11055,20 +11058,35 @@ typedef struct
 typedef struct
 {
     stc_rtc_cr0_bit_t                        CR0_b;
+    uint32_t                                 RESERVED0[24];
     stc_rtc_cr1_bit_t                        CR1_b;
+    uint32_t                                 RESERVED1[24];
     stc_rtc_cr2_bit_t                        CR2_b;
+    uint32_t                                 RESERVED2[24];
     stc_rtc_cr3_bit_t                        CR3_b;
+    uint32_t                                 RESERVED3[24];
     stc_rtc_sec_bit_t                        SEC_b;
+    uint32_t                                 RESERVED4[24];
     stc_rtc_min_bit_t                        MIN_b;
+    uint32_t                                 RESERVED5[24];
     stc_rtc_hour_bit_t                       HOUR_b;
+    uint32_t                                 RESERVED6[24];
     stc_rtc_week_bit_t                       WEEK_b;
+    uint32_t                                 RESERVED7[24];
     stc_rtc_day_bit_t                        DAY_b;
+    uint32_t                                 RESERVED8[24];
     stc_rtc_mon_bit_t                        MON_b;
+    uint32_t                                 RESERVED9[24];
     stc_rtc_year_bit_t                       YEAR_b;
+    uint32_t                                 RESERVED10[24];
     stc_rtc_almmin_bit_t                     ALMMIN_b;
+    uint32_t                                 RESERVED11[24];
     stc_rtc_almhour_bit_t                    ALMHOUR_b;
+    uint32_t                                 RESERVED12[24];
     stc_rtc_almweek_bit_t                    ALMWEEK_b;
+    uint32_t                                 RESERVED13[24];
     stc_rtc_errcrh_bit_t                     ERRCRH_b;
+    uint32_t                                 RESERVED14[24];
     stc_rtc_errcrl_bit_t                     ERRCRL_b;
 } bM0P_RTC_TypeDef;
 

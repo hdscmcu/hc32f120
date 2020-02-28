@@ -8,6 +8,7 @@
    Date             Author          Notes
    2019-04-28       Wangmin         First version
    2019-12-11       Wangmin         Add timeout function for register write
+   2020-02-28       Wangmin         Modify after hc32_common.h changed
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -284,7 +285,7 @@ en_result_t TIMER0_Init(const stc_tim0_init_t* pstcTmr0Init)
         /* Configure clock source and clock mode*/
         if(TIMER0_CLK_ASYNC == pstcTmr0Init->u32ClockMode)
         {
-            MODIFY_REG(M0P_TMR0->BCONR, TMR0_BCONR_ASYNCLKA, pstcTmr0Init->u32ClockSource);
+            MODIFY_REG32(M0P_TMR0->BCONR, TMR0_BCONR_ASYNCLKA, pstcTmr0Init->u32ClockSource);
             bM0P_TMR0->BCONR_b.SYNSA = 1u;
             AsyncDelay();
             u32TimeOut = 0ul;
@@ -299,7 +300,7 @@ en_result_t TIMER0_Init(const stc_tim0_init_t* pstcTmr0Init)
         }
         else
         {
-            MODIFY_REG(M0P_TMR0->BCONR, TMR0_BCONR_SYNCLKA, pstcTmr0Init->u32ClockSource);
+            MODIFY_REG32(M0P_TMR0->BCONR, TMR0_BCONR_SYNCLKA, pstcTmr0Init->u32ClockSource);
             bM0P_TMR0->BCONR_b.SYNSA = 0u;
             AsyncDelay();
             u32TimeOut = 0ul;

@@ -235,19 +235,19 @@ en_result_t RTC_Init(const stc_rtc_init_t *pstcRtcInit)
         DDL_ASSERT(IS_RTC_PERIOD_INTERRUPT(pstcRtcInit->u8PeriodInterrupt));
 
         /* RTC CR1 Configuration */
-        MODIFY_REG(M0P_RTC->CR1, (RTC_CR1_PRDS | RTC_CR1_AMPM),
-                   ((uint32_t)pstcRtcInit->u8PeriodInterrupt | pstcRtcInit->u8HourFormat));
+        MODIFY_REG8(M0P_RTC->CR1, (RTC_CR1_PRDS | RTC_CR1_AMPM),
+                    ((uint32_t)pstcRtcInit->u8PeriodInterrupt | pstcRtcInit->u8HourFormat));
 
         /* RTC CR3 Configuration */
         if (RTC_CLOCK_SOURCE_XTAL32 != pstcRtcInit->u8ClockSource)
         {
-            MODIFY_REG(M0P_RTC->CR3, (RTC_CR3_LRCEN | RTC_CR3_RCKSEL),
-                       ((uint32_t)pstcRtcInit->u8ClockSource | RTC_CR3_LRCEN));
+            MODIFY_REG8(M0P_RTC->CR3, (RTC_CR3_LRCEN | RTC_CR3_RCKSEL),
+                        ((uint32_t)pstcRtcInit->u8ClockSource | RTC_CR3_LRCEN));
         }
         else
         {
-            MODIFY_REG(M0P_RTC->CR3, (RTC_CR3_LRCEN | RTC_CR3_RCKSEL),
-                       (uint32_t)pstcRtcInit->u8ClockSource);
+            MODIFY_REG8(M0P_RTC->CR3, (RTC_CR3_LRCEN | RTC_CR3_RCKSEL),
+                        (uint32_t)pstcRtcInit->u8ClockSource);
         }
     }
 
@@ -378,11 +378,11 @@ void RTC_PeriodIntConfig(uint8_t u8IntCond)
     }
 
     /* RTC CR1 Configuration */
-    MODIFY_REG(M0P_RTC->CR1, RTC_CR1_PRDS, (uint32_t)u8IntCond);
+    MODIFY_REG8(M0P_RTC->CR1, RTC_CR1_PRDS, (uint32_t)u8IntCond);
 
     if ((Set == enIntSta) && (Set == enRtcSta))
     {
-        MODIFY_REG(M0P_RTC->CR2, RTC_CR2_PRDF, (uint32_t)RTC_CR2_PRDIE);
+        MODIFY_REG8(M0P_RTC->CR2, RTC_CR2_PRDF, (uint32_t)RTC_CR2_PRDIE);
     }
 }
 
@@ -448,7 +448,7 @@ void RTC_SetClkCompenValue(uint16_t u16CompenVal)
     DDL_ASSERT(IS_RTC_COMPENSATION_VALUE(u16CompenVal));
 
     bM0P_RTC->ERRCRH_b.COMP8 = ((uint32_t)u16CompenVal >> 8u) & 0x01u;
-    WRITE_REG(M0P_RTC->ERRCRL, ((uint32_t)u16CompenVal & 0x00FFu));
+    WRITE_REG8(M0P_RTC->ERRCRL, ((uint32_t)u16CompenVal & 0x00FFu));
 }
 
 /**
@@ -504,10 +504,10 @@ en_result_t RTC_SetDate(uint8_t u8Format, stc_rtc_date_t *pstcRtcDate)
                 pstcRtcDate->u8Month = DEC2BCD((uint32_t)pstcRtcDate->u8Month);
                 pstcRtcDate->u8Day = DEC2BCD((uint32_t)pstcRtcDate->u8Day);
             }
-            WRITE_REG(M0P_RTC->YEAR, pstcRtcDate->u8Year);
-            WRITE_REG(M0P_RTC->MON, pstcRtcDate->u8Month);
-            WRITE_REG(M0P_RTC->DAY, pstcRtcDate->u8Day);
-            WRITE_REG(M0P_RTC->WEEK, pstcRtcDate->u8Weekday);
+            WRITE_REG8(M0P_RTC->YEAR, pstcRtcDate->u8Year);
+            WRITE_REG8(M0P_RTC->MON, pstcRtcDate->u8Month);
+            WRITE_REG8(M0P_RTC->DAY, pstcRtcDate->u8Day);
+            WRITE_REG8(M0P_RTC->WEEK, pstcRtcDate->u8Weekday);
 
             /* Exit read/write mode */
             if (Ok != RTC_ExitRwMode())
@@ -584,10 +584,10 @@ en_result_t RTC_GetDate(uint8_t u8Format, stc_rtc_date_t *pstcRtcDate)
         else
         {
             /* Get RTC date registers */
-            pstcRtcDate->u8Year = (uint8_t)READ_REG(M0P_RTC->YEAR);
-            pstcRtcDate->u8Month = (uint8_t)READ_REG(M0P_RTC->MON);
-            pstcRtcDate->u8Day = (uint8_t)READ_REG(M0P_RTC->DAY);
-            pstcRtcDate->u8Weekday = (uint8_t)READ_REG(M0P_RTC->WEEK);
+            pstcRtcDate->u8Year = (uint8_t)READ_REG8(M0P_RTC->YEAR);
+            pstcRtcDate->u8Month = (uint8_t)READ_REG8(M0P_RTC->MON);
+            pstcRtcDate->u8Day = (uint8_t)READ_REG8(M0P_RTC->DAY);
+            pstcRtcDate->u8Weekday = (uint8_t)READ_REG8(M0P_RTC->WEEK);
 
             /* Check decimal format*/
             if (RTC_DATA_FORMAT_DEC == u8Format)
@@ -680,14 +680,14 @@ en_result_t RTC_SetTime(uint8_t u8Format, stc_rtc_time_t *pstcRtcTime)
             if ((RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM) &&
                 (RTC_HOUR12_PM == pstcRtcTime->u8AmPm))
             {
-                WRITE_REG(M0P_RTC->HOUR, ((uint32_t)pstcRtcTime->u8Hour | RTC_HOUR12_PM));
+                WRITE_REG8(M0P_RTC->HOUR, ((uint32_t)pstcRtcTime->u8Hour | RTC_HOUR12_PM));
             }
             else
             {
-                WRITE_REG(M0P_RTC->HOUR, pstcRtcTime->u8Hour);
+                WRITE_REG8(M0P_RTC->HOUR, pstcRtcTime->u8Hour);
             }
-            WRITE_REG(M0P_RTC->MIN, pstcRtcTime->u8Minute);
-            WRITE_REG(M0P_RTC->SEC, pstcRtcTime->u8Second);
+            WRITE_REG8(M0P_RTC->MIN, pstcRtcTime->u8Minute);
+            WRITE_REG8(M0P_RTC->SEC, pstcRtcTime->u8Second);
 
             /* Exit read/write mode */
             if (Ok != RTC_ExitRwMode())
@@ -764,9 +764,9 @@ en_result_t RTC_GetTime(uint8_t u8Format, stc_rtc_time_t *pstcRtcTime)
         else
         {
             /* Get RTC time registers */
-            pstcRtcTime->u8Hour = (uint8_t)READ_REG(M0P_RTC->HOUR);
-            pstcRtcTime->u8Minute = (uint8_t)READ_REG(M0P_RTC->MIN);
-            pstcRtcTime->u8Second = (uint8_t)READ_REG(M0P_RTC->SEC);
+            pstcRtcTime->u8Hour = (uint8_t)READ_REG8(M0P_RTC->HOUR);
+            pstcRtcTime->u8Minute = (uint8_t)READ_REG8(M0P_RTC->MIN);
+            pstcRtcTime->u8Second = (uint8_t)READ_REG8(M0P_RTC->SEC);
             if (RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM)
             {
                 if (RTC_HOUR12_PM == (pstcRtcTime->u8Hour & RTC_HOUR12_PM))
@@ -862,14 +862,14 @@ en_result_t RTC_SetAlarm(uint8_t u8Format, stc_rtc_alarm_t *pstcRtcAlarm)
         if ((RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM) &&
             (RTC_HOUR12_PM == pstcRtcAlarm->u8AlarmAmPm))
         {
-            WRITE_REG(M0P_RTC->ALMHOUR, ((uint32_t)pstcRtcAlarm->u8AlarmHour | RTC_HOUR12_PM));
+            WRITE_REG8(M0P_RTC->ALMHOUR, ((uint32_t)pstcRtcAlarm->u8AlarmHour | RTC_HOUR12_PM));
         }
         else
         {
-            WRITE_REG(M0P_RTC->ALMHOUR, pstcRtcAlarm->u8AlarmHour);
+            WRITE_REG8(M0P_RTC->ALMHOUR, pstcRtcAlarm->u8AlarmHour);
         }
-        WRITE_REG(M0P_RTC->ALMMIN, pstcRtcAlarm->u8AlarmMinute);
-        WRITE_REG(M0P_RTC->ALMWEEK, pstcRtcAlarm->u8AlarmWeekday);
+        WRITE_REG8(M0P_RTC->ALMMIN, pstcRtcAlarm->u8AlarmMinute);
+        WRITE_REG8(M0P_RTC->ALMWEEK, pstcRtcAlarm->u8AlarmWeekday);
     }
 
     return enRet;
@@ -931,9 +931,9 @@ en_result_t RTC_GetAlarm(uint8_t u8Format, stc_rtc_alarm_t *pstcRtcAlarm)
         DDL_ASSERT(IS_RTC_DATA_FORMAT(u8Format));
 
         /* Get RTC date and time register */
-        pstcRtcAlarm->u8AlarmWeekday = (uint8_t)READ_REG(M0P_RTC->ALMWEEK);
-        pstcRtcAlarm->u8AlarmMinute = (uint8_t)READ_REG(M0P_RTC->ALMMIN);
-        pstcRtcAlarm->u8AlarmHour = (uint8_t)READ_REG(M0P_RTC->ALMHOUR);
+        pstcRtcAlarm->u8AlarmWeekday = (uint8_t)READ_REG8(M0P_RTC->ALMWEEK);
+        pstcRtcAlarm->u8AlarmMinute = (uint8_t)READ_REG8(M0P_RTC->ALMMIN);
+        pstcRtcAlarm->u8AlarmHour = (uint8_t)READ_REG8(M0P_RTC->ALMHOUR);
         if (RTC_HOUR_FORMAT_12 == bM0P_RTC->CR1_b.AMPM)
         {
             if (RTC_HOUR12_PM == (pstcRtcAlarm->u8AlarmHour & RTC_HOUR12_PM))
@@ -982,7 +982,7 @@ void RTC_AlarmCmd(en_functional_state_t enNewSta)
 
     if ((Set == enIntSta) && (Set == enRtcSta))
     {
-        MODIFY_REG(M0P_RTC->CR2, RTC_CR2_ALMF, RTC_CR2_ALMIE);
+        MODIFY_REG8(M0P_RTC->CR2, RTC_CR2_ALMF, RTC_CR2_ALMIE);
     }
 }
 
@@ -1004,11 +1004,11 @@ void RTC_IntCmd(uint8_t u8IntSource, en_functional_state_t enNewSta)
 
     if (Disable != enNewSta)
     {
-        SET_BIT(M0P_RTC->CR2, u8IntSource);
+        SET_REG8_BIT(M0P_RTC->CR2, u8IntSource);
     }
     else
     {
-        CLEAR_BIT(M0P_RTC->CR2, (uint32_t)u8IntSource);
+        CLEAR_REG8_BIT(M0P_RTC->CR2, (uint32_t)u8IntSource);
     }
 }
 
@@ -1030,7 +1030,7 @@ en_flag_status_t RTC_GetFlag(uint8_t u8Flag)
     /* Check parameters */
     DDL_ASSERT(IS_RTC_FLAG(u8Flag));
 
-    if (Reset != (READ_BIT(M0P_RTC->CR2, u8Flag)))
+    if (Reset != (READ_REG8_BIT(M0P_RTC->CR2, u8Flag)))
     {
         enFlagSta = Set;
     }
@@ -1052,7 +1052,7 @@ void RTC_ClearFlag(uint8_t u8Flag)
     /* Check parameters */
     DDL_ASSERT(IS_RTC_FLAG(u8Flag));
 
-    CLEAR_BIT(M0P_RTC->CR2, (uint32_t)u8Flag);
+    CLEAR_REG8_BIT(M0P_RTC->CR2, (uint32_t)u8Flag);
 }
 
 /**
@@ -1072,7 +1072,7 @@ en_flag_status_t RTC_GetIntFlag(uint8_t u8IntFlag)
     /* Check parameters */
     DDL_ASSERT(IS_RTC_INT_FLAG(u8IntFlag));
 
-    if (Reset != (READ_BIT(M0P_RTC->CR2, u8IntFlag)))
+    if (Reset != (READ_REG8_BIT(M0P_RTC->CR2, u8IntFlag)))
     {
         enFlagSta = Set;
     }
@@ -1093,7 +1093,7 @@ void RTC_ClearIntFlag(uint8_t u8IntFlag)
     /* Check parameters */
     DDL_ASSERT(IS_RTC_INT_FLAG(u8IntFlag));
 
-    CLEAR_BIT(M0P_RTC->CR2, (uint32_t)u8IntFlag);
+    CLEAR_REG8_BIT(M0P_RTC->CR2, (uint32_t)u8IntFlag);
 }
 
 /**

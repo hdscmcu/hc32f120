@@ -11,7 +11,7 @@
         <endian>little</endian>
         <mpuPresent>false</mpuPresent>
         <fpuPresent>false</fpuPresent>
-        <nvicPrioBits>4</nvicPrioBits>
+        <nvicPrioBits>2</nvicPrioBits>
         <vendorSystickConfig>false</vendorSystickConfig>
     </cpu>
     <addressUnitBits>8</addressUnitBits>
@@ -10556,14 +10556,14 @@
             <baseAddress>0x4000D400</baseAddress>
             <addressBlock>
                 <offset>0x0</offset>
-                <size>0x40</size>
+                <size>0x3D</size>
             </addressBlock>
             <registers>
                 <register>
                     <name>CR0</name>
                     <description>desc CR0</description>
                     <addressOffset>0x0</addressOffset>
-                    <size>32</size>
+                    <size>8</size>
                     <access>read-write</access>
                     <resetValue>0x0</resetValue>
                     <resetMask>0x1</resetMask>
@@ -10581,7 +10581,7 @@
                     <name>CR1</name>
                     <description>desc CR1</description>
                     <addressOffset>0x4</addressOffset>
-                    <size>32</size>
+                    <size>8</size>
                     <access>read-write</access>
                     <resetValue>0x0</resetValue>
                     <resetMask>0xAF</resetMask>
@@ -10620,7 +10620,7 @@
                     <name>CR2</name>
                     <description>desc CR2</description>
                     <addressOffset>0x8</addressOffset>
-                    <size>32</size>
+                    <size>8</size>
                     <access>read-write</access>
                     <resetValue>0x0</resetValue>
                     <resetMask>0xEF</resetMask>
@@ -10680,7 +10680,7 @@
                     <name>CR3</name>
                     <description>desc CR3</description>
                     <addressOffset>0xC</addressOffset>
-                    <size>32</size>
+                    <size>8</size>
                     <access>read-write</access>
                     <resetValue>0x0</resetValue>
                     <resetMask>0x90</resetMask>
@@ -10705,7 +10705,7 @@
                     <name>SEC</name>
                     <description>desc SEC</description>
                     <addressOffset>0x10</addressOffset>
-                    <size>32</size>
+                    <size>8</size>
                     <access>read-write</access>
                     <resetValue>0x0</resetValue>
                     <resetMask>0x7F</resetMask>
@@ -10730,7 +10730,7 @@
                     <name>MIN</name>
                     <description>desc MIN</description>
                     <addressOffset>0x14</addressOffset>
-                    <size>32</size>
+                    <size>8</size>
                     <access>read-write</access>
                     <resetValue>0x0</resetValue>
                     <resetMask>0x7F</resetMask>
@@ -10755,7 +10755,7 @@
                     <name>HOUR</name>
                     <description>desc HOUR</description>
                     <addressOffset>0x18</addressOffset>
-                    <size>32</size>
+                    <size>8</size>
                     <access>read-write</access>
                     <resetValue>0x12</resetValue>
                     <resetMask>0x3F</resetMask>
@@ -10780,7 +10780,7 @@
                     <name>WEEK</name>
                     <description>desc WEEK</description>
                     <addressOffset>0x1C</addressOffset>
-                    <size>32</size>
+                    <size>8</size>
                     <access>read-write</access>
                     <resetValue>0x0</resetValue>
                     <resetMask>0x7</resetMask>
@@ -10798,7 +10798,7 @@
                     <name>DAY</name>
                     <description>desc DAY</description>
                     <addressOffset>0x20</addressOffset>
-                    <size>32</size>
+                    <size>8</size>
                     <access>read-write</access>
                     <resetValue>0x0</resetValue>
                     <resetMask>0x3F</resetMask>
@@ -10823,7 +10823,7 @@
                     <name>MON</name>
                     <description>desc MON</description>
                     <addressOffset>0x24</addressOffset>
-                    <size>32</size>
+                    <size>8</size>
                     <access>read-write</access>
                     <resetValue>0x0</resetValue>
                     <resetMask>0x1F</resetMask>
@@ -10841,7 +10841,7 @@
                     <name>YEAR</name>
                     <description>desc YEAR</description>
                     <addressOffset>0x28</addressOffset>
-                    <size>32</size>
+                    <size>8</size>
                     <access>read-write</access>
                     <resetValue>0x0</resetValue>
                     <resetMask>0xFF</resetMask>
@@ -10866,7 +10866,7 @@
                     <name>ALMMIN</name>
                     <description>desc ALMMIN</description>
                     <addressOffset>0x2C</addressOffset>
-                    <size>32</size>
+                    <size>8</size>
                     <access>read-write</access>
                     <resetValue>0x12</resetValue>
                     <resetMask>0x7F</resetMask>
@@ -10891,7 +10891,7 @@
                     <name>ALMHOUR</name>
                     <description>desc ALMHOUR</description>
                     <addressOffset>0x30</addressOffset>
-                    <size>32</size>
+                    <size>8</size>
                     <access>read-write</access>
                     <resetValue>0x0</resetValue>
                     <resetMask>0x3F</resetMask>
@@ -10916,7 +10916,7 @@
                     <name>ALMWEEK</name>
                     <description>desc ALMWEEK</description>
                     <addressOffset>0x34</addressOffset>
-                    <size>32</size>
+                    <size>8</size>
                     <access>read-write</access>
                     <resetValue>0x0</resetValue>
                     <resetMask>0x7F</resetMask>
@@ -10934,7 +10934,7 @@
                     <name>ERRCRH</name>
                     <description>desc ERRCRH</description>
                     <addressOffset>0x38</addressOffset>
-                    <size>32</size>
+                    <size>8</size>
                     <access>read-write</access>
                     <resetValue>0x0</resetValue>
                     <resetMask>0x81</resetMask>
@@ -10959,7 +10959,7 @@
                     <name>ERRCRL</name>
                     <description>desc ERRCRL</description>
                     <addressOffset>0x3C</addressOffset>
-                    <size>32</size>
+                    <size>8</size>
                     <access>read-write</access>
                     <resetValue>0x20</resetValue>
                     <resetMask>0xFF</resetMask>

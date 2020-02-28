@@ -8,6 +8,8 @@
    Date             Author          Notes
    2019-04-22       Chengy          First version
    2019-10-21       Chengy          Add function CLK_ClearXtalStdFlag
+   2020-02-28       Chengy          Modified CLK_REG_WRITE_ENABLE/DISABLE 
+                                    #Elimate impact on other bits
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -423,8 +425,8 @@ typedef struct
  * @defgroup CLK_REG_Write_Configuration CLK register write Configuration
  * @{
  */
-#define CLK_REG_WRITE_ENABLE()      (M0P_PWC->FPRC = 0xa501u)
-#define CLK_REG_WRITE_DISABLE()     (M0P_PWC->FPRC = 0xa500u)
+#define CLK_REG_WRITE_ENABLE()      (M0P_PWC->FPRC |= 0xa501u)
+#define CLK_REG_WRITE_DISABLE()     (M0P_PWC->FPRC = (0xa500u | (M0P_PWC->FPRC & (uint16_t)(~1u))))
 
 #define CLK_HRCCFGR_WRITE_ENBALE()  {M0P_EFM->FAPRT = 0x0123u; \
                                      M0P_EFM->FAPRT = 0x3210u;}
