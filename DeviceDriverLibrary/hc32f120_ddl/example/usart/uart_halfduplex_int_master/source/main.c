@@ -7,6 +7,8 @@
    Change Logs:
    Date             Author          Notes
    2019-04-28       Hongjh          First version
+   2020-02-21       Hongjh          Modify interrupt macro define to USART_INT_TXE
+                                    /USART_INT_TC/USART_INT_RX
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -235,7 +237,7 @@ static en_key_state_t KeyGetState(const stc_key_t *pstcKey)
 static void UartMasterUnitTxIrqCallback(void)
 {
     en_flag_status_t enFlag = USART_GetFlag(UART_MASTER_UNIT, USART_FLAG_TXE);
-    en_functional_state_t enState = USART_GetFuncState(UART_MASTER_UNIT, USART_IT_TXE);
+    en_functional_state_t enState = USART_GetFuncState(UART_MASTER_UNIT, USART_INT_TXE);
 
     if ((Set == enFlag) && (Enable == enState))
     {
@@ -255,7 +257,7 @@ static void UartMasterUnitTxIrqCallback(void)
 static void UartMasterUnitTcIrqCallback(void)
 {
     en_flag_status_t enFlag = USART_GetFlag(UART_MASTER_UNIT, USART_FLAG_TC);
-    en_functional_state_t enState = USART_GetFuncState(UART_MASTER_UNIT, USART_IT_TC);
+    en_functional_state_t enState = USART_GetFuncState(UART_MASTER_UNIT, USART_INT_TC);
 
     if ((Set == enFlag) && (Enable == enState))
     {
@@ -273,7 +275,7 @@ static void UartMasterUnitTcIrqCallback(void)
 static void UartMasterUnitRxIrqCallback(void)
 {
     en_flag_status_t enFlag = USART_GetFlag(UART_MASTER_UNIT, USART_FLAG_RXNE);
-    en_functional_state_t enState = USART_GetFuncState(UART_MASTER_UNIT, USART_IT_RI);
+    en_functional_state_t enState = USART_GetFuncState(UART_MASTER_UNIT, USART_INT_RX);
 
     if ((Set == enFlag) && (Enable == enState))
     {
