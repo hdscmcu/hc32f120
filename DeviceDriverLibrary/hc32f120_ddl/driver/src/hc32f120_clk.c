@@ -89,32 +89,32 @@
 
 
 /**
- * @defgroup RTC_Check_Parameters_Validity RTC Check Parameters Validity
+ * @defgroup CLK_Check_Parameters_Validity CLK Check Parameters Validity
  * @{
  */
-/* Paramer valid check for XTAL state */
+/* parameter valid check for XTAL state */
 #define IS_VALID_CLK_XTAL_STATE(STA)                                           \
 (       ((STA) == CLK_XTAL_OFF)                     ||                         \
         ((STA) == CLK_XTAL_ON))
 
-/* Paramer valid check for XTAL mode */
+/* parameter valid check for XTAL mode */
 #define IS_VALID_CLK_XTAL_MODE(MODE)                                           \
 (       ((MODE) == CLK_XTALMODE_OSC)                ||                         \
         ((MODE) == CLK_XTALMODE_EXCLK))
 
-/* Paramer valid check for XTAL super driver state */
+/* parameter valid check for XTAL super driver state */
 #define IS_VALID_CLK_XTAL_SUPDRV_STATE(STA)                                    \
 (       ((STA) == CLK_XTAL_SUPDRV_ON)               ||                         \
         ((STA) == CLK_XTAL_SUPDRV_OFF))
 
-/* Paramer valid check for XTAL driver ability mode */
+/* parameter valid check for XTAL driver ability mode */
 #define IS_VALID_CLK_XTALDRV_MODE(MODE)                                        \
 (       ((MODE) == CLK_XTALDRV_HIGH)                ||                         \
         ((MODE) == CLK_XTALDRV_MID)                 ||                         \
         ((MODE) == CLK_XTALDRV_LOW)                 ||                         \
         ((MODE) == CLK_XTALDRV_ULOW))
 
-/* Paramer valid check for XTAL stable time selection */
+/* parameter valid check for XTAL stable time selection */
 #define IS_VALID_CLK_XTALSTB_SEL(SEL)                                          \
 (       ((SEL) == CLK_XTALSTB_8)                    ||                         \
         ((SEL) == CLK_XTALSTB_9 )                   ||                         \
@@ -125,32 +125,32 @@
         ((SEL) == CLK_XTALSTB_16)                   ||                         \
         ((SEL) == CLK_XTALSTB_17))
 
-/* Paramer valid check for XTALSTD state */
+/* parameter valid check for XTALSTD state */
 #define IS_VALID_CLK_XTALSTD_STATE(STA)                                        \
 (       ((STA) == CLK_XTALSTD_OFF)                  ||                         \
         ((STA) == CLK_XTALSTD_ON))
 
-/* Paramer valid check for XTALSTD mode */
+/* parameter valid check for XTALSTD mode */
 #define IS_VALID_CLK_XTALSTD_MODE(MD)                                          \
 (       ((MD) == CLK_XTALSTD_MODE_RST)            ||                           \
         ((MD) == CLK_XTALSTD_MODE_INT))
 
-/* Paramer valid check for XTALSTD interrupt state */
+/* parameter valid check for XTALSTD interrupt state */
 #define IS_VALID_CLK_XTALSTD_INT_STATE(STA)                                    \
 (       ((STA) == CLK_XTALSTD_INT_OFF)              ||                         \
         ((STA) == CLK_XTALSTD_INT_ON))
 
-/* Paramer valid check for XTALSTD reset state */
+/* parameter valid check for XTALSTD reset state */
 #define IS_VALID_CLK_XTALSTD_RST_STATE(STA)                                    \
 (       ((STA) == CLK_XTALSTD_RST_OFF)              ||                         \
         ((STA) == CLK_XTALSTD_RST_ON))
 
-/* Paramer valid check for HRC state */
+/* parameter valid check for HRC state */
 #define IS_VALID_CLK_HRC_STATE(STA)                                            \
 (       ((STA) == CLK_HRC_OFF)                      ||                         \
         ((STA) == CLK_HRC_ON))
 
-/* Paramer valid check for HRC state */
+/* parameter valid check for HRC state */
 #define IS_VALID_CLK_HRC_FREQ_SEL(SEL)                                         \
  (      ((SEL) == CLK_HRCFREQ_32)                   ||                         \
         ((SEL) == CLK_HRCFREQ_16)                   ||                         \
@@ -159,35 +159,35 @@
         ((SEL) == CLK_HRCFREQ_2)                    ||                         \
         ((SEL) == CLK_HRCFREQ_1))
 
-/* Paramer valid check for LRC state */
+/* parameter valid check for LRC state */
 #define IS_VALID_CLK_LRC_STATE(STA)                                            \
 (       ((STA) == CLK_LRC_OFF)                      ||                         \
         ((STA) == CLK_LRC_ON))
 
-/* Paramer valid check for XTAL32 state */
+/* parameter valid check for XTAL32 state */
 #define IS_VALID_CLK_XTAL32_STATE(STA)                                         \
 (       ((STA) == CLK_XTAL32_OFF)                   ||                         \
         ((STA) == CLK_XTAL32_ON))
 
-/* Paramer valid check for XTAL32 super driver state */
+/* parameter valid check for XTAL32 super driver state */
 #define IS_VALID_CLK_XTAL32_SUPDRV_STATE(STA)                                  \
 (       ((STA) == CLK_XTAL32_SUPDRV_ON)             ||                         \
         ((STA) == CLK_XTAL32_SUPDRV_OFF))
 
-/* Paramer valid check for XTAL32 driver ability mode */
+/* parameter valid check for XTAL32 driver ability mode */
 #define IS_VALID_CLK_XTAL32DRV_MODE(MODE)                                      \
 (       ((MODE) == CLK_XTAL32DRV_MID)               ||                         \
         ((MODE) == CLK_XTAL32DRV_HIGH)              ||                         \
         ((MODE) == CLK_XTAL32DRV_LOW)               ||                         \
         ((MODE) == CLK_XTAL32DRV_ULOW))
 
-/* Paramer valid check for XTAL32 filtering selection */
+/* parameter valid check for XTAL32 filtering selection */
 #define IS_VALID_CLK_XTAL32_FILT_SEL(SEL)                                      \
 (       ((SEL) == CLK_XTAL32NF_FULL)                ||                         \
         ((SEL) == CLK_XTAL32NF_PART)                ||                         \
         ((SEL) == CLK_XTAL32NF_NONE))
 
-/* Paramer valid check for HRC frequency selection */
+/* parameter valid check for HRC frequency selection */
 #define IS_VALID_CLK_HRCFREQ_SEL(SEL)                                          \
 (       ((SEL) == CLK_HRCFREQ_32)                   ||                         \
         ((SEL) == CLK_HRCFREQ_16)                   ||                         \
@@ -196,14 +196,14 @@
         ((SEL) == CLK_HRCFREQ_2)                    ||                         \
         ((SEL) == CLK_HRCFREQ_1)
 
-/* Paramer valid check for system clock source */
+/* parameter valid check for system clock source */
 #define IS_VALID_CLK_SYSCLK_SRC(SRC)                                           \
 (       ((SRC) == CLK_SYSCLKSOURCE_HRC)             ||                         \
         ((SRC) == CLK_SYSCLKSOURCE_XTAL)            ||                         \
         ((SRC) == CLK_SYSCLKSOURCE_LRC)             ||                         \
         ((SRC) == CLK_SYSCLKSOURCE_XTAL32))
 
-/* Paramer valid check for system clock divider */
+/* parameter valid check for system clock divider */
 #define IS_VALID_CLK_SYSCLK_DIV(DIV)                                           \
 (       ((DIV) == CLK_SYSCLK_DIV1)                  ||                         \
         ((DIV) == CLK_SYSCLK_DIV2)                  ||                         \
@@ -213,7 +213,7 @@
         ((DIV) == CLK_SYSCLK_DIV32)                 ||                         \
         ((DIV) == CLK_SYSCLK_DIV64))
 
-/* Paramer valid check for hclk divider */
+/* parameter valid check for hclk divider */
 #define IS_VALID_HCLK_DIV(DIV)                                                 \
 (       ((DIV) == CLK_HCLK_DIV1)                    ||                         \
         ((DIV) == CLK_HCLK_DIV2)                    ||                         \
@@ -317,7 +317,7 @@ void CLK_DeInit(void)
 
 /**
  * @brief  Init Xtal initial structure with default value.
- * @param  pstcXtal specifies the paramer of XTAL.
+ * @param  pstcXtal specifies the parameter of XTAL.
  *            @arg    u8XtalState  : The new state of the XTAL.
  *            @arg    u8XtalMode   : The XTAL mode selection osc or exclk.
  *            @arg    u8XtalDrv    : The XTAL drive ability.
@@ -351,7 +351,7 @@ en_result_t CLK_XtalStrucInit(stc_clk_xtal_init_t* pstcXtal)
 
 /**
   * @brief  Initialise the XTAL.
-  * @param  pstcXtal specifies the paramer of XTAL.
+  * @param  pstcXtal specifies the parameter of XTAL.
   *            @arg    u8XtalState  : The new state of the XTAL.
   *            @arg    u8XtalMode   : The XTAL mode selection osc or exclk.
   *            @arg    u8XtalDrv    : The XTAL drive ability.
@@ -370,7 +370,7 @@ en_result_t CLK_XTALInit(const stc_clk_xtal_init_t* pstcXtal)
     }
     else
     {
-        /* Paramers check */
+        /* parameters check */
         DDL_ASSERT(IS_VALID_CLK_XTAL_STATE(pstcXtal->u8XtalState));
 
         /* Enable register write. */
@@ -404,7 +404,7 @@ en_result_t CLK_XTALInit(const stc_clk_xtal_init_t* pstcXtal)
         }
         else
         {
-            /* Paramers check */
+            /* parameters check */
             DDL_ASSERT(IS_VALID_CLK_XTAL_MODE(pstcXtal->u8XtalMode));
             DDL_ASSERT(IS_VALID_CLK_XTALDRV_MODE(pstcXtal->u8XtalDrv));
             DDL_ASSERT(IS_VALID_CLK_XTAL_SUPDRV_STATE(pstcXtal->u8XtalSupDrv));
@@ -440,7 +440,7 @@ en_result_t CLK_XTALInit(const stc_clk_xtal_init_t* pstcXtal)
 
 /**
  * @brief  Init Xtal32 initial structure with default value.
- * @param  pstcXtal32 specifies the paramer of XTAL32.
+ * @param  pstcXtal32 specifies the parameter of XTAL32.
  *            @arg    u8Xtal32State  : The new state of the XTAL32.
  *            @arg    u8Xtal32Drv    : The XTAL mode selection osc or exclk.
  *            @arg    u8Xtal32SupDrv: The XTAL drive ability.
@@ -472,7 +472,7 @@ en_result_t CLK_Xtal32StrucInit(stc_clk_xtal32_init_t* pstcXtal32)
 
 /**
  * @brief  Initialise the XTAL32.
- * @param  pstcXtal32 specifies the paramer of XTAL32.
+ * @param  pstcXtal32 specifies the parameter of XTAL32.
  *            @arg    u8Xtal32State  : The new state of the XTAL32.
  *            @arg    u8Xtal32Drv    : The XTAL mode selection osc or exclk.
  *            @arg    u8Xtal32SupDrv: The XTAL drive ability.
@@ -490,7 +490,7 @@ en_result_t CLK_XTAL32Init(const stc_clk_xtal32_init_t* pstcXtal32)
     }
     else
     {
-        /* Paramers check */
+        /* parameters check */
         DDL_ASSERT(IS_VALID_CLK_XTAL32_STATE(pstcXtal32->u8Xtal32State));
 
         /* Enable register write. */
@@ -524,7 +524,7 @@ en_result_t CLK_XTAL32Init(const stc_clk_xtal32_init_t* pstcXtal32)
         }
         else
         {
-            /* Paramers check */
+            /* parameters check */
             DDL_ASSERT(IS_VALID_CLK_XTAL32DRV_MODE(pstcXtal32->u8Xtal32Drv));
             DDL_ASSERT(IS_VALID_CLK_XTAL32_SUPDRV_STATE(pstcXtal32->u8Xtal32SupDrv));
             DDL_ASSERT(IS_VALID_CLK_XTAL32_FILT_SEL(pstcXtal32->u8Xtal32NF));
@@ -584,7 +584,7 @@ en_result_t CLK_HRCInit(uint8_t HRCState, uint8_t HRCFreq)
     uint32_t u32timeout = 0ul;
     en_result_t enRet = Ok;
 
-    /* Paramers check */
+    /* parameters check */
     DDL_ASSERT(IS_VALID_CLK_HRC_STATE(HRCState));
 
     /* Enable register write. */
@@ -618,7 +618,7 @@ en_result_t CLK_HRCInit(uint8_t HRCState, uint8_t HRCFreq)
     }
     else
     {
-        /* Paramers check */
+        /* parameters check */
         DDL_ASSERT(IS_VALID_CLK_HRC_FREQ_SEL(HRCFreq));
 
         /* Enable CMU_HRCCFGR register write */
@@ -667,7 +667,7 @@ en_result_t CLK_HRCInit(uint8_t HRCState, uint8_t HRCFreq)
 en_result_t CLK_LRCInit(uint8_t LRCState)
 {
     en_result_t enRet = Ok;
-    /* Paramers check */
+    /* parameters check */
     DDL_ASSERT(IS_VALID_CLK_LRC_STATE(LRCState));
 
     /* Enable register write. */
@@ -700,7 +700,7 @@ en_result_t CLK_LRCInit(uint8_t LRCState)
 
 /**
  * @brief  Init XtalStd initial structure with default value.
- * @param  pstcXtalStd specifies the paramer of XTALSTD.
+ * @param  pstcXtalStd specifies the parameter of XTALSTD.
  *            @arg    u8XtalStdState:   The new state of the XTALSTD.
  *            @arg    u8XtalStdMode:    The XTAL status detection occur interrupt or reset.
  *            @arg    u8XtalStdInt:     The XTAL status detection interrupt on or off.
@@ -732,7 +732,7 @@ en_result_t CLK_XtalStdStrucInit(stc_clk_xtalstd_init_t* pstcXtalStd)
 
 /**
  * @brief  Initialise the XTAL status detection.
- * @param  pstcXtalStd specifies the paramer of XTALSTD.
+ * @param  pstcXtalStd specifies the parameter of XTALSTD.
  *            @arg    u8XtalStdState:   The new state of the XTALSTD.
  *            @arg    u8XtalStdMode:    The XTAL status detection occur interrupt or reset.
  *            @arg    u8XtalStdInt:     The XTAL status detection interrupt on or off.
@@ -749,7 +749,7 @@ en_result_t CLK_XTALStdInit(const stc_clk_xtalstd_init_t* pstcXtalStd)
     }
     else
     {
-        /* Paramer valid check */
+        /* parameter valid check */
         DDL_ASSERT(IS_VALID_CLK_XTALSTD_STATE(pstcXtalStd->u8XtalStdState));
 
         /* Enable register write. */
@@ -762,7 +762,7 @@ en_result_t CLK_XTALStdInit(const stc_clk_xtalstd_init_t* pstcXtalStd)
         }
         else
         {
-            /* Paramer valid check */
+            /* parameter valid check */
             DDL_ASSERT(IS_VALID_CLK_XTALSTD_MODE(pstcXtalStd->u8XtalStdMode));
             DDL_ASSERT(IS_VALID_CLK_XTALSTD_INT_STATE(pstcXtalStd->u8XtalStdInt));
             DDL_ASSERT(IS_VALID_CLK_XTALSTD_RST_STATE(pstcXtalStd->u8XtalStdRst));

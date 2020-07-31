@@ -185,13 +185,13 @@ void SystemCoreClockUpdate(void)
         case 0x00:  /* use internal high speed RC */
             SystemCoreClock = HrcUpdate();
             break;
-        case 0x01:  /* use external high speed RC */
+        case 0x01:  /* use external high speed OSC */
             SystemCoreClock = XTAL_VALUE;
             break;
         case 0x02:  /* use internal low speed RC */
             SystemCoreClock = LRC_VALUE;
             break;
-        case 0x03:  /* use external low speed RC */
+        case 0x03:  /* use external low speed OSC */
             SystemCoreClock = XTAL32_VALUE;
             break;
     }

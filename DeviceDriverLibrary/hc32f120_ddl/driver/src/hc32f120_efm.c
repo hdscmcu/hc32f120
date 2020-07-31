@@ -8,9 +8,10 @@
    Date             Author          Notes
    2019-05-06       Chengy          First version
    2020-01-08       Wuze            Fixed a bug of IS_VALID_EFM_ADDR.
-   2020-02-14       Heqb            Modify EFM_InterruptCmd function for efm.c
+   2020-02-14       Heqb            Modify EFM_InterruptCmd function
    2020-02-21       Heqb            Use MODIFY_REG32,CLEAR_REG32_BIT,
-                                    SET_REG32_BIT for efm.c
+                                    SET_REG32_BIT
+   2020-07-09       Chengy          Add wait RDY at start of func. EFM_SetOperateMode().
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -319,18 +320,36 @@ void EFM_InstructionCacheCmd(en_functional_state_t enNewState)
  *   @arg  EFM_MODE_READONLY                Read only
  *   @arg  EFM_MODE_READONLY1               Read only
  *   @arg  EFM_MODE_READONLY2               Read only
- * @retval None
+ * @retval An en_result_t enumeration value:
+ *           - Ok: program success
+ *           - ErrorTimeout: program error timeout
  */
-void EFM_SetOperateMode(uint32_t u32PeMode)
+en_result_t EFM_SetOperateMode(uint32_t u32PeMode)
 {
+    en_result_t enRet = Ok;
+    uint16_t u16tmp = 0;
+
     DDL_ASSERT(IS_VALID_EFM_OPERATE_MD(u32PeMode));
 
-    /* Enable operate mode modified. */
-    SET_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
-    /* Set the program or erase mode. */
-    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, u32PeMode);
-    /* Disable operate mode modified. */
-    CLEAR_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
+    while(Set != EFM_GetFlagStatus(EFM_FLAG_RDY))
+    {
+        u16tmp++;
+        if(u16tmp > EFM_TIMEOUT)
+        {
+            enRet = ErrorTimeout;
+            break;
+        }
+    }
+    if(Ok == enRet)
+    {
+        /* Enable operate mode modified. */
+        SET_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
+        /* Set the program or erase mode. */
+        MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, u32PeMode);
+        /* Disable operate mode modified. */
+        CLEAR_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
+    }
+    return enRet;
 }
 
 /**
@@ -446,8 +465,11 @@ en_result_t EFM_ProgramWord(uint32_t u32Addr, uint32_t u32Data)
                   EFM_FLAG_CLR_PGMISMTCHCLR | EFM_FLAG_CLR_OPTENDCLR   |
                   EFM_FLAG_CLR_COLERRCLR);
 
+    /* Enable operate mode modified. */
+    SET_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
     /* Set single program mode. */
-    EFM_SetOperateMode(EFM_MODE_PROGRAMSINGLE);
+    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, EFM_MODE_PROGRAMSINGLE);
+
     /* program data. */
     *(uint32_t*)u32Addr = u32Data;
 
@@ -457,6 +479,7 @@ en_result_t EFM_ProgramWord(uint32_t u32Addr, uint32_t u32Data)
         if(u16tmp > EFM_TIMEOUT)
         {
             enRet = ErrorTimeout;
+            break;
         }
     }
 
@@ -466,8 +489,11 @@ en_result_t EFM_ProgramWord(uint32_t u32Addr, uint32_t u32Data)
     }
 
     EFM_ClearFlag(EFM_FLAG_CLR_OPTENDCLR);
+
     /* Set read only mode. */
-    EFM_SetOperateMode(EFM_MODE_READONLY);
+    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, EFM_MODE_READONLY);
+    /* Disable operate mode modified. */
+    CLEAR_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
 
     return enRet;
 }
@@ -493,8 +519,10 @@ en_result_t EFM_ProgramHalfWord(uint32_t u32Addr, uint16_t u16Data)
                   EFM_FLAG_CLR_PGMISMTCHCLR | EFM_FLAG_CLR_OPTENDCLR   |
                   EFM_FLAG_CLR_COLERRCLR);
 
+    /* Enable operate mode modified. */
+    SET_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
     /* Set single program mode. */
-    EFM_SetOperateMode(EFM_MODE_PROGRAMSINGLE);
+    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, EFM_MODE_PROGRAMSINGLE);
     /* program data. */
     *((volatile uint16_t*)u32Addr) = u16Data;
 
@@ -504,6 +532,7 @@ en_result_t EFM_ProgramHalfWord(uint32_t u32Addr, uint16_t u16Data)
         if(u16tmp > EFM_TIMEOUT)
         {
             enRet = ErrorTimeout;
+            break;
         }
     }
 
@@ -514,7 +543,9 @@ en_result_t EFM_ProgramHalfWord(uint32_t u32Addr, uint16_t u16Data)
 
     EFM_ClearFlag(EFM_FLAG_CLR_OPTENDCLR);
     /* Set read only mode. */
-    EFM_SetOperateMode(EFM_MODE_READONLY);
+    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, EFM_MODE_READONLY);
+    /* Disable operate mode modified. */
+    CLEAR_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
 
     return enRet;
 }
@@ -540,8 +571,10 @@ en_result_t EFM_ProgramByte(uint32_t u32Addr, uint8_t u8Data)
                   EFM_FLAG_CLR_PGMISMTCHCLR | EFM_FLAG_CLR_OPTENDCLR   |
                   EFM_FLAG_CLR_COLERRCLR);
 
+    /* Enable operate mode modified. */
+    SET_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
     /* Set single program mode. */
-    EFM_SetOperateMode(EFM_MODE_PROGRAMSINGLE);
+    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, EFM_MODE_PROGRAMSINGLE);
     /* program data. */
     *((volatile uint8_t*)u32Addr) = u8Data;
 
@@ -551,6 +584,7 @@ en_result_t EFM_ProgramByte(uint32_t u32Addr, uint8_t u8Data)
         if(u16tmp > EFM_TIMEOUT)
         {
             enRet = ErrorTimeout;
+            break;
         }
     }
 
@@ -561,7 +595,9 @@ en_result_t EFM_ProgramByte(uint32_t u32Addr, uint8_t u8Data)
 
     EFM_ClearFlag(EFM_FLAG_CLR_OPTENDCLR);
     /* Set read only mode. */
-    EFM_SetOperateMode(EFM_MODE_READONLY);
+    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, EFM_MODE_READONLY);
+    /* Disable operate mode modified. */
+    CLEAR_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
 
     return enRet;
 }
@@ -587,8 +623,11 @@ en_result_t EFM_ProgramWordRB(uint32_t u32Addr, uint32_t u32Data)
                   EFM_FLAG_CLR_PGMISMTCHCLR | EFM_FLAG_CLR_OPTENDCLR   |
                   EFM_FLAG_CLR_COLERRCLR);
 
-    /* Set single program mode. */
-    EFM_SetOperateMode(EFM_MODE_PROGRAMREADBACK);
+    /* Enable operate mode modified. */
+    SET_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
+    /* Set single program read back mode. */
+    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, EFM_MODE_PROGRAMREADBACK);
+
     /* program data. */
     *(uint32_t*)u32Addr = u32Data;
 
@@ -598,6 +637,7 @@ en_result_t EFM_ProgramWordRB(uint32_t u32Addr, uint32_t u32Data)
         if(u16tmp > EFM_TIMEOUT)
         {
             enRet = ErrorTimeout;
+            break;
         }
     }
 
@@ -610,7 +650,9 @@ en_result_t EFM_ProgramWordRB(uint32_t u32Addr, uint32_t u32Data)
 
     EFM_ClearFlag(EFM_FLAG_CLR_OPTENDCLR);
     /* Set read only mode. */
-    EFM_SetOperateMode(EFM_MODE_READONLY);
+    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, EFM_MODE_READONLY);
+    /* Disable operate mode modified. */
+    CLEAR_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
 
     return enRet;
 }
@@ -636,8 +678,11 @@ en_result_t EFM_ProgramHalfWordRB(uint32_t u32Addr, uint16_t u16Data)
                   EFM_FLAG_CLR_PGMISMTCHCLR | EFM_FLAG_CLR_OPTENDCLR   |
                   EFM_FLAG_CLR_COLERRCLR);
 
-    /* Set single program mode. */
-    EFM_SetOperateMode(EFM_MODE_PROGRAMREADBACK);
+    /* Enable operate mode modified. */
+    SET_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
+    /* Set single program read back mode. */
+    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, EFM_MODE_PROGRAMREADBACK);
+
     /* program data. */
     *((volatile uint16_t*)u32Addr) = u16Data;
 
@@ -647,6 +692,7 @@ en_result_t EFM_ProgramHalfWordRB(uint32_t u32Addr, uint16_t u16Data)
         if(u16tmp > EFM_TIMEOUT)
         {
             enRet = ErrorTimeout;
+            break;
         }
     }
 
@@ -659,7 +705,9 @@ en_result_t EFM_ProgramHalfWordRB(uint32_t u32Addr, uint16_t u16Data)
 
     EFM_ClearFlag(EFM_FLAG_CLR_OPTENDCLR);
     /* Set read only mode. */
-    EFM_SetOperateMode(EFM_MODE_READONLY);
+    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, EFM_MODE_READONLY);
+    /* Disable operate mode modified. */
+    CLEAR_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
 
     return enRet;
 }
@@ -685,8 +733,11 @@ en_result_t EFM_ProgramByteRB(uint32_t u32Addr, uint8_t u8Data)
                   EFM_FLAG_CLR_PGMISMTCHCLR | EFM_FLAG_CLR_OPTENDCLR   |
                   EFM_FLAG_CLR_COLERRCLR);
 
-    /* Set single program mode. */
-    EFM_SetOperateMode(EFM_MODE_PROGRAMREADBACK);
+    /* Enable operate mode modified. */
+    SET_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
+    /* Set single program read back mode. */
+    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, EFM_MODE_PROGRAMREADBACK);
+
     /* program data. */
     *((volatile uint8_t*)u32Addr) = u8Data;
 
@@ -696,6 +747,7 @@ en_result_t EFM_ProgramByteRB(uint32_t u32Addr, uint8_t u8Data)
         if(u16tmp > EFM_TIMEOUT)
         {
             enRet = ErrorTimeout;
+            break;
         }
     }
 
@@ -708,7 +760,9 @@ en_result_t EFM_ProgramByteRB(uint32_t u32Addr, uint8_t u8Data)
 
     EFM_ClearFlag(EFM_FLAG_CLR_OPTENDCLR);
     /* Set read only mode. */
-    EFM_SetOperateMode(EFM_MODE_READONLY);
+    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, EFM_MODE_READONLY);
+    /* Disable operate mode modified. */
+    CLEAR_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
 
     return enRet;
 }
@@ -739,8 +793,10 @@ en_result_t EFM_SequenceProgram(uint32_t u32Addr, uint32_t u32Len, void *pBuf)
                   EFM_FLAG_CLR_PGMISMTCHCLR | EFM_FLAG_CLR_OPTENDCLR   |
                   EFM_FLAG_CLR_COLERRCLR);
 
+    /* Enable operate mode modified. */
+    SET_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
     /* Set sequence program mode. */
-    EFM_SetOperateMode(EFM_MODE_PROGRAMSEQUENCE);
+    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, EFM_MODE_PROGRAMSEQUENCE);
 
     /* program data. */
     while(u32LoopWords--)
@@ -753,6 +809,7 @@ en_result_t EFM_SequenceProgram(uint32_t u32Addr, uint32_t u32Len, void *pBuf)
             if(u16tmp > EFM_TIMEOUT)
             {
                 enRet = ErrorTimeout;
+                break;
             }
         }
         /* clear end flag. */
@@ -769,7 +826,9 @@ en_result_t EFM_SequenceProgram(uint32_t u32Addr, uint32_t u32Len, void *pBuf)
     }
 
     /* Set read only mode. */
-    EFM_SetOperateMode(EFM_MODE_READONLY);
+    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, EFM_MODE_READONLY);
+    /* Disable operate mode modified. */
+    CLEAR_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
 
     u16tmp = 0u;
     while(Set != EFM_GetFlagStatus(EFM_FLAG_RDY))
@@ -806,8 +865,10 @@ en_result_t EFM_SectorErase(uint32_t u32Addr)
                   EFM_FLAG_CLR_PGMISMTCHCLR | EFM_FLAG_CLR_OPTENDCLR   |
                   EFM_FLAG_CLR_COLERRCLR);
 
-    /* Set sector erase mode. */
-    EFM_SetOperateMode(EFM_MODE_ERASESECTOR);
+    /* Enable operate mode modified. */
+    SET_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
+    /* Set sector erase  mode. */
+    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, EFM_MODE_ERASESECTOR);
 
     *(uint32_t*)u32Addr = 0ul;
 
@@ -817,12 +878,15 @@ en_result_t EFM_SectorErase(uint32_t u32Addr)
         if(u16tmp > EFM_TIMEOUT)
         {
             enRet = ErrorTimeout;
+            break;
         }
     }
     /* CLear the end of operate flag */
     EFM_ClearFlag(EFM_FLAG_CLR_OPTENDCLR);
     /* Set read only mode. */
-    EFM_SetOperateMode(EFM_MODE_READONLY);
+    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, EFM_MODE_READONLY);
+    /* Disable operate mode modified. */
+    CLEAR_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
 
     return enRet;
 }
@@ -845,8 +909,10 @@ en_result_t EFM_ChipErase(void)
                   EFM_FLAG_CLR_PGMISMTCHCLR | EFM_FLAG_CLR_OPTENDCLR   |
                   EFM_FLAG_CLR_COLERRCLR);
 
-    /* Set sector erase mode. */
-    EFM_SetOperateMode(EFM_MODE_ERASECHIP);
+    /* Enable operate mode modified. */
+    SET_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
+    /* Set chip erase  mode. */
+    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, EFM_MODE_ERASECHIP);
 
     *(uint32_t*)0 = 0ul;
 
@@ -856,12 +922,15 @@ en_result_t EFM_ChipErase(void)
         if(u16tmp > EFM_TIMEOUT)
         {
             enRet = ErrorTimeout;
+            break;
         }
     }
     /* CLear the end of operate flag */
     EFM_ClearFlag(EFM_FLAG_CLR_OPTENDCLR);
     /* Set read only mode. */
-    EFM_SetOperateMode(EFM_MODE_READONLY);
+    MODIFY_REG32(M0P_EFM->FWMC, EFM_FWMC_PEMOD, EFM_MODE_READONLY);
+    /* Disable operate mode modified. */
+    CLEAR_REG32_BIT(M0P_EFM->FWMC, EFM_FWMC_PEMODE);
 
     return enRet;
 }

@@ -174,7 +174,7 @@ void Led_Init(void)
 }
 
 /**
- * @brief  Main function of CLK project
+ * @brief  Main function of PWC project
  * @param  None
  * @retval int32_t return value, if needed
  */
