@@ -394,6 +394,7 @@ en_result_t CLK_XTALInit(const stc_clk_xtal_init_t* pstcXtal)
                     if(u32timeout > CLK_XTAL_TIMEOUT)
                     {
                         enRet = ErrorTimeout;
+						break;
                     }
                     else
                     {
@@ -423,6 +424,7 @@ en_result_t CLK_XTALInit(const stc_clk_xtal_init_t* pstcXtal)
                 if(u32timeout > CLK_XTAL_TIMEOUT)
                 {
                     enRet = ErrorTimeout;
+					break;
                 }
                 else
                 {
@@ -514,6 +516,7 @@ en_result_t CLK_XTAL32Init(const stc_clk_xtal32_init_t* pstcXtal32)
                     if(u32timeout > CLK_TIMEOUT)
                     {
                         enRet = ErrorTimeout;
+						break;
                     }
                     else
                     {
@@ -542,6 +545,7 @@ en_result_t CLK_XTAL32Init(const stc_clk_xtal32_init_t* pstcXtal32)
                 if(u32timeout > CLK_TIMEOUT)
                 {
                     enRet = ErrorTimeout;
+					break;
                 }
                 else
                 {
@@ -608,6 +612,7 @@ en_result_t CLK_HRCInit(uint8_t HRCState, uint8_t HRCFreq)
                 if(u32timeout > CLK_TIMEOUT)
                 {
                     enRet = ErrorTimeout;
+					break;
                 }
                 else
                 {
@@ -639,6 +644,7 @@ en_result_t CLK_HRCInit(uint8_t HRCState, uint8_t HRCFreq)
             if(u32timeout > CLK_TIMEOUT)
             {
                 enRet = ErrorTimeout;
+				break;
             }
             else
             {

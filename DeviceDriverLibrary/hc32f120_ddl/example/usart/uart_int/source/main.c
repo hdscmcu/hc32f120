@@ -7,8 +7,9 @@
    Date             Author          Notes
    2019-04-28       Hongjh          First version
    2019-10-28       Hongjh          Check function return value: USART_UartInit
-   2019-11-04       Hongjh          TX empty interrupt IRQ callback disable TX 
-                                    empyt interrupt when buffer data is empty.
+   2019-11-04       Hongjh          TX empty interrupt IRQ callback disable TX
+                                    empty interrupt when buffer data is empty.
+   2020-12-15       Hongjh          Fix bug: loss TX data.
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -116,7 +117,7 @@ typedef struct
 
 /* Ring buffer size */
 #define RING_BUFFER_SIZE                (500u)
-#define IS_RING_BUFFER_EMPYT(x)         (0u == ((x)->u16UsedSize))
+#define IS_RING_BUFFER_EMPTY(x)         (0u == ((x)->u16UsedSize))
 
 /* Function clock gate definition  */
 #define FUNCTION_CLK_GATE               (CLK_FCG_UART1)
@@ -145,6 +146,8 @@ static stc_ring_buffer_t m_stcRingBuf = {
     .u16UsedSize = 0,
     .u16Capacity = RING_BUFFER_SIZE,
 };
+
+static uint8_t m_u8Status = 0U;
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -213,7 +216,7 @@ static void UartTxIrqCallback(void)
         USART_SendData(UART_UNIT, (uint16_t)u8Data);
     }
 
-    if (IS_RING_BUFFER_EMPYT(&m_stcRingBuf))
+    if (IS_RING_BUFFER_EMPTY(&m_stcRingBuf))
     {
         USART_FuncCmd(UART_UNIT, (USART_INT_TXE), Disable);
         USART_FuncCmd(UART_UNIT, USART_INT_TC, Enable);
@@ -228,6 +231,7 @@ static void UartTxIrqCallback(void)
 static void UartTcIrqCallback(void)
 {
     USART_FuncCmd(UART_UNIT, (USART_TX | USART_INT_TC), Disable);
+    m_u8Status = 0U;
 }
 
 /**
@@ -377,9 +381,10 @@ int32_t main(void)
 
     while (1)
     {
-        if (!IS_RING_BUFFER_EMPYT(&m_stcRingBuf))
+        if ((!IS_RING_BUFFER_EMPTY(&m_stcRingBuf)) && (0U == m_u8Status))
         {
             USART_FuncCmd(UART_UNIT, (USART_TX | USART_INT_TXE), Enable);
+            m_u8Status = 1U;
         }
     }
 }

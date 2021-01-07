@@ -5,7 +5,7 @@
  @verbatim
    Change Logs:
    Date             Author          Notes
-   2020-02-28       chengy          First version
+   2020-11-19       chengy          First version
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2017, Huada Semiconductor Co.,Ltd All rights reserved.
@@ -56,7 +56,7 @@
  **
  ** History:
  **
- **   - 2020-02-28  1.0   First version for Device Driver Library of HC32F120 series MCU.
+ **   - 2020-11-19  1.0   First version for Device Driver Library of HC32F120 series MCU.
  **
  ******************************************************************************/
 
@@ -190,7 +190,7 @@ typedef enum en_int_src
     INT_TMRB_7_UDF          = 9u,
     INT_TMRB_8_CMP          = 10u,
     INT_USART_1_EI          = 12u,
-    INT_IIC_EE1             = 13u,
+    INT_IIC_EEI             = 13u,
     INT_SPI_SPEI            = 14u,
     INT_USART_4_EI          = 15u,
     INT_PORT_EIRQ1          = 16u,

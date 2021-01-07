@@ -6,6 +6,7 @@
    Change Logs:
    Date             Author          Notes
    2019-04-20       Wuze            First version
+   2020-12-04       Wuze            Refined this example.
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -73,39 +74,14 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* SPI pin group definition. */
-#define SPI_PIN_GROUP_A             (1u)
-#define SPI_PIN_GROUP_B             (2u)
-#define SPI_PIN_GROUP_C             (3u)
-#define SPI_PIN_GROUP               (SPI_PIN_GROUP_B)
-
-#if (SPI_PIN_GROUP == SPI_PIN_GROUP_A)
-    #define SPI_NSS_PORT            (GPIO_PORT_1)
-    #define SPI_NSS_PIN             (GPIO_PIN_7)
-    #define SPI_SCK_PORT            (GPIO_PORT_5)
-    #define SPI_SCK_PIN             (GPIO_PIN_1)
-    #define SPI_MOSI_PORT           (GPIO_PORT_1)
-    #define SPI_MOSI_PIN            (GPIO_PIN_5)
-    #define SPI_MISO_PORT           (GPIO_PORT_1)
-    #define SPI_MISO_PIN            (GPIO_PIN_6)
-#elif (SPI_PIN_GROUP == SPI_PIN_GROUP_B)
-    #define SPI_NSS_PORT            (GPIO_PORT_2)
-    #define SPI_NSS_PIN             (GPIO_PIN_2)
-    #define SPI_SCK_PORT            (GPIO_PORT_2)
-    #define SPI_SCK_PIN             (GPIO_PIN_3)
-    #define SPI_MOSI_PORT           (GPIO_PORT_2)
-    #define SPI_MOSI_PIN            (GPIO_PIN_0)
-    #define SPI_MISO_PORT           (GPIO_PORT_2)
-    #define SPI_MISO_PIN            (GPIO_PIN_1)
-#else
-    #define SPI_NSS_PORT            (GPIO_PORT_6)
-    #define SPI_NSS_PIN             (GPIO_PIN_3)
-    #define SPI_SCK_PORT            (GPIO_PORT_7)
-    #define SPI_SCK_PIN             (GPIO_PIN_3)
-    #define SPI_MOSI_PORT           (GPIO_PORT_7)
-    #define SPI_MOSI_PIN            (GPIO_PIN_1)
-    #define SPI_MISO_PORT           (GPIO_PORT_7)
-    #define SPI_MISO_PIN            (GPIO_PIN_2)
-#endif
+#define SPI_NSS_PORT                (GPIO_PORT_1)
+#define SPI_NSS_PIN                 (GPIO_PIN_7)
+#define SPI_SCK_PORT                (GPIO_PORT_2)
+#define SPI_SCK_PIN                 (GPIO_PIN_3)
+#define SPI_MOSI_PORT               (GPIO_PORT_1)
+#define SPI_MOSI_PIN                (GPIO_PIN_5)
+#define SPI_MISO_PORT               (GPIO_PORT_1)
+#define SPI_MISO_PIN                (GPIO_PIN_6)
 
 /* SPI wire mode definition. */
 #define SPI_APP_3_WIRE              (3u)
@@ -114,7 +90,7 @@
 
 #if (SPI_APP_X_WIRE == SPI_APP_4_WIRE)
 #define SPI_WIRE_MODE               (SPI_WIRE_4)
-#define SPI_SPI_MODE                (SPI_MODE_0)
+#define SPI_SPI_MODE                (SPI_MODE_1)
 #else
 #define SPI_WIRE_MODE               (SPI_WIRE_3)
 /* CPHA CAN NOT be zero while in 3-wire slave mode.
@@ -128,14 +104,12 @@
 
 
 /* SPI data buffer size definition. */
-#define SPI_BUFFER_LENGTH           (6u)
-#define SPI_RX_BUFFER_LENGTH        (SPI_BUFFER_LENGTH)
-#define SPI_TX_BUFFER_LENGTH        (SPI_BUFFER_LENGTH + 2u)  /*!< Valid data start offset 0 and length is SPI_BUFFER_LENGTH. */
-#define SPI_IDLE_TIME               (400u)      /*!< Customer definition. */
+#define SPI_BUFFER_LENGTH           (8u)
+#define SPI_IDLE_TIME               (4000u)             /*!< Customer definition. */
 
 /* Command from the master. */
-#define SPI_WRITE_SLAVE             (0x51u)     /*!< Customer definition. */
-#define SPI_READ_SLAVE              (0x56u)     /*!< Customer definition. */
+#define SPI_WRITE_SLAVE             (0x51u)             /*!< Customer definition. */
+#define SPI_READ_SLAVE              (0x56u)             /*!< Customer definition. */
 #define SPI_DUMMY_DATA              (0xFFu)
 
 /* Share interrupt definition. */
@@ -159,8 +133,8 @@ static __IO uint32_t m_u32RxIdle    = 0u;
 static __IO uint8_t m_u8RxStart     = 0u;
 static __IO uint8_t m_u8RxDataCount = 0u;
 static __IO uint8_t m_u8TxDataCount = 0u;
-static __IO uint8_t m_au8SpiRxBuf[SPI_RX_BUFFER_LENGTH];
-static __IO uint8_t m_au8SpiTxBuf[SPI_TX_BUFFER_LENGTH] = {0x10, 0x20, 0x30, 0x40, 0x50, 0x60};
+static __IO uint8_t m_au8SpiRxBuf[SPI_BUFFER_LENGTH];
+static __IO uint8_t m_au8SpiTxBuf[SPI_BUFFER_LENGTH] = {0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70, 0x80};
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -187,7 +161,7 @@ int32_t main(void)
 
     while (1u)
     {
-        if (m_u8RxStart)
+        if (m_u8RxStart != 0u)
         {
             if (++m_u32RxIdle >= SPI_IDLE_TIME)
             {
@@ -205,11 +179,17 @@ int32_t main(void)
                     m_au8SpiTxBuf[3u]++;
                     m_au8SpiTxBuf[4u]++;
                     m_au8SpiTxBuf[5u]++;
+                    m_au8SpiTxBuf[6u]++;
+                    m_au8SpiTxBuf[7u]++;
                 }
-                m_u32RxIdle = 0u;
-                m_u8RxStart = 0u;
+                m_u32RxIdle     = 0u;
+                m_u8RxStart     = 0u;
                 m_u8RxDataCount = 0u;
-                m_u8TxDataCount = 0u;
+
+                /* The following code is used to generate TX empty interrupt. */
+                SPI_FunctionCmd(Disable);
+                SPI_IntCmd(SPI_INT_TX_BUFFER_EMPTY, Enable);
+                SPI_FunctionCmd(Enable);
             }
         }
     }
@@ -243,10 +223,10 @@ static void SpiConfig(void)
     SPI_StructInit(&stcInit);
 
     /* User configuration value. */
-    stcInit.u32MasterSlave       = SPI_SLAVE;
-    stcInit.u32WireMode          = SPI_WIRE_MODE;
-    stcInit.u32NssActiveLevel    = SPI_NSS_ACTIVE;
-    stcInit.u32SpiMode           = SPI_SPI_MODE;
+    stcInit.u32MasterSlave    = SPI_SLAVE;
+    stcInit.u32WireMode       = SPI_WIRE_MODE;
+    stcInit.u32NssActiveLevel = SPI_NSS_ACTIVE;
+    stcInit.u32SpiMode        = SPI_SPI_MODE;
 
     /* The SPI register can be written only after the SPI peripheral is enabled. */
     CLK_FcgPeriphClockCmd(CLK_FCG_SPI, Enable);
@@ -341,15 +321,16 @@ static void SpiIrqConfig(void)
  */
 void SpiRxEnd_IrqHandler(void)
 {
-    if (SPI_GetFlag(SPI_FLAG_RX_BUFFER_FULL) == Set)
+    m_u8RxStart = 1U;
+    m_u32RxIdle = 0U;
+    if (m_u8RxDataCount < SPI_BUFFER_LENGTH)
     {
-        m_u8RxStart = 1u;
-        m_u32RxIdle = 0u;
-        if (m_u8RxDataCount < SPI_RX_BUFFER_LENGTH)
-        {
-            m_au8SpiRxBuf[m_u8RxDataCount] = (uint8_t)SPI_ReadDataReg();
-            m_u8RxDataCount++;
-        }
+        m_au8SpiRxBuf[m_u8RxDataCount] = (uint8_t)SPI_ReadDataReg();
+        m_u8RxDataCount++;
+    }
+    else
+    {
+        (void)SPI_ReadDataReg();
     }
 }
 
@@ -360,13 +341,14 @@ void SpiRxEnd_IrqHandler(void)
  */
 void SpiTxEmpt_IrqHandler(void)
 {
-    if (SPI_GetFlag(SPI_FLAG_TX_BUFFER_EMPTY) == Set)
+    if (m_u8TxDataCount < SPI_BUFFER_LENGTH)
     {
-        SPI_WriteDataReg((uint32_t)(m_au8SpiTxBuf[m_u8TxDataCount++]));
-        if (m_u8TxDataCount >= SPI_TX_BUFFER_LENGTH)
-        {
-            m_u8TxDataCount = 0u;
-        }
+        SPI_WriteDataReg(m_au8SpiTxBuf[m_u8TxDataCount++]);
+    }
+    else
+    {
+        m_u8TxDataCount= 0U;
+        SPI_IntCmd(SPI_INT_TX_BUFFER_EMPTY, Disable);
     }
 }
 

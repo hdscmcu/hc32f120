@@ -335,7 +335,7 @@
         </option>
         <option>
           <name>CCOptLevel</name>
-          <state>3</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptStrategy</name>
@@ -344,7 +344,7 @@
         </option>
         <option>
           <name>CCOptLevelSlave</name>
-          <state>3</state>
+          <state>0</state>
         </option>
         <option>
           <name>CompilerMisraRules98</name>
@@ -730,7 +730,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\hc32f120.icf</state>
+          <state>$PROJ_DIR$\hc32f120x8.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -1299,7 +1299,7 @@
         </option>
         <option>
           <name>CCOptLevel</name>
-          <state>0</state>
+          <state>3</state>
         </option>
         <option>
           <name>CCOptStrategy</name>
@@ -1308,7 +1308,7 @@
         </option>
         <option>
           <name>CCOptLevelSlave</name>
-          <state>0</state>
+          <state>3</state>
         </option>
         <option>
           <name>CompilerMisraRules98</name>
@@ -1622,7 +1622,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\hc32f120.icf</state>
+          <state>$PROJ_DIR$\hc32f120x8.icf</state>
         </option>
         <option>
           <name>IlinkLibIOConfig</name>
@@ -1947,10 +1947,13 @@
     </file>
     -->
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_efm.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_spi.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_clk.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_efm.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_gpio.c</name>
@@ -1960,9 +1963,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_utility.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\driver\src\hc32f120_spi.c</name>
     </file>
 
   </group>

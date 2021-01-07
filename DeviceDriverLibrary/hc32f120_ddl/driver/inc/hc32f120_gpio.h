@@ -7,6 +7,7 @@
    Change Logs:
    Date             Author          Notes
    2019-04-16       Zhangxl         First version
+   2020-10-27       Zhangxl         Revise debug port definition
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -254,8 +255,8 @@ typedef struct
 /** @defgroup GPIO_DebugPin_Sel GPIO Debug pin selection
  * @{
  */
-#define GPIO_PIN_SWDIO      ((uint8_t)0x01u)
-#define GPIO_PIN_SWCLK      ((uint8_t)0x02u)
+#define GPIO_PIN_SWCLK      ((uint8_t)0x01u)
+#define GPIO_PIN_SWDIO      ((uint8_t)0x02u)
 #define GPIO_PIN_DEBUG      ((uint8_t)0x03u)
 /**
  * @}

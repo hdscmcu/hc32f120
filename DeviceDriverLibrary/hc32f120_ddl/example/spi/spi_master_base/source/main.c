@@ -7,6 +7,7 @@
    Date             Author          Notes
    2019-04-20       Wuze            First version
    2020-06-24       Wuze            Changed default mode to master 3-wire mode.
+   2020-12-04       Wuze            Refined this example.
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -74,51 +75,26 @@
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /* Slave test definition. */
-//#define SLAVE_TEST
+#define SLAVE_TEST
 
-/* SPI pin group definition. */
-#define SPI_PIN_GROUP_A             (1u)
-#define SPI_PIN_GROUP_B             (2u)
-#define SPI_PIN_GROUP_C             (3u)
-#define SPI_PIN_GROUP               (SPI_PIN_GROUP_B)
-
-#if (SPI_PIN_GROUP == SPI_PIN_GROUP_A)
+/* SPI pin definition. */
 #define SPI_NSS_PORT                (GPIO_PORT_1)
 #define SPI_NSS_PIN                 (GPIO_PIN_7)
-#define SPI_SCK_PORT                (GPIO_PORT_5)
-#define SPI_SCK_PIN                 (GPIO_PIN_1)
+#define SPI_SCK_PORT                (GPIO_PORT_2)
+#define SPI_SCK_PIN                 (GPIO_PIN_3)
 #define SPI_MOSI_PORT               (GPIO_PORT_1)
 #define SPI_MOSI_PIN                (GPIO_PIN_5)
 #define SPI_MISO_PORT               (GPIO_PORT_1)
 #define SPI_MISO_PIN                (GPIO_PIN_6)
-#elif (SPI_PIN_GROUP == SPI_PIN_GROUP_B)
-#define SPI_NSS_PORT                (GPIO_PORT_2)
-#define SPI_NSS_PIN                 (GPIO_PIN_2)
-#define SPI_SCK_PORT                (GPIO_PORT_2)
-#define SPI_SCK_PIN                 (GPIO_PIN_3)
-#define SPI_MOSI_PORT               (GPIO_PORT_2)
-#define SPI_MOSI_PIN                (GPIO_PIN_0)
-#define SPI_MISO_PORT               (GPIO_PORT_2)
-#define SPI_MISO_PIN                (GPIO_PIN_1)
-#else
-#define SPI_NSS_PORT                (GPIO_PORT_6)
-#define SPI_NSS_PIN                 (GPIO_PIN_3)
-#define SPI_SCK_PORT                (GPIO_PORT_7)
-#define SPI_SCK_PIN                 (GPIO_PIN_3)
-#define SPI_MOSI_PORT               (GPIO_PORT_7)
-#define SPI_MOSI_PIN                (GPIO_PIN_1)
-#define SPI_MISO_PORT               (GPIO_PORT_7)
-#define SPI_MISO_PIN                (GPIO_PIN_2)
-#endif // #if (SPI_PIN_GROUP == SPI_PIN_GROUP_A)
 
 /* SPI wire mode definition. */
 #define SPI_APP_3_WIRE              (3u)
 #define SPI_APP_4_WIRE              (4u)
-#define SPI_APP_X_WIRE              (SPI_APP_3_WIRE)
+#define SPI_APP_X_WIRE              (SPI_APP_4_WIRE)
 
 #if (SPI_APP_X_WIRE == SPI_APP_4_WIRE)
 #define SPI_WIRE_MODE               (SPI_WIRE_4)
-#define SPI_SPI_MODE                (SPI_MODE_0)    /*!< Depends on your application. */
+#define SPI_SPI_MODE                (SPI_MODE_1)    /*!< Depends on your application. */
 #else
 #define SPI_WIRE_MODE               (SPI_WIRE_3)
 #ifdef SLAVE_TEST
@@ -130,8 +106,8 @@
 #endif // #if (SPI_APP_X_WIRE == SPI_APP_4_WIRE)
 
 #ifdef SPI_APP_CUSTOM_NSS
-#define SPI_CUSTOM_NSS_PORT         (GPIO_PORT_6)
-#define SPI_CUSTOM_NSS_PIN          (GPIO_PIN_3)
+#define SPI_CUSTOM_NSS_PORT         (SPI_NSS_PORT)
+#define SPI_CUSTOM_NSS_PIN          (SPI_NSS_PIN)
 
 //#define SPI_APP_RECEIVE_WHILE_TRANSMIT
 #endif // #ifdef SPI_APP_CUSTOM_NSS
@@ -157,7 +133,7 @@
 #ifdef SLAVE_TEST
 /* The maximum transmission baud rate of the slave is 6 divisions of its PCLK.
    Master baud rate depends on slave PCLK frequency. */
-#define SPI_BR_DIV                  (SPI_BR_DIV_8)
+#define SPI_BR_DIV                  (SPI_BR_DIV_64)
 #else
 #define SPI_BR_DIV                  (SPI_BR_DIV_8)
 #endif
@@ -176,12 +152,10 @@
 
 
 /* SPI data buffer size definition. */
-#define SPI_BUFFER_LENGTH           (6u)
+#define SPI_BUFFER_LENGTH           (8u)
 #ifdef SLAVE_TEST
-#define SPI_WRITE_SLAVE             (0x51u)         /*!< Customer definition. */
-#define SPI_READ_SLAVE              (0x56u)         /*!< Customer definition. */
-#define SPI_TX_BUFFER_LENGTH        (SPI_BUFFER_LENGTH)
-#define SPI_RX_BUFFER_LENGTH        (SPI_TX_BUFFER_LENGTH + 2u)
+#define SPI_WRITE_SLAVE             (0x51u)     /*!< Customer definition. */
+#define SPI_READ_SLAVE              (0x56u)     /*!< Customer definition. */
 #endif
 
 /*******************************************************************************
@@ -210,13 +184,13 @@ static void SpiTransmitReceiveData(uint8_t *pu8TxBuf,       \
  * Local variable definitions ('static')
  ******************************************************************************/
 #ifdef SLAVE_TEST
-    static uint8_t m_au8SpiTxBuf[SPI_TX_BUFFER_LENGTH] = {0x50, 0x51, 0x52, 0x53, 0x54, 0x55};
-    static uint8_t m_au8SpiRxBuf[SPI_RX_BUFFER_LENGTH];
+static uint8_t m_au8SpiTxBuf[SPI_BUFFER_LENGTH] = {0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57};
+static uint8_t m_au8SpiRxBuf[SPI_BUFFER_LENGTH];
 #else
-    static uint8_t m_au8SpiTxBuf[SPI_BUFFER_LENGTH] = {0x50, 0x51, 0x52, 0x53, 0x54, 0x55};
-    #if (SPI_APP_TRANS_MODE == SPI_APP_FULL_DUPLEX)
-        static uint8_t m_au8SpiRxBuf[SPI_BUFFER_LENGTH];
-    #endif
+static uint8_t m_au8SpiTxBuf[SPI_BUFFER_LENGTH] = {0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57};
+#if (SPI_APP_TRANS_MODE == SPI_APP_FULL_DUPLEX)
+static uint8_t m_au8SpiRxBuf[SPI_BUFFER_LENGTH];
+#endif
 #endif // #ifdef SLAVE_TEST
 
 /*******************************************************************************
@@ -243,20 +217,19 @@ int32_t main(void)
 #ifdef SLAVE_TEST
         /* Write data to the slave. */
         m_au8SpiTxBuf[0u] = SPI_WRITE_SLAVE;
-        SPI_Transmit((uint8_t *)&m_au8SpiTxBuf[0u], SPI_TX_BUFFER_LENGTH);
+        SPI_Transmit((uint8_t *)&m_au8SpiTxBuf[0u], SPI_BUFFER_LENGTH);
 
         /* Delay for slave handling data. */
-        DDL_Delay1ms(2u);
+        DDL_Delay1ms(20u);
 
         /* Read data from the slave. */
         m_au8SpiTxBuf[0u] = SPI_READ_SLAVE;
-        SPI_Transmit((uint8_t *)&m_au8SpiTxBuf[0u], SPI_TX_BUFFER_LENGTH);
+        SPI_Transmit((uint8_t *)&m_au8SpiTxBuf[0u], SPI_BUFFER_LENGTH);
         /* Delay for slave handling data. */
-        DDL_Delay1ms(2u);
-        SPI_Receive((uint8_t *)&m_au8SpiRxBuf[0u], SPI_RX_BUFFER_LENGTH);
-        // TODO: Use data received from the slave. Valid data starts at offset 2.
-#else
-
+        DDL_Delay1ms(50u);
+        SPI_Receive((uint8_t *)&m_au8SpiRxBuf[0u], SPI_BUFFER_LENGTH);
+        // TODO: Use data received from the slave.
+#else // If not defined SLAVE_TEST
 #if (SPI_APP_X_WIRE == SPI_APP_4_WIRE)
     #if (SPI_APP_TRANS_MODE == SPI_APP_FULL_DUPLEX)
         /* SPI send and receive in 4-wire master mode. */

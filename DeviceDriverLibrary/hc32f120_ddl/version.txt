@@ -1,57 +1,80 @@
 version     date           comment
+ 1.1.0
+            Jan 06, 2021   1. Replace INT_IIC_EE1 with INT_IIC_EEI for I2C samples.
+            
+            Dec 15, 2020   1. Example uart_int: Fix bug of lossing TX data.
+
+            Dec 09, 2020   1. Correct timeout process for clk driver.
+
+            Dec 04, 2020   1. Refined examples spi_master_base, spi_self_diagnosis and spi_slave_interrupt.
+
+            Oct 30, 2020   1. Refine CTC initialization structure;
+                           2. Revise I2C TxEmpty & Complete Entry;
+                           3. SPII flag judgment for share IRQ;
+                           4. Use MODIFY instead of WRITE for GPIO_Init.
+                           5. Fixed SysTick_Delay function overflow handling.
+
+            Oct 27, 2020   1. Revise debug port definition.
+
+            Sep 17, 2020   1. Correct typo for USART sample.
+
+            Sep 07, 2020   1. Optimizing the definition method of ICG field;
+                           2. Add the precompiled configuration of ARM compiler V6.
+
+            Aug 31, 2020   1. Correct macro define of CTC driver:IS_CTC_TOLERANCE_BIAS.
  1.0.0
             Jul 31, 2020   1. Add wait RDY at start of func. EFM_SetOperateMode().
                            2. some typo in clk.c & PWC sample
 
             Jul 27, 2020   1. Correct macro define of CTC driver:IS_CTC_OFFSET_VAL
 
-            Feb 28, 2020   1. Some typo in PWC/CLK
-                           2. Delete struct member u32HwFlowCtrl of stc_lin_init_t for USART driver
-                           3. Modify function comment: UsartGetSilenceModeState for USART sample
-                           4. Delete macro-defgroup USART_Interrupt_definition in hc32_usart.h files
-                           5. Modify interrupt macro define to USART_INT_TXE /USART_INT_TC/USART_INT_RX
-                           6. Use MODIFY_REG32,CLEAR_REG32_BIT,SET_REG32_BIT for drivers 
-                           7. Delete history legacy register macro definition in hc32_common.h files.
-                           8. Merge hc32_common.h files of HC32F120, HC32F4A0, HC32M120, HC32M423 series chips.
+            Feb 28, 2020   1. Some typo in PWC/CLK;
+                           2. Delete struct member u32HwFlowCtrl of stc_lin_init_t for USART driver;
+                           3. Modify function comment: UsartGetSilenceModeState for USART sample;
+                           4. Delete macro-defgroup USART_Interrupt_definition in hc32_usart.h files;
+                           5. Modify interrupt macro define to USART_INT_TXE /USART_INT_TC/USART_INT_RX;
+                           6. Use MODIFY_REG32,CLEAR_REG32_BIT,SET_REG32_BIT for drivers;
+                           7. Delete history legacy register macro definition in hc32_common.h files;
+                           8. Merge hc32_common.h files of HC32F120, HC32F4A0, HC32M120, HC32M423 series chips;
                            9. Update head file: Modify the 32 bit register to 8 bit register for RTC.
 
-            Feb 14, 2020   1. Modify EFM_InterruptCmd function for efm.c .
-                           2. Use CLEAR_REG8_BIT for CLK_ClearXtalStdFlag() instead of CLEAR_REG8_BIT.
-                           3. Comment revise for GPIO_DeInit().
+            Feb 14, 2020   1. Modify EFM_InterruptCmd function for efm.c;
+                           2. Use CLEAR_REG8_BIT for CLK_ClearXtalStdFlag() instead of CLEAR_REG8_BIT;
+                           3. Comment revise for GPIO_DeInit();
                            4. Sync 'Compiler Macro Definitions' with other series.
 
             Jan 22, 2020   1. Modify exclusive IRQ request process for share handler.
 
-            Jan 20, 2020   1. Modify the macro definition of CLEAR_REG.
+            Jan 20, 2020   1. Modify the macro definition of CLEAR_REG;
                            2. Add the macro definition of __UNUSED.
 
-            Jan 08, 2020   1. Added GCC compiler support.
-                           2. Added Eclipse project files for each example project.
-                           3. Modified the type of 'u32Event0' in structure stc_adc_trg_cfg_t,
-                              from 'uint32 enEvent0' to 'en_event_src_t enEvent0'. Same with 'u32Event1'.
-                           4. Modified the definitions of ADC_Trigger_Source_Type.
+            Jan 08, 2020   1. Added GCC compiler support;
+                           2. Added Eclipse project files for each example project;
+                           3. Modified the type of 'u32Event0' in structure stc_adc_trg_cfg_t
+                              from 'uint32 enEvent0' to 'en_event_src_t enEvent0'. Same with 'u32Event1';
+                           4. Modified the definitions of ADC_Trigger_Source_Type;
                            5. Fixed a bug of IS_VALID_EFM_ADDR in hc32f120_efm.c.
 
-            Jan 03, 2020   1. comment revise for gpio driver
+            Jan 03, 2020   1. comment revise for gpio driver.
 
-            Dec 11, 2019   1. Add timeout function for timer0
+            Dec 11, 2019   1. Add timeout function for timer0.
 
-            Nov 20, 2019   1. Configure DAP to the default ICE
+            Nov 20, 2019   1. Configure DAP to the default ICE.
  
             Nov 04, 2019   1. TX empty interrupt IRQ callback disable TX empty interrupt 
-                              when buffer data is empty for UART interrupt sample.[usart];
+                              when buffer data is empty for UART interrupt sample.
 
-            Oct 30, 2019   1. Update STK hardware version: STK_HC32F120_LQFP44_080_V11;
+            Oct 30, 2019   1. Update STK hardware version: STK_HC32F120_LQFP44_080_V11.
 
-            Oct 18, 2019   1. Check function return value(USART_UartInit) for UART sample [usart];
+            Oct 18, 2019   1. Check function return value(USART_UartInit) for UART sample.
 
-            Oct 17, 2019   1. Correct EIRQCRx address calculate formula [interrupt];
-                           2. LVD judgement in IRQHandler31 [interrupt];
-                           3. Delete the interval between consecutively sent data; [spi]
-                           4. Bug fix, function PWC_LvdCmd; [pwc]
+            Oct 17, 2019   1. Correct EIRQCRx address calculate formula;
+                           2. LVD judgement in IRQHandler31;
+                           3. Delete the interval between consecutively sent data;
+                           4. Bug fix, function PWC_LvdCmd.
 
-            Oct 08, 2019   1. MISRAC2004 compliance (portion rules)
+            Oct 08, 2019   1. MISRAC2004 compliance (portion rules).
 
-            Jun 07, 2019   1. the first release for hc32f120 series DDL(Device Driver Library)
+            Jun 07, 2019   1. the first release for hc32f120 series DDL(Device Driver Library).
 
 EOF

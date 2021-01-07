@@ -7,6 +7,7 @@
    Change Logs:
    Date             Author          Notes
    2019-04-28       Hongjh          First version
+   2020-10-30       Hongjh          Refine CTC initialization structure.
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2016, Huada Semiconductor Co., Ltd. All rights reserved.
@@ -90,9 +91,6 @@ extern "C"
  */
 typedef struct stc_ctc_init
 {
-    uint32_t u32Fhrc;               /*!< HRC clock frequency
-                                         This parameter can be a value of @ref CTC_Trimming_HRC_Frequency */
-
     uint32_t u32Fref;               /*!< Reference clock frequency */
 
     uint32_t u32RefClkSel;          /*!< Reference clock source selection
@@ -121,8 +119,6 @@ typedef struct stc_ctc_init
 
 /**
  * @defgroup CTC_Flag CTC Flag
- *        Elements values convention: 0xXXXXXXXX
- *           - 0xXXXXXXXX  : Flag mask in the CTC_STR register
  * @{
  */
 #define CTC_FLAG_TRMOK                          (CTC_STR_TRIMOK)    /*!< Trimming OK flag */
@@ -168,27 +164,6 @@ typedef struct stc_ctc_init
  * @{
  */
 #define CTC_DEFAULT_TOLERANCE_BIAS              (0.02f)             /*!< CTC default tolerance bias: 2% */
-/**
- * @}
- */
-
-/**
- * @defgroup CTC_Trimming_HRC_Frequency CTC Trimming HRC Frequency definition
- * @{
- */
-#define CTC_TRIMMING_HRC_1MHZ                   ((uint32_t)1000000ul)   /*!< CTC Trimming 1MHz */
-#define CTC_TRIMMING_HRC_2MHZ                   ((uint32_t)2000000ul)   /*!< CTC Trimming 2MHz */
-#define CTC_TRIMMING_HRC_4MHZ                   ((uint32_t)4000000ul)   /*!< CTC Trimming 4MHz */
-#define CTC_TRIMMING_HRC_8MHZ                   ((uint32_t)8000000ul)   /*!< CTC Trimming 8MHz */
-#define CTC_TRIMMING_HRC_16MHZ                  ((uint32_t)16000000ul)  /*!< CTC Trimming 16MHz */
-#define CTC_TRIMMING_HRC_32MHZ                  ((uint32_t)32000000ul)  /*!< CTC Trimming 32MHz */
-
-#define CTC_TRIMMING_HRC_1P5MHZ                 ((uint32_t)1500000ul)   /*!< CTC Trimming 1.5MHz */
-#define CTC_TRIMMING_HRC_3MHZ                   ((uint32_t)3000000ul)   /*!< CTC Trimming 3MHz */
-#define CTC_TRIMMING_HRC_6MHZ                   ((uint32_t)6000000ul)   /*!< CTC Trimming 6MHz */
-#define CTC_TRIMMING_HRC_12MHZ                  ((uint32_t)12000000ul)  /*!< CTC Trimming 12MHz */
-#define CTC_TRIMMING_HRC_24MHZ                  ((uint32_t)24000000ul)  /*!< CTC Trimming 24MHz */
-#define CTC_TRIMMING_HRC_48MHZ                  ((uint32_t)48000000ul)  /*!< CTC Trimming 48MHz */
 /**
  * @}
  */
